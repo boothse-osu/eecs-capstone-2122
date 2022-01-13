@@ -1,2 +1,5 @@
-﻿  Mobile3DPrinter.c
+﻿  InverseKinematics.c
+  Mobile3DPrinter.c
+  PrinterStruct.c
+  Generating Code...
   Mobile3DPrinter.vcxproj -> D:\School\Capstone\Capstone Code\eecs-capstone-2122\main\Mobile3DPrinter\Debug\Mobile3DPrinter.exe
