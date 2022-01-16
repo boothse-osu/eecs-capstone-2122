@@ -15,24 +15,21 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Mobile3DPrinter.c">
+    <ClCompile Include="main.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="InverseKinematics.c">
+    <ClCompile Include="kinematics.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="PrinterStruct.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="defines.c">
+    <ClCompile Include="printer_struct.c">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="InverseKinematics.h">
+    <ClInclude Include="kinematics.h">
       <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="PrinterStruct.h">
+    <ClInclude Include="printer_struct.h">
       <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>

@@ -141,14 +141,13 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="defines.c" />
-    <ClCompile Include="InverseKinematics.c" />
-    <ClCompile Include="Mobile3DPrinter.c" />
-    <ClCompile Include="PrinterStruct.c" />
+    <ClCompile Include="kinematics.c" />
+    <ClCompile Include="main.c" />
+    <ClCompile Include="printer_struct.c" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="InverseKinematics.h" />
-    <ClInclude Include="PrinterStruct.h" />
+    <ClInclude Include="kinematics.h" />
+    <ClInclude Include="printer_struct.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
