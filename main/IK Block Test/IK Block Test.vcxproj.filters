@@ -18,18 +18,18 @@
     <ClCompile Include="main.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="kinematics.c">
+    <ClCompile Include="..\Mobile3DPrinter\kinematics.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="printer_struct.c">
+    <ClCompile Include="..\Mobile3DPrinter\printer_struct.c">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="printer_struct.h">
+    <ClInclude Include="..\Mobile3DPrinter\kinematics.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="kinematics.h">
+    <ClInclude Include="..\Mobile3DPrinter\printer_struct.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

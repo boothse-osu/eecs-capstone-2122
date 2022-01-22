@@ -5,6 +5,8 @@ VisualStudioVersion = 16.0.31911.196
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Mobile3DPrinter", "Mobile3DPrinter.vcxproj", "{FD9373B1-6E5E-4AF3-90B3-F35C7F45BB60}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "IK Block Test", "..\IK Block Test\IK Block Test.vcxproj", "{407F2404-72AB-423D-A528-92AE6172697B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -21,6 +23,14 @@ Global
 		{FD9373B1-6E5E-4AF3-90B3-F35C7F45BB60}.Release|x64.Build.0 = Release|x64
 		{FD9373B1-6E5E-4AF3-90B3-F35C7F45BB60}.Release|x86.ActiveCfg = Release|Win32
 		{FD9373B1-6E5E-4AF3-90B3-F35C7F45BB60}.Release|x86.Build.0 = Release|Win32
+		{407F2404-72AB-423D-A528-92AE6172697B}.Debug|x64.ActiveCfg = Debug|x64
+		{407F2404-72AB-423D-A528-92AE6172697B}.Debug|x64.Build.0 = Debug|x64
+		{407F2404-72AB-423D-A528-92AE6172697B}.Debug|x86.ActiveCfg = Debug|Win32
+		{407F2404-72AB-423D-A528-92AE6172697B}.Debug|x86.Build.0 = Debug|Win32
+		{407F2404-72AB-423D-A528-92AE6172697B}.Release|x64.ActiveCfg = Release|x64
+		{407F2404-72AB-423D-A528-92AE6172697B}.Release|x64.Build.0 = Release|x64
+		{407F2404-72AB-423D-A528-92AE6172697B}.Release|x86.ActiveCfg = Release|Win32
+		{407F2404-72AB-423D-A528-92AE6172697B}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

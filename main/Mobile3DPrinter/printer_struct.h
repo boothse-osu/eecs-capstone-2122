@@ -4,7 +4,7 @@
 #include <cglm.h>
 
 //Motor struct
-//Contains current angle, min and max angles
+//Contains current angle, min and max angles in degrees
 struct Motor {
 	float angle;
 	float max_angle;
@@ -15,7 +15,8 @@ struct Motor {
 struct Link{
 	//link mat is a 4x4 matrix showing the translation from the end of the link to the
 	//	central point - putting 0,0,0,1 in should provide the coords of the end of the link
-	const mat4 link_mat;
+	//  should never be changed during the operation of the printer. Should probably be const.
+	mat4 link_mat;
 	//The current location of the end of the link compared to the base of the link. Prismatic joints "grow".
 	mat4 current_mat;
 	//absolute mat is a 4x4 matrix showing the translation from the base of the very first link to the end of this link.
@@ -24,6 +25,7 @@ struct Link{
 	//Whether the joint before the link is prismatic or not. If 0 it's rotational. If not, it is prismatic.
 	int prismatic;
 	//The axis the printer moves on if prismatic, or the one it moves around if rotational.
+	//MUST be a normal vector or the movement ratios will be messed up
 	vec3 axis;
 	//The ratio of motor angle to movement. Should be 1 for rotational, may depend for prismatic.
 	float move_ratio;

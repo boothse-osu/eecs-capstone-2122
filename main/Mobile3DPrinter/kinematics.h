@@ -8,4 +8,6 @@
 //Precondition: The Printer struct has the angles set to the desired values
 void forward_kinematics(struct Printer*);
 
+void inverse_kinematics(struct Printer*, vec3 target, vec3 normal);
+
 #endif
