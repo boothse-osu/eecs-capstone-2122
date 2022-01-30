@@ -1,0 +1,4 @@
+(sym_lib_table
+  (lib (name Driver_Motor)(type Legacy)(uri ${KIPRJMOD}/Driver_Motor.lib)(options "")(descr ""))
+  (lib (name Capstone)(type Legacy)(uri "F:/Sean/Documents/EECS Capstone Git/eecs-capstone-2122/electrical/Capstone.lib")(options "")(descr ""))
+)
