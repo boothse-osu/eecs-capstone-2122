@@ -4,7 +4,7 @@
 #include <cglm.h>
 
 //Motor struct
-//Contains current angle, min and max angles in degrees
+//Contains current angle, min and max angles in radians
 struct Motor {
 	float angle;
 	float max_angle;
@@ -39,5 +39,25 @@ struct Printer{
 
 //Gets vector3 position of the printer's end effector, assuming that the final absolute link matrix is up to date
 void printer_get_tip(struct Printer*, vec3);
+
+//Gets the normal vector relative to the surface of the last two joints.
+void printer_get_normal(struct Printer*, vec3);
+
+//Debug helpers
+void print_vec3(vec3);
+
+void print_vec3_sphere_coords(vec3);
+
+void print_mat4(mat4);
+
+void print_link(struct Link*);
+
+void print_motor(struct Motor*);
+
+void print_printer(struct Printer*);
+
+void print_link_position(struct Link*);
+
+void print_printer_link_positions(struct Printer*);
 
 #endif
