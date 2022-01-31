@@ -18,13 +18,16 @@ void printer_get_tip(struct Printer* prn, vec3 out) {
 void printer_get_normal(struct Printer* prn, vec3 out) {
 
 	//Get the position of link 3 minus the position of link 4
+	vec3 lnk5;
+	get_link_position(&(prn->links[5]), lnk5);
 	vec3 lnk4;
 	get_link_position(&(prn->links[4]), lnk4);
-	vec3 lnk3;
-	get_link_position(&(prn->links[3]), lnk3);
 
 	vec3 norm;
-	glm_vec3_sub(lnk3, lnk4, norm);
+	glm_vec3_sub(lnk4, lnk5, norm);
+
+	//Reverse it
+	glm_vec3_scale(norm, -1.f, norm);
 
 	//Normalize
 	glm_vec3_normalize_to(norm,out);

@@ -33,8 +33,8 @@ struct Link{
 
 //Printer struct. For the printer as a whole.
 struct Printer{
-	struct Link links[5];
-	struct Motor motors[5];
+	struct Link links[6];
+	struct Motor motors[6];
 };
 
 //Gets vector3 position of the printer's end effector, assuming that the final absolute link matrix is up to date

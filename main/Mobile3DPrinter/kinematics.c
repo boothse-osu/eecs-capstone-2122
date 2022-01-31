@@ -10,7 +10,7 @@ void forward_kinematics(struct Printer* prn)
 	//	for an arbitary configuration anyways. If I could, I would.
 
 	//Go through the motors and links and update the link matrices based on the angles.
-	for (int i = 0; i < 5; i++) {
+	for (int i = 0; i < 6; i++) {
 
 		if (prn->links[i].prismatic) {
 			
@@ -40,7 +40,7 @@ void forward_kinematics(struct Printer* prn)
 	}
 
 	//Now, take all the relative values in the links and update their absolute matrices
-	for (int i = 0; i < 5; i++) {
+	for (int i = 0; i < 6; i++) {
 
 		mat4 prev_matrix;
 
@@ -68,9 +68,9 @@ void inverse_kinematics(struct Printer* prn, vec3 target, vec3 normal) {
 	//Calculate axis coordinates
 	
 	//r1 = arctan(x/y)
-	float r1 = (float)atan2(normal[0], normal[1]);
+	float r1 = (float)atan2(-1.f*(double)normal[0], normal[1]);
 	//r2 = arctan()
-	float r2 = (float)atan2(normal[2], normal[1]);
+	float r2 = (float)atan2(normal[2], sqrt(((double)normal[0]*(double)normal[0])+((double)normal[1]*(double)normal[1])));
 
 	//Set the rotational joints to those coordinates if possible
 	//Making assumptions about these last two motors being Z axis rotation and X axis rotation
@@ -93,7 +93,7 @@ void inverse_kinematics(struct Printer* prn, vec3 target, vec3 normal) {
 	printf("Normal\n");
 	printer_get_normal(prn, results);
 	print_vec3(results);
-	print_printer_link_positions(prn);
+	//print_printer_link_positions(prn);
 	*/
 	//END
 
@@ -108,13 +108,13 @@ void inverse_kinematics(struct Printer* prn, vec3 target, vec3 normal) {
 
 	//Again making assumptions based on the design of our specific printer
 	//X-axis
-	prn->motors[0].angle = differences[0] / prn->links[0].move_ratio;
+	prn->motors[0].angle += differences[0] / prn->links[0].move_ratio;
 
 	//Z-axis
-	prn->motors[1].angle = differences[2] / prn->links[1].move_ratio;
+	prn->motors[1].angle += differences[2] / prn->links[1].move_ratio;
 
 	//Y-axis
-	prn->motors[2].angle = differences[1] / prn->links[2].move_ratio;
+	prn->motors[2].angle += differences[1] / prn->links[2].move_ratio;
 
 	//Do FK to ensure that the end of the printer is in the right place
 	forward_kinematics(prn);
