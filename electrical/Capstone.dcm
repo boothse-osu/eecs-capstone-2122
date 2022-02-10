@@ -1,5 +1,35 @@
 EESchema-DOCLIB  Version 2.0
 #
+$CMP B220A
+D 20V 2A Schottky Barrier Rectifier Diode, SMA
+K diode Schottky
+F http://www.jameco.com/Jameco/Products/ProdDS/1538777.pdf
+$ENDCMP
+#
+$CMP B230_copy
+D 30V 2A Schottky Barrier Rectifier Diode, SMB
+K diode Schottky
+F http://www.jameco.com/Jameco/Products/ProdDS/1538777.pdf
+$ENDCMP
+#
+$CMP B240_copy
+D 40V 2A Schottky Barrier Rectifier Diode, SMB
+K diode Schottky
+F http://www.jameco.com/Jameco/Products/ProdDS/1538777.pdf
+$ENDCMP
+#
+$CMP B250_copy
+D 50V 2A Schottky Barrier Rectifier Diode, SMB
+K diode Schottky
+F http://www.jameco.com/Jameco/Products/ProdDS/1538777.pdf
+$ENDCMP
+#
+$CMP B260_copy
+D 60V 2A Schottky Barrier Rectifier Diode, SMB
+K diode Schottky
+F http://www.jameco.com/Jameco/Products/ProdDS/1538777.pdf
+$ENDCMP
+#
 $CMP Pololu_Breakout_AMIS30543
 D Pololu AMIS-30543 Stepper Motor Driver Carrier
 $ENDCMP

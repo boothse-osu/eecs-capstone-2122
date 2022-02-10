@@ -1,0 +1,3 @@
+(fp_lib_table
+  (lib (name techdemo)(type KiCad)(uri "F:/Sean/Documents/EECS Capstone Git/ece441-tech-demo/techdemo")(options "")(descr ""))
+)
