@@ -7,20 +7,20 @@
       "Application": "Pcbnew",
       "Version":     "(5.1.12)-1"
     },
-    "CreationDate":  "2021-11-13T04:14:36-08:00"
+    "CreationDate":  "2022-02-19T00:27:12-08:00"
   },
   "GeneralSpecs":
   {
     "ProjectId":
     {
-      "Name": "techdemo",
-      "GUID": "74656368-6465-46d6-9f2e-6b696361645f",
-      "Revision": "rev?"
+      "Name": "powersupply",
+      "GUID": "706f7765-7273-4757-9070-6c792e6b6963",
+      "Revision": "1"
     },
     "Size":
     {
-      "X": 54.660,
-      "Y": 29.260
+      "X": 57.250,
+      "Y": 33.120
     },
     "LayerNumber": 2,
     "BoardThickness":  1.600
@@ -32,7 +32,7 @@
       "PadToPad":  0.152,
       "PadToTrack":  0.152,
       "TrackToTrack":  0.152,
-      "MinLineWidth":  0.254,
+      "MinLineWidth":  0.152,
       "TrackToRegion":  0.508,
       "RegionToRegion":  0.508
     }
@@ -40,37 +40,37 @@
   "FilesAttributes":
   [
     {
-      "Path":  "techdemo-F_Cu.gtl",
+      "Path":  "powersupply-F_Cu.gtl",
       "FileFunction":  "Copper,L1,Top",
       "FilePolarity":  "Positive"
     },
     {
-      "Path":  "techdemo-B_Cu.gbl",
+      "Path":  "powersupply-B_Cu.gbl",
       "FileFunction":  "Copper,L2,Bot",
       "FilePolarity":  "Positive"
     },
     {
-      "Path":  "techdemo-F_SilkS.gto",
+      "Path":  "powersupply-F_SilkS.gto",
       "FileFunction":  "Legend,Top",
       "FilePolarity":  "Positive"
     },
     {
-      "Path":  "techdemo-B_SilkS.gbo",
+      "Path":  "powersupply-B_SilkS.gbo",
       "FileFunction":  "Legend,Bot",
       "FilePolarity":  "Positive"
     },
     {
-      "Path":  "techdemo-F_Mask.gts",
+      "Path":  "powersupply-F_Mask.gts",
       "FileFunction":  "SolderMask,Top",
       "FilePolarity":  "Negative"
     },
     {
-      "Path":  "techdemo-B_Mask.gbs",
+      "Path":  "powersupply-B_Mask.gbs",
       "FileFunction":  "SolderMask,Bot",
       "FilePolarity":  "Negative"
     },
     {
-      "Path":  "techdemo-Edge_Cuts.gm1",
+      "Path":  "powersupply-Edge_Cuts.gm1",
       "FileFunction":  "Profile",
       "FilePolarity":  "Positive"
     }
