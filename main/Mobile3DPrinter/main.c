@@ -53,7 +53,7 @@ int main(int argc,char* argv[]) {
 	//Setup
 	
 	//Home the printer
-	//printer_home()
+	//printer_home();
 
 	//Create a new printer struct and hard set the angles to zero
 	struct Printer printer;
@@ -84,7 +84,16 @@ int main(int argc,char* argv[]) {
 			extruding = 0;
 		}
 
-		//Motor handling I guess?
+		//Motor handling
+		for (int i = 0; i < 5; i++) {
+
+			if (printer.links[i].prismatic) {
+				//motor_prismatic(i,printer.motors[i].angle);
+			}
+			else {
+				//motor_rotational(i,printer.motors[i].angle);
+			}
+		}
 
 	}
 
