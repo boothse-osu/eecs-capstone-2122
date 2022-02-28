@@ -43,6 +43,9 @@ void printer_get_tip(struct Printer*, vec3);
 //Gets the normal vector relative to the surface of the last two joints.
 void printer_get_normal(struct Printer*, vec3);
 
+//Printer constructor helpers
+struct Printer generate_printer();
+
 //Debug helpers
 void print_vec3(vec3);
 

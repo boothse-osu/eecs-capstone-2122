@@ -143,11 +143,13 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="csv_parser.c" />
     <ClCompile Include="kinematics.c" />
     <ClCompile Include="main.c" />
     <ClCompile Include="printer_struct.c" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="csv_parser.h" />
     <ClInclude Include="kinematics.h" />
     <ClInclude Include="printer_struct.h" />
   </ItemGroup>

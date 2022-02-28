@@ -24,12 +24,18 @@
     <ClCompile Include="printer_struct.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="csv_parser.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="printer_struct.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="kinematics.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="csv_parser.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
