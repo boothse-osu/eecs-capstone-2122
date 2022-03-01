@@ -16,11 +16,11 @@ int move_rotational(int motor_number, float move_amount){
 
 
 int move_motors(float* move_amounts){ 
-    move_prismatic(1, move_amounts[1]);
-    move_prismatic(2, move_amounts[2]);
-    move_prismatic(3, move_amounts[3]);
-    move_rotational(4, move_amounts[4]);
-    move_rotational(5, move_amounts[5]);
+    move_prismatic(1, move_amounts[0]);
+    move_prismatic(2, move_amounts[1]);
+    move_prismatic(3, move_amounts[2]);
+    move_rotational(4, move_amounts[3]);
+    move_rotational(5, move_amounts[4]);
   
     return 0;
 }
