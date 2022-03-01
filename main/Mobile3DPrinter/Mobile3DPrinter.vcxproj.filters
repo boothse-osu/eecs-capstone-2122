@@ -27,6 +27,12 @@
     <ClCompile Include="csv_parser.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="firmware_temp.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="motor_stall.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="printer_struct.h">
@@ -36,6 +42,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="csv_parser.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="firmware_temp.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

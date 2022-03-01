@@ -3,6 +3,7 @@
 #include "printer_struct.h"
 #include "kinematics.h"
 #include "csv_parser.h"
+#include "firmware_temp.h"
 
 //Initial buffer size for printing path (number of points)
 #define PATH_SIZE 32
@@ -53,7 +54,7 @@ int main(int argc,char* argv[]) {
 	//Setup
 	
 	//Home the printer
-	//printer_home();
+	run_homing();
 
 	//Create a new printer struct and hard set the angles to zero
 	struct Printer printer;
@@ -63,6 +64,8 @@ int main(int argc,char* argv[]) {
 	generate_printer();
 
 	int extruding = 0;
+
+	int error = 0;
 
 	//While there are still points to handle, handle each point
 	for (int i = 0; i < print_path.size; i++) {
@@ -88,12 +91,20 @@ int main(int argc,char* argv[]) {
 		for (int i = 0; i < 5; i++) {
 
 			if (printer.links[i].prismatic) {
-				//motor_prismatic(i,printer.motors[i].angle);
+				error = move_prismatic(i,printer.motors[i].angle);
 			}
 			else {
-				//motor_rotational(i,printer.motors[i].angle);
+				error = move_rotational(i,printer.motors[i].angle);
 			}
+
+			if (error) {
+				printf("Error in moving motor %i! Shutting down\n",i);
+				break;
+			}
+				
 		}
+
+		if (error) break;
 
 	}
 
