@@ -61,7 +61,12 @@ int main(int argc,char* argv[]) {
 	
 	//Will eventually make use of defines for constants
 	//Has all motor angles set to zero by default
-	generate_printer();
+	printer = generate_printer();
+	forward_kinematics(&printer);
+
+	vec3 tip;
+	printer_get_tip(&printer, tip);
+	print_vec3(tip);
 
 	int extruding = 0;
 
@@ -74,7 +79,9 @@ int main(int argc,char* argv[]) {
 
 		vec3 target = { pnt.x,pnt.y,pnt.z };
 		vec3 normal;
+		//printf("Theta %f Phi %f",pnt.theta,pnt.phi);
 		sphere_to_normal(normal, pnt.theta, pnt.phi);
+		//print_vec3(normal);
 		inverse_kinematics(&printer, target, normal);
 
 		//Extrusion
@@ -89,6 +96,8 @@ int main(int argc,char* argv[]) {
 
 		//Motor handling
 		for (int i = 0; i < 5; i++) {
+
+			//printf("Angle float: %f", printer.motors[i].angle);
 
 			if (printer.links[i].prismatic) {
 				error = move_prismatic(i,printer.motors[i].angle);
