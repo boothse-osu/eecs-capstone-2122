@@ -4,6 +4,8 @@
 #include "kinematics.h"
 #include "csv_parser.h"
 #include "firmware_temp.h"
+#include <assert.h>
+
 
 //Initial buffer size for printing path (number of points)
 #define PATH_SIZE 32
@@ -81,8 +83,10 @@ int main(int argc,char* argv[]) {
 		vec3 normal;
 		//printf("Theta %f Phi %f",pnt.theta,pnt.phi);
 		sphere_to_normal(normal, pnt.theta, pnt.phi);
+		
 		//print_vec3(normal);
-		inverse_kinematics(&printer, target, normal);
+		//inverse_kinematics(&printer, target, normal);
+		ik_test_case(&printer, target, normal);
 
 		//Extrusion
 		if (pnt.extrusion) {
@@ -105,6 +109,8 @@ int main(int argc,char* argv[]) {
 			else {
 				error = move_rotational(i,printer.motors[i].angle);
 			}
+
+			error = 0;
 
 			if (error) {
 				printf("Error in moving motor %i! Shutting down\n",i);
