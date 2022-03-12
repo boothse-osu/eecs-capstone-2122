@@ -2,6 +2,7 @@
 #define PRINTER_STRUCT
 
 #include <cglm.h>
+#include "printer_defines.h"
 
 //Motor struct
 //Contains current angle, min and max angles in radians
@@ -33,8 +34,8 @@ struct Link{
 
 //Printer struct. For the printer as a whole.
 struct Printer{
-	struct Link links[6];
-	struct Motor motors[6];
+	struct Link links[NUM_LINKS];
+	struct Motor motors[NUM_MOTORS];
 };
 
 //Gets vector3 position of the printer's end effector, assuming that the final absolute link matrix is up to date

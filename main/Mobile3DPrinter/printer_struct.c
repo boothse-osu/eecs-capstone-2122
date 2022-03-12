@@ -33,14 +33,14 @@ void printer_get_normal(struct Printer* prn, vec3 out) {
 	glm_vec3_normalize_to(norm,out);
 }
 
-//Generates a motor, converting degrees to radians to make things easier on my poor brain
-struct Motor generate_motor_deg(float min, float max) {
+//Generates a motor, taking in min and max angles in radians
+struct Motor generate_motor(float min, float max) {
 
 	struct Motor mtr;
 
 	mtr.angle = 0.f;
-	mtr.min_angle = (float)(min * M_PI / 180);
-	mtr.max_angle = (float)(max * M_PI / 18);
+	mtr.min_angle = min;
+	mtr.max_angle = max;
 
 	return mtr;
 }
@@ -72,10 +72,14 @@ struct Link generate_link(mat4 link, int prismatic, vec3 axis, float ratio) {
 struct Printer generate_printer() {
 
 	//Generate the motors
-	struct Motor motors[5];
+	struct Motor motors[NUM_MOTORS];
+
+	float max_list[NUM_MOTORS] = MOTOR_MAX_LIST;
+	float min_list[NUM_MOTORS] = MOTOR_MIN_LIST;
+
 	//90 degrees for the test case
-	for (int i = 0; i < 5; i++) {
-		struct Motor m = generate_motor_deg(-90.f, 90.f);
+	for (int i = 0; i < NUM_MOTORS; i++) {
+		struct Motor m = generate_motor(min_list[i], max_list[i]);
 		//print_motor(&m);
 		motors[i] = m;
 	}
@@ -91,39 +95,33 @@ struct Printer generate_printer() {
 	//Movement ratios of 1.f for now just so its easier to debug
 	// (One radian of rotmovement = 1 inch of lateral movement. Scale is a mess.)
 
-	struct Link links[6];
+	struct Link links[NUM_LINKS];
 
-	mat4 id = GLM_MAT4_IDENTITY_INIT;
+	//Once the IK bug is squashed, this can be refactored to look like the motor code
 	mat4 tmp = GLM_MAT4_IDENTITY_INIT;
+	glm_translate(tmp, LINK0_HOME);
+	
+	links[0] = generate_link(tmp, LINK0_PRISMATIC, LINK0_AXIS, LINK0_RATIO);
 
-	glm_translate(tmp, (vec3) { 3.f, 0.f, 0.f });
+	glm_mat4_copy(GLM_MAT4_IDENTITY, tmp);
+	glm_translate(tmp, LINK1_HOME);
 
-	links[0] = generate_link(tmp, 1, (vec3) { 1.f, 0.f, 0.f }, 1.f);
+	links[1] = generate_link(tmp, LINK1_PRISMATIC, LINK1_AXIS, LINK1_RATIO);
 
-	glm_mat4_copy(id, tmp);
-	glm_translate(tmp, (vec3) { 0.f, 0.f, 2.f });
+	glm_mat4_copy(GLM_MAT4_IDENTITY, tmp);
+	glm_translate(tmp, LINK2_HOME);
 
-	links[1] = generate_link(tmp, 1, (vec3) { 0.f, 0.f, 1.f }, 1.f);
+	links[2] = generate_link(tmp, LINK2_PRISMATIC, LINK2_AXIS, LINK2_RATIO);
 
-	glm_mat4_copy(id, tmp);
-	glm_translate(tmp, (vec3) { 0.f, 1.f, 0.f });
+	glm_mat4_copy(GLM_MAT4_IDENTITY, tmp);
+	glm_translate(tmp, LINK3_HOME);
 
-	links[2] = generate_link(tmp, 1, (vec3) { 0.f, 1.f, 0.f }, 1.f);
+	links[3] = generate_link(tmp, LINK3_PRISMATIC, LINK3_AXIS, LINK3_RATIO);
 
-	glm_mat4_copy(id, tmp);
-	glm_translate(tmp, (vec3) { 0.f, 0.f, 0.f });
+	glm_mat4_copy(GLM_MAT4_IDENTITY, tmp);
+	glm_translate(tmp, LINK4_HOME);
 
-	links[3] = generate_link(tmp, 0, (vec3) { 0.f, 0.f, 1.f }, 1.f);
-
-	glm_mat4_copy(id, tmp);
-	glm_translate(tmp, (vec3) { 0.f, 2.f, 0.f });
-
-	links[4] = generate_link(tmp, 0, (vec3) { 1.f, 0.f, 0.f }, 1.f);
-
-	glm_mat4_copy(id, tmp);
-	glm_translate(tmp, (vec3) { 0.f, 1.f, 0.f });
-
-	links[5] = generate_link(tmp, 1, (vec3) { 1.f, 0.f, 0.f }, 1.f);
+	links[4] = generate_link(tmp, LINK4_PRISMATIC, LINK4_AXIS, LINK4_RATIO);
 
 	//Create the printer
 

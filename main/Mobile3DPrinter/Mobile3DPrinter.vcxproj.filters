@@ -47,5 +47,8 @@
     <ClInclude Include="firmware_temp.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="printer_defines.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
