@@ -6,9 +6,9 @@ void get_link_position(struct Link* lnk, vec3 out) {
 
 	glm_mat4_mulv3(lnk->absolute_mat, lnk->home, 1.f, out);
 
-	//mat3 rot;
-	//glm_mat4_pick3(lnk->absolute_mat,rot);
-	//glm_mat3_mulv(rot, out, out);
+	//Used to work(ish), kept just in case the above turns out to be broken
+	//vec3 zero = GLM_VEC3_ZERO_INIT
+	//glm_mat4_mulv3(lnk->absolute_mat, zero, 1.f, out);
 }
 
 //Gets position of the end effector

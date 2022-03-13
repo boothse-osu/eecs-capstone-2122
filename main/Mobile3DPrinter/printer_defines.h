@@ -17,8 +17,8 @@
 #define LINK0_HOME (vec3){1.f,0.f,0.f} //X
 #define LINK1_HOME (vec3){0.f,0.f,1.f} //Z
 #define LINK2_HOME (vec3){0.f,1.f,0.f} //Y
-#define LINK3_HOME (vec3){0.f,2.f,0.f} //Y
-#define LINK4_HOME (vec3){0.f,2.f,0.f} //Y
+#define LINK3_HOME (vec3){0.f,1.f,0.f} //Y
+#define LINK4_HOME (vec3){0.f,1.f,0.f} //Y
 
 #define LINK_HOME_LIST {LINK0_HOME,LINK1_HOME,LINK2_HOME,LINK3_HOME,LINK4_HOME}
 
@@ -59,19 +59,19 @@
 
 //Motor bounds (radians)
 //Max
-#define MOTOR0_MAX 10000.f
-#define MOTOR1_MAX 10000.f
-#define MOTOR2_MAX 10000.f
-#define MOTOR3_MAX 10000.f
-#define MOTOR4_MAX 10000.f
+#define MOTOR0_MAX 1000.f
+#define MOTOR1_MAX 1000.f
+#define MOTOR2_MAX 1000.f
+#define MOTOR3_MAX 1000.f
+#define MOTOR4_MAX 1000.f
 
 #define MOTOR_MAX_LIST {MOTOR0_MAX,MOTOR1_MAX,MOTOR2_MAX,MOTOR3_MAX,MOTOR4_MAX}
 //Min
-#define MOTOR0_MIN -10000.f
-#define MOTOR1_MIN -10000.f
-#define MOTOR2_MIN -10000.f
-#define MOTOR3_MIN -10000.f
-#define MOTOR4_MIN -10000.f
+#define MOTOR0_MIN -1000.f
+#define MOTOR1_MIN -1000.f
+#define MOTOR2_MIN -1000.f
+#define MOTOR3_MIN -1000.f
+#define MOTOR4_MIN -1000.f
 
 #define MOTOR_MIN_LIST {MOTOR0_MIN,MOTOR1_MIN,MOTOR2_MIN,MOTOR3_MIN,MOTOR4_MIN}
 
