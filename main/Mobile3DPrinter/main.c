@@ -86,7 +86,10 @@ int main(int argc,char* argv[]) {
 		
 		//print_vec3(normal);
 		//inverse_kinematics(&printer, target, normal);
-		ik_test_case(&printer, target, normal);
+		if (ik_test_case(&printer, target, normal)) {
+			printf("Error in IK: Motor angle out of bounds. Shutting down!\n");
+			break;
+		};
 
 		//Extrusion
 		if (pnt.extrusion) {

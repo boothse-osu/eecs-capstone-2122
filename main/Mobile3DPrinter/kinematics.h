@@ -11,6 +11,6 @@ void forward_kinematics(struct Printer*);
 
 int inverse_kinematics(struct Printer*, vec3 target, vec3 normal);
 
-void ik_test_case(struct Printer*,vec3 target, vec3 normal);
+int ik_test_case(struct Printer*,vec3 target, vec3 normal);
 
 #endif

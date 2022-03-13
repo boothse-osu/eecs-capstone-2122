@@ -59,19 +59,19 @@
 
 //Motor bounds (radians)
 //Max
-#define MOTOR0_MAX 1.f
-#define MOTOR1_MAX 1.f
-#define MOTOR2_MAX 1.f
-#define MOTOR3_MAX 1.f
-#define MOTOR4_MAX 1.f
+#define MOTOR0_MAX 10000.f
+#define MOTOR1_MAX 10000.f
+#define MOTOR2_MAX 10000.f
+#define MOTOR3_MAX 10000.f
+#define MOTOR4_MAX 10000.f
 
 #define MOTOR_MAX_LIST {MOTOR0_MAX,MOTOR1_MAX,MOTOR2_MAX,MOTOR3_MAX,MOTOR4_MAX}
 //Min
-#define MOTOR0_MIN 1.f
-#define MOTOR1_MIN 1.f
-#define MOTOR2_MIN 1.f
-#define MOTOR3_MIN 1.f
-#define MOTOR4_MIN 1.f
+#define MOTOR0_MIN -10000.f
+#define MOTOR1_MIN -10000.f
+#define MOTOR2_MIN -10000.f
+#define MOTOR3_MIN -10000.f
+#define MOTOR4_MIN -10000.f
 
 #define MOTOR_MIN_LIST {MOTOR0_MIN,MOTOR1_MIN,MOTOR2_MIN,MOTOR3_MIN,MOTOR4_MIN}
 
