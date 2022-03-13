@@ -11,14 +11,14 @@
 
 //Number of links
 //Should be 5, but might be higher if there are links without motors which are important
-#define NUM_LINKS 6
+#define NUM_LINKS 5
 
 //Link home position vectors
-#define LINK0_HOME (vec3){1.f,1.f,1.f}
-#define LINK1_HOME (vec3){1.f,1.f,1.f}
-#define LINK2_HOME (vec3){1.f,1.f,1.f}
-#define LINK3_HOME (vec3){1.f,1.f,1.f}
-#define LINK4_HOME (vec3){1.f,1.f,1.f}
+#define LINK0_HOME (vec3){1.f,0.f,0.f} //X
+#define LINK1_HOME (vec3){0.f,0.f,1.f} //Z
+#define LINK2_HOME (vec3){0.f,1.f,0.f} //Y
+#define LINK3_HOME (vec3){0.f,2.f,0.f} //Y
+#define LINK4_HOME (vec3){0.f,2.f,0.f} //Y
 
 #define LINK_HOME_LIST {LINK0_HOME,LINK1_HOME,LINK2_HOME,LINK3_HOME,LINK4_HOME}
 

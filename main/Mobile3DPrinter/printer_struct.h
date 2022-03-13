@@ -18,6 +18,8 @@ struct Link{
 	//	central point - putting 0,0,0,1 in should provide the coords of the end of the link
 	//  should never be changed during the operation of the printer. Should probably be const.
 	mat4 link_mat;
+	//Easier way to get vector
+	vec3 home;
 	//The current location of the end of the link compared to the base of the link. Prismatic joints "grow".
 	mat4 current_mat;
 	//absolute mat is a 4x4 matrix showing the translation from the base of the very first link to the end of this link.

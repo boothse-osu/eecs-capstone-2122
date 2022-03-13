@@ -4,8 +4,11 @@
 //Gets the position of the end of a link
 void get_link_position(struct Link* lnk, vec3 out) {
 
-	vec3 new = GLM_VEC3_ZERO_INIT;
-	glm_mat4_mulv3(lnk->absolute_mat, new, 1.f, out);
+	glm_mat4_mulv3(lnk->absolute_mat, lnk->home, 1.f, out);
+
+	//mat3 rot;
+	//glm_mat4_pick3(lnk->absolute_mat,rot);
+	//glm_mat3_mulv(rot, out, out);
 }
 
 //Gets position of the end effector
@@ -19,9 +22,9 @@ void printer_get_normal(struct Printer* prn, vec3 out) {
 
 	//Get the position of link 3 minus the position of link 4
 	vec3 lnk5;
-	get_link_position(&(prn->links[5]), lnk5);
+	get_link_position(&(prn->links[4]), lnk5);
 	vec3 lnk4;
-	get_link_position(&(prn->links[4]), lnk4);
+	get_link_position(&(prn->links[3]), lnk4);
 
 	vec3 norm;
 	glm_vec3_sub(lnk4, lnk5, norm);
@@ -46,12 +49,15 @@ struct Motor generate_motor(float min, float max) {
 }
 
 //Generates a prismatic link
-struct Link generate_link(mat4 link, int prismatic, vec3 axis, float ratio) {
+struct Link generate_link(vec3 home, int prismatic, vec3 axis, float ratio) {
 
 	struct Link lnk;
 
+	glm_vec3_copy(home, lnk.home);
+
 	//Set the link matrix
-	glm_mat4_copy(link, lnk.link_mat);
+	mat4 tmp = GLM_MAT4_IDENTITY_INIT;
+	glm_translate_to(tmp, home, lnk.link_mat);
 
 	//Set up the other matrices
 	mat4 id = GLM_MAT4_IDENTITY_INIT;
@@ -98,35 +104,20 @@ struct Printer generate_printer() {
 	struct Link links[NUM_LINKS];
 
 	//Once the IK bug is squashed, this can be refactored to look like the motor code
-	mat4 tmp = GLM_MAT4_IDENTITY_INIT;
-	glm_translate(tmp, LINK0_HOME);
-	
-	links[0] = generate_link(tmp, LINK0_PRISMATIC, LINK0_AXIS, LINK0_RATIO);
+	links[0] = generate_link(LINK0_HOME, LINK0_PRISMATIC, LINK0_AXIS, LINK0_RATIO);
 
-	glm_mat4_copy(GLM_MAT4_IDENTITY, tmp);
-	glm_translate(tmp, LINK1_HOME);
+	links[1] = generate_link(LINK1_HOME, LINK1_PRISMATIC, LINK1_AXIS, LINK1_RATIO);
 
-	links[1] = generate_link(tmp, LINK1_PRISMATIC, LINK1_AXIS, LINK1_RATIO);
+	links[2] = generate_link(LINK2_HOME, LINK2_PRISMATIC, LINK2_AXIS, LINK2_RATIO);
 
-	glm_mat4_copy(GLM_MAT4_IDENTITY, tmp);
-	glm_translate(tmp, LINK2_HOME);
+	links[3] = generate_link(LINK3_HOME, LINK3_PRISMATIC, LINK3_AXIS, LINK3_RATIO);
 
-	links[2] = generate_link(tmp, LINK2_PRISMATIC, LINK2_AXIS, LINK2_RATIO);
-
-	glm_mat4_copy(GLM_MAT4_IDENTITY, tmp);
-	glm_translate(tmp, LINK3_HOME);
-
-	links[3] = generate_link(tmp, LINK3_PRISMATIC, LINK3_AXIS, LINK3_RATIO);
-
-	glm_mat4_copy(GLM_MAT4_IDENTITY, tmp);
-	glm_translate(tmp, LINK4_HOME);
-
-	links[4] = generate_link(tmp, LINK4_PRISMATIC, LINK4_AXIS, LINK4_RATIO);
+	links[4] = generate_link(LINK4_HOME, LINK4_PRISMATIC, LINK4_AXIS, LINK4_RATIO);
 
 	//Create the printer
 
 	//Cursed, but nothing else was working...
-	struct Printer prn = { {links[0],links[1],links[2],links[3],links[4],links[5]},{motors[0],motors[1],motors[2],motors[3],motors[4]} };
+	struct Printer prn = { {links[0],links[1],links[2],links[3],links[4]},{motors[0],motors[1],motors[2],motors[3],motors[4]} };
 
 	return prn;
 }
