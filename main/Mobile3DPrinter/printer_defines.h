@@ -44,9 +44,9 @@
 //Link movement ratios
 //If rotational, the ratio of motor movement in radians to link rotation in radians
 //If prismatic, the ratio of motor movement in radians to linear distance traveled
-#define LINK0_RATIO 1.f
-#define LINK1_RATIO 1.f
-#define LINK2_RATIO 1.f
+#define LINK0_RATIO 100.f
+#define LINK1_RATIO 100.f
+#define LINK2_RATIO 100.f
 #define LINK3_RATIO 1.f
 #define LINK4_RATIO 1.f
 
@@ -59,19 +59,19 @@
 
 //Motor bounds (radians)
 //Max
-#define MOTOR0_MAX 1000.f
-#define MOTOR1_MAX 1000.f
-#define MOTOR2_MAX 1000.f
-#define MOTOR3_MAX 1000.f
-#define MOTOR4_MAX 1000.f
+#define MOTOR0_MAX (float)(M_PI/2.0)
+#define MOTOR1_MAX (float)(M_PI/2.0)
+#define MOTOR2_MAX (float)(M_PI/2.0)
+#define MOTOR3_MAX (float)(M_PI/2.0)
+#define MOTOR4_MAX (float)(M_PI/2.0)
 
 #define MOTOR_MAX_LIST {MOTOR0_MAX,MOTOR1_MAX,MOTOR2_MAX,MOTOR3_MAX,MOTOR4_MAX}
 //Min
-#define MOTOR0_MIN -1000.f
-#define MOTOR1_MIN -1000.f
-#define MOTOR2_MIN -1000.f
-#define MOTOR3_MIN -1000.f
-#define MOTOR4_MIN -1000.f
+#define MOTOR0_MIN (float)(-M_PI/2.0)
+#define MOTOR1_MIN (float)(-M_PI/2.0)
+#define MOTOR2_MIN (float)(-M_PI/2.0)
+#define MOTOR3_MIN (float)(-M_PI/2.0)
+#define MOTOR4_MIN (float)(-M_PI/2.0)
 
 #define MOTOR_MIN_LIST {MOTOR0_MIN,MOTOR1_MIN,MOTOR2_MIN,MOTOR3_MIN,MOTOR4_MIN}
 

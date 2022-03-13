@@ -182,7 +182,7 @@ int ik_test_case(struct Printer* prn, vec3 target, vec3 normal) {
 
 	//print_vec3(target_results);
 	//print_vec3(norm_results);
-	//print_printer_link_positions(prn);
+	print_printer_link_positions(prn);
 
 	float margin = 0.001f;
 	for (int i = 0; i < 3; i++) {

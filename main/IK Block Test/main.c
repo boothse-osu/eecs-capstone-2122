@@ -17,16 +17,16 @@ int main() {
 	if(ik_test_case(&prn, (vec3) { 2.f, 3.f, 2.f }, (vec3) { 0.f, 1.f, 0.f })) return;
 
 	printf("Move just the third motor\n");
-	if (ik_test_case(&prn, (vec3) { 2.f, 4.f, 2.f }, (vec3) { 0.f, 1.f, 0.f })) return;;
+	if (ik_test_case(&prn, (vec3) { 2.f, 4.f, 2.f }, (vec3) { 0.f, 1.f, 0.f })) return;
 
-	printf("Move in the Z axis\n");
-	if (ik_test_case(&prn, (vec3) { 2.f, 4.f, 2.f }, (vec3) { 1.f, 1.f, 0.f })) return;;
+	printf("Move around Z less than 90 degrees\n");
+	if (ik_test_case(&prn, (vec3) { 2.f, 4.f, 2.f }, (vec3) { 1.f, 1.f, 0.f })) return;
 
-	printf("Move in the X axis\n");
-	if (ik_test_case(&prn, (vec3) { 2.f, 4.f, 2.f }, (vec3) { 1.f, 1.f, 1.f })) return;;
+	printf("Move around Z to 90 degrees\n");
+	if (ik_test_case(&prn, (vec3) { 2.f, 4.f, 2.f }, (vec3) { 1.f, 0.f, 0.f })) return;
 
-	printf("Move all at once\n");
-	if (ik_test_case(&prn, (vec3) { 4.f, 2.f, 4.f }, (vec3) { -1.f, -1.f, -1.f })) return;;
+	printf("Move around Z to more than 90 degrees\n");
+	if (ik_test_case(&prn, (vec3) { 2.f, 4.f, 2.f }, (vec3) { 1.f, -1.f, 0.f })) return;
 
 	return 0;
 }
