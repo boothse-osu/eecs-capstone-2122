@@ -1,6 +1,7 @@
 #include <SPI.h>
 #include <AMIS30543.h>
 
+// PINS
 const uint8_t amisDirPin[3] = {PB11, PB12, PB13};
 const uint8_t amisStepPin[3] = {PC5, PC6, PC7};
 const uint8_t amisSlaveSelect[3] = {PB3, PB4, PB5};
