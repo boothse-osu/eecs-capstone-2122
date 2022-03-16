@@ -154,6 +154,7 @@
     <ClInclude Include="csv_parser.h" />
     <ClInclude Include="firmware_temp.h" />
     <ClInclude Include="kinematics.h" />
+    <ClInclude Include="printer_defines.h" />
     <ClInclude Include="printer_struct.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
