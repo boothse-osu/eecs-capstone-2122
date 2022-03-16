@@ -1,10 +1,10 @@
 #include <SPI.h>
 #include <AMIS30543.h>
 
-const uint8_t amisDirPin[3] = {PB11, PB12, PB13};
-const uint8_t amisStepPin[3] = {PC5, PC6, PC7};
-const uint8_t amisSlaveSelect[3] = {PB3, PB4, PB5};
-const uint8_t amisSLA[3] = {PA0, PA1, PA4};
+const uint8_t amisDirPin[5] = {PB11, PB12, PB13, PB14, PB15};
+const uint8_t amisStepPin[5] = {PC5, PC6, PC7, PC8, PC9};
+const uint8_t amisSlaveSelect[5] = {PB3, PB4, PB5, PB6, PB7};
+const uint8_t amisSLA[5] = {PA0, PA1, PA4, PB0, PC1};
 
 AMIS30543 stepper;
 
@@ -13,7 +13,7 @@ void setup()
   SPI.begin();
   Serial.begin(9600);
 
-  for(int i = 0; i < 3; i++) {
+  for(int i = 0; i < 5; i++) {
     stepper.init(amisSlaveSelect[i]);
 
     // Drive the NXT/STEP and DIR pins low initially.
@@ -21,8 +21,6 @@ void setup()
     pinMode(amisStepPin[i], OUTPUT);
     digitalWrite(amisDirPin[i], LOW);
     pinMode(amisDirPin[i], OUTPUT);
-  
-    //analogWrite(hotend, 0);
   
     // Give the driver some time to power up.
     delay(1);
@@ -32,7 +30,11 @@ void setup()
   
     // Set the current limit.  You should change the number here to
     // an appropriate value for your particular system.
-    stepper.setCurrentMilliamps(1800);
+    if (i < 3) {
+      stepper.setCurrentMilliamps(1800);
+    } else {
+      stepper.setCurrentMilliamps(700);
+    }
   
     // Set the number of microsteps that correspond to one full step.
     stepper.setStepMode(4);
@@ -51,11 +53,15 @@ void loop()
   setDirection(0,0);
   setDirection(1,0);
   setDirection(2,0);
+  setDirection(3,0);
+  setDirection(4,0);
   for (unsigned int x = 0; x < 2400; x++)
   {
     step(0);
     step(1);
     step(2);
+    step(3);
+    step(4);
     //if(x%10 == 0) {
     //  Serial.print(analogRead(therm));
     //  Serial.print(", ");
@@ -78,11 +84,15 @@ void loop()
   setDirection(0,1);
   setDirection(1,1);
   setDirection(2,1);
+  setDirection(3,1);
+  setDirection(4,1);
   for (unsigned int x = 0; x < 2400; x++)
   {
     step(0);
     step(1);
     step(2);
+    step(3);
+    step(4);
     //if(x%10 == 0) {
     //  Serial.print(analogRead(therm));
     //  Serial.print(", ");
