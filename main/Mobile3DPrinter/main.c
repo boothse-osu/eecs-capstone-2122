@@ -5,6 +5,7 @@
 #include "csv_parser.h"
 #include "firmware_temp.h"
 #include <assert.h>
+#include "printer_usb.h"
 
 
 //Initial buffer size for printing path (number of points)
@@ -132,7 +133,11 @@ int main(int argc,char* argv[]) {
 		extruding = 0;
 	}
 
+	//Free the memory we were using to dynamically store the printing path data
 	free(print_path.points);
+
+	//Exit the USB functionality
+	//libusb_exit(NULL);
 
 	return 0;
 }

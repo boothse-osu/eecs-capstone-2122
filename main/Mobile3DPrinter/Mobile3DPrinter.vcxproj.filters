@@ -33,6 +33,12 @@
     <ClCompile Include="motor_stall.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="usb.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\lib\CSerialPort-master\CSerialPort\CSerialPort.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="printer_struct.h">
@@ -48,6 +54,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="printer_defines.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="printer_usb.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\lib\CSerialPort-master\CSerialPort\CSerialPort.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
