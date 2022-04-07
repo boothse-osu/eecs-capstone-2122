@@ -6,6 +6,12 @@ const uint8_t amisStepPin[5] = {PC5, PC6, PC7, PC8, PC9};
 const uint8_t amisSlaveSelect[5] = {PB3, PB4, PB5, PB6, PB7};
 const uint8_t amisSLA[5] = {PA0, PA1, PA4, PB0, PC1};
 
+const uint8_t extruder_index = 0
+
+const uint8_t cm_step_amount = 800
+const uint8_t cm_target_number = 100
+
+
 AMIS30543 stepper;
 
 void setup()
@@ -13,102 +19,52 @@ void setup()
   SPI.begin();
   Serial.begin(9600);
 
-  for(int i = 0; i < 5; i++) {
-    stepper.init(amisSlaveSelect[i]);
+  stepper.init(amisSlaveSelect[extruder_index]);
 
-    // Drive the NXT/STEP and DIR pins low initially.
-    digitalWrite(amisStepPin[i], LOW);
-    pinMode(amisStepPin[i], OUTPUT);
-    digitalWrite(amisDirPin[i], LOW);
-    pinMode(amisDirPin[i], OUTPUT);
-  
-    // Give the driver some time to power up.
-    delay(1);
-  
-    // Reset the driver to its default settings.
-    stepper.resetSettings();
-  
-    // Set the current limit.  You should change the number here to
-    // an appropriate value for your particular system.
-    if (i < 3) {
-      stepper.setCurrentMilliamps(1800);
-    } else {
-      stepper.setCurrentMilliamps(700);
-    }
-  
-    // Set the number of microsteps that correspond to one full step.
-    stepper.setStepMode(4);
-  
-    stepper.setSlaTransparencyOff();
-    stepper.setSlaGainHalf();
-  
-    // Enable the motor outputs.
-    stepper.enableDriver();
+  // Drive the NXT/STEP and DIR pins low initially.
+  digitalWrite(amisStepPin[extruder_index], LOW);
+  pinMode(amisStepPin[extruder_index], OUTPUT);
+  digitalWrite(amisDirPin[extruder_index], LOW);
+  pinMode(amisDirPin[extruder_index], OUTPUT);
+
+  // Give the driver some time to power up.
+  delay(1);
+
+  // Reset the driver to its default settings.
+  stepper.resetSettings();
+
+  // Set the current limit.  You should change the number here to
+  // an appropriate value for your particular system.
+  if (i < 3) {
+    stepper.setCurrentMilliamps(1800);
+  } else {
+    stepper.setCurrentMilliamps(700);
   }
+
+  // Set the number of microsteps that correspond to one full step.
+  stepper.setStepMode(4);
+
+  stepper.setSlaTransparencyOff();
+  stepper.setSlaGainHalf();
+
+  // Enable the motor outputs.
+  stepper.enableDriver();
+ 
 }
 
 void loop()
 {
   // Step in the default direction 1000 times.
-  setDirection(0,0);
-  setDirection(1,0);
-  setDirection(2,0);
-  setDirection(3,0);
-  setDirection(4,0);
-  for (unsigned int x = 0; x < 2400; x++)
-  {
-    step(0);
-    step(1);
-    step(2);
-    step(3);
-    step(4);
-    //if(x%10 == 0) {
-    //  Serial.print(analogRead(therm));
-    //  Serial.print(", ");
-    //  Serial.println(analogRead(amisSLA));
-    //}
-  }
+  setDirection(extruder_index,0);
 
-  // Wait for 300 ms.
-  for (unsigned int x = 0; x < 1600; x++)
+  // How many cm to extrude
+  for (unsigned int x = 0; x < cm_target_number; x++)
   {
-    delay(1);
-    //if(x%10 == 0) {
-    //  Serial.print(analogRead(therm));
-    //  Serial.print(", ");
-    //  Serial.println(analogRead(amisSLA));
-    //}
-  }
-
-  // Step in the default direction 1000 times.
-  setDirection(0,1);
-  setDirection(1,1);
-  setDirection(2,1);
-  setDirection(3,1);
-  setDirection(4,1);
-  for (unsigned int x = 0; x < 2400; x++)
-  {
-    step(0);
-    step(1);
-    step(2);
-    step(3);
-    step(4);
-    //if(x%10 == 0) {
-    //  Serial.print(analogRead(therm));
-    //  Serial.print(", ");
-    //  Serial.println(analogRead(amisSLA));
-    //}
-  }
-
-  // Wait for 300 ms.
-  for (unsigned int x = 0; x < 1600; x++)
-  {
-    delay(1);
-    //if(x%10 == 0) {
-    //  Serial.print(analogRead(therm));
-    //  Serial.print(", ");
-    //  Serial.println(analogRead(amisSLA));
-    //}
+    // Steps to extrude one cm
+    for (unsigned int x = 0; x < cm_step_amount; x++)
+    {
+      step(extruder_index);
+    }
   }
 }
 
