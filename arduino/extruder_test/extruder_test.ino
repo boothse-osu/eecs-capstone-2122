@@ -58,10 +58,10 @@ void loop()
   setDirection(extruder_index,0);
 
   // How many cm to extrude
-  for (unsigned int x = 0; x < cm_target_number; x++)
+  for (unsigned int x = 0; x < 100; x++)
   {
     // Steps to extrude one cm
-    for (unsigned int x = 0; x < cm_step_amount; x++)
+    for (unsigned int x = 0; x < 800; x++)
     {
       step(extruder_index);
     }
