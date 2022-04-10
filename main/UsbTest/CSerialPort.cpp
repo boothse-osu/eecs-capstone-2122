@@ -20,6 +20,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 #include "CSerialPort.h"
+#include <iostream>
 
 PORT OpenPort(int idx)
 {
@@ -53,7 +54,8 @@ PORT OpenPort(int idx)
 }
 void ClosePort(PORT com_port)
 {
-	CloseHandle(com_port);
+	int err = CloseHandle(com_port);
+	printf("Close-err: %i\n", err);
 }
 
 int SetPortBoudRate(PORT com_port, int rate)
@@ -170,6 +172,7 @@ int ReciveData(PORT com_port, char * data,int len)
 	}
 	Status = ReadFile(com_port, data, len, &NoBytesRead, NULL);
 	data[NoBytesRead] = 0;
+	//printf("Bytes read: %i\n", NoBytesRead);
 	if (Status == FALSE) {
 		return FALSE;
 	}
