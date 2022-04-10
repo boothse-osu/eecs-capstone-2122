@@ -37,7 +37,7 @@ int main(int argc,char* argv[]) {
 	printf("Printing %s",filepath);
 	*/
 
-	char* filepath = "D:\\School\\Capstone\\Capstone Code\\eecs-capstone-2122\\main\\Tool Paths.csv";
+	char* filepath = "..\\ToolPath.csv";
 
 	//Parse the CSV file
 	struct Path print_path;
