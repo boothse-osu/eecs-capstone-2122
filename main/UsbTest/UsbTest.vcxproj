@@ -116,7 +116,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>..\lib\CSerialPort-master\CSerialPort;..\Mobile3DPrinter;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\Libraries\CSerialPort-master\CSerialPort;D:\School\Capstone\Capstone Code\eecs-capstone-2122\main\Mobile3DPrinter</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -131,7 +131,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>..\lib\CSerialPort-master\CSerialPort;..\Mobile3DPrinter;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\Libraries\CSerialPort-master\CSerialPort;D:\School\Capstone\Capstone Code\eecs-capstone-2122\main\Mobile3DPrinter</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -141,13 +141,13 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\Libraries\CSerialPort-master\CSerialPort\CSerialPort.cpp" />
     <ClCompile Include="..\Mobile3DPrinter\usb.cpp" />
-    <ClCompile Include="CSerialPort.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\Libraries\CSerialPort-master\CSerialPort\CSerialPort.h" />
     <ClInclude Include="..\Mobile3DPrinter\printer_usb.h" />
-    <ClInclude Include="CSerialPort.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -118,7 +118,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>..\lib\cglm-0.8.4\include\cglm;..\lib\libusb-1.0.25\include\libusb-1.0;..\lib\CSerialPort-master\CSerialPort;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\Libraries\cglm-0.8.4\include\cglm;..\Libraries\CSerialPort-master\CSerialPort;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -135,7 +135,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>..\lib\cglm-0.8.4\include\cglm;..\lib\libusb-1.0.25\include\libusb-1.0;..\lib\CSerialPort-master\CSerialPort;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\Libraries\cglm-0.8.4\include\cglm;..\Libraries\CSerialPort-master\CSerialPort;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -147,7 +147,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\lib\CSerialPort-master\CSerialPort\CSerialPort.c" />
+    <ClCompile Include="..\Libraries\CSerialPort-master\CSerialPort\CSerialPort.cpp" />
     <ClCompile Include="csv_parser.c" />
     <ClCompile Include="firmware_temp.c" />
     <ClCompile Include="kinematics.c" />
@@ -157,7 +157,7 @@
     <ClCompile Include="usb.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\lib\CSerialPort-master\CSerialPort\CSerialPort.h" />
+    <ClInclude Include="..\Libraries\CSerialPort-master\CSerialPort\CSerialPort.h" />
     <ClInclude Include="csv_parser.h" />
     <ClInclude Include="firmware_temp.h" />
     <ClInclude Include="kinematics.h" />
