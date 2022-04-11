@@ -2,7 +2,8 @@
 #include <stdio.h>
 
 int main() {
-	usb_test();
+
+
 
 	return 0;
 }
