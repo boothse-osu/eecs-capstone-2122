@@ -149,7 +149,6 @@
   <ItemGroup>
     <ClCompile Include="..\Libraries\CSerialPort-master\CSerialPort\CSerialPort.cpp" />
     <ClCompile Include="csv_parser.c" />
-    <ClCompile Include="firmware_temp.c" />
     <ClCompile Include="kinematics.c" />
     <ClCompile Include="main.c" />
     <ClCompile Include="motor_stall.c" />
@@ -159,7 +158,6 @@
   <ItemGroup>
     <ClInclude Include="..\Libraries\CSerialPort-master\CSerialPort\CSerialPort.h" />
     <ClInclude Include="csv_parser.h" />
-    <ClInclude Include="firmware_temp.h" />
     <ClInclude Include="kinematics.h" />
     <ClInclude Include="printer_defines.h" />
     <ClInclude Include="printer_struct.h" />
