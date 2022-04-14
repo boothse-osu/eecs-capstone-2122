@@ -13,6 +13,7 @@ const int cm_step_amount = 800;
 // 100cm: meter
 const int cm_target_number = 100;
 
+bool jobDone = false;
 
 AMIS30543 stepper;
 
@@ -37,12 +38,8 @@ void setup()
 
   // Set the current limit.  You should change the number here to
   // an appropriate value for your particular system.
-<<<<<<< HEAD
   stepper.setCurrentMilliamps(700);
   // or stepper.setCurrentMilliamps(1800);
-=======
-  stepper.setCurrentMilliamps(1800);
->>>>>>> 0cb8891921c899abda4c2e6ec95a38536da25f80
 
   // Set the number of microsteps that correspond to one full step.
   stepper.setStepMode(4);
@@ -58,20 +55,23 @@ void setup()
 void loop()
 {
   // Step in the default direction 1000 times.
-  bool jobDone = false;
   if(jobDone==false)
   {
     setDirection(extruder_index,0);
-
+    int step_count = 0;
     // How many cm to extrude
     for (unsigned int x = 0; x < cm_target_number; x++)
     {
       // Steps to extrude one cm
       for (unsigned int i = 0; i < cm_step_amount; i++)
       {
+        step_count++;
         step(extruder_index);
       }
     }
+    Serial.print("\nCm extruded: "); Serial.print(cm_target_number);
+    Serial.print("\nSteps per cm: "); Serial.print(cm_step_amount);
+    Serial.print("\nSteps taken: "); Serial.print(step_count);
     jobDone = true;
   }
 }
