@@ -3,8 +3,8 @@
 #include "printer_struct.h"
 #include "kinematics.h"
 #include "csv_parser.h"
-#include "firmware_temp.h"
 #include <assert.h>
+#include "printer_usb.h"
 
 
 //Initial buffer size for printing path (number of points)
@@ -36,7 +36,7 @@ int main(int argc,char* argv[]) {
 	printf("Printing %s",filepath);
 	*/
 
-	char* filepath = "D:\\School\\Capstone\\Capstone Code\\eecs-capstone-2122\\main\\Tool Paths.csv";
+	char* filepath = "..\\ToolPath.csv";
 
 	//Parse the CSV file
 	struct Path print_path;
@@ -74,65 +74,17 @@ int main(int argc,char* argv[]) {
 
 	int error = 0;
 
-	//While there are still points to handle, handle each point
-	for (int i = 0; i < print_path.size; i++) {
+	//******
 
-		struct Point pnt = print_path.points[i];
+	//Get serial input
 
-		vec3 target = { pnt.x,pnt.y,pnt.z };
-		vec3 normal;
-		//printf("Theta %f Phi %f",pnt.theta,pnt.phi);
-		sphere_to_normal(normal, pnt.theta, pnt.phi);
-		
-		//print_vec3(normal);
-		//inverse_kinematics(&printer, target, normal);
-		if (ik_test_case(&printer, target, normal)) {
-			printf("Error in IK: Motor angle out of bounds. Shutting down!\n");
-			break;
-		};
+	//******
 
-		//Extrusion
-		if (pnt.extrusion) {
-			//Begin extrusion
-			extruding = 1;
-		}
-		else {
-			//End extrusion
-			extruding = 0;
-		}
-
-		//Motor handling
-		for (int i = 0; i < 5; i++) {
-
-			//printf("Angle float: %f", printer.motors[i].angle);
-
-			if (printer.links[i].prismatic) {
-				error = move_prismatic(i,printer.motors[i].angle);
-			}
-			else {
-				error = move_rotational(i,printer.motors[i].angle);
-			}
-
-			error = 0;
-
-			if (error) {
-				printf("Error in moving motor %i! Shutting down\n",i);
-				break;
-			}
-				
-		}
-
-		if (error) break;
-
-	}
-
-	//Shutdown
-	if (extruding) {
-		//End extrusion
-		extruding = 0;
-	}
-
+	//Free the memory we were using to dynamically store the printing path data
 	free(print_path.points);
+
+	//Exit the USB functionality
+	//libusb_exit(NULL);
 
 	return 0;
 }

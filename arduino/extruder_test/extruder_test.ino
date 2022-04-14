@@ -37,8 +37,12 @@ void setup()
 
   // Set the current limit.  You should change the number here to
   // an appropriate value for your particular system.
+<<<<<<< HEAD
   stepper.setCurrentMilliamps(700);
   // or stepper.setCurrentMilliamps(1800);
+=======
+  stepper.setCurrentMilliamps(1800);
+>>>>>>> 0cb8891921c899abda4c2e6ec95a38536da25f80
 
   // Set the number of microsteps that correspond to one full step.
   stepper.setStepMode(4);

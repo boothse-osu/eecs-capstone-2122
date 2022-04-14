@@ -27,10 +27,13 @@
     <ClCompile Include="csv_parser.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="firmware_temp.c">
+    <ClCompile Include="motor_stall.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="motor_stall.c">
+    <ClCompile Include="usb.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\CSerialPort-master\CSerialPort\CSerialPort.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -44,10 +47,13 @@
     <ClInclude Include="csv_parser.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="firmware_temp.h">
+    <ClInclude Include="printer_defines.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="printer_defines.h">
+    <ClInclude Include="printer_usb.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Libraries\CSerialPort-master\CSerialPort\CSerialPort.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
