@@ -11,10 +11,13 @@ const int cm_step_amount = 800;
 // 100cm: meter
 const int cm_radius = 5;
 
+bool jobDone = false;
+
 AMIS30543 stepper;
 
 void setup()
 {
+  Serial.begin(9600);
   SPI.begin();
   Serial.begin(9600);
 
@@ -45,17 +48,22 @@ void setup()
   
     // Enable the motor outputs.
     stepper.enableDriver();
+    
   }
 }
 
 void loop()
 {
   // Stops the loop after the job has been completed
-  bool jobDone = false;
   if(jobDone==false)
   {
     int x = cm_radius;
-    int y,x_x,y_y,change = 0;
+    int y = 0;
+    int x_x = 0;
+    int y_y = 0;
+    int change = 0;
+    int x_shift = 0;
+    int y_shift = 0;
     for (int angle = 0; angle < 361; angle++)
     {
       if (angle==0 || angle==360)
@@ -86,26 +94,39 @@ void loop()
       }
       else
       {
-        x_x = -x_triangle(angle);
-        y_y = -y_triangle(angle);
+        x_x = -x_triangle(angle-180);
+        y_y = -y_triangle(angle-180);
       }
       
       if(x != x_x)
       {
         change = x_x-x;
+        Serial.print("\nX: ");
+        Serial.print(change);
+        x_shift += change;
         if(change > 0) setDirection(1,0);
         else setDirection(1,1);
-        for(int i; i<change; i++) step(1);
+        step(1);
+        //for(int i; i<change; i++) step(1); // add abs to change
+        x = x_x;
       }
       if(y != y_y)
       {
         change = y_y-y;
+        Serial.print("\nY: ");
+        Serial.print(change);
+        y_shift += change;
         if(change > 0) setDirection(0,0);
         else setDirection(0,1);
-        for(int i; i<change; i++) step(0);
+        step(0);
+        //for(int i; i<change; i++) step(0); // add ans to change
+        y = y_y;
       }
     }
-
+    Serial.print("\nX_shift: ");
+    Serial.print(x_shift);
+    Serial.print("\nY_shift: ");
+    Serial.print(y_shift);
     jobDone = true;
   }
 }
@@ -128,7 +149,7 @@ int x_triangle(int angle_x)
 int y_triangle(int angle_y)
 {
   // calculate the height of a right triangle on the circle
-  return (int) (((float) cm_radius * sin_deg(angle_x)) / sin_deg(90));
+  return (int) (((float) cm_radius * sin_deg(angle_y)) / sin_deg(90));
 }
 
 // Sends a pulse on the NXT/STEP pin to tell the driver to take
@@ -159,3 +180,4 @@ void setDirection(int sel, bool dir)
   digitalWrite(amisDirPin[sel], dir);
   delayMicroseconds(1);
 }
+
