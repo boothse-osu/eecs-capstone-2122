@@ -6,11 +6,14 @@ const uint8_t amisStepPin[5] = {PC5, PC6, PC7, PC8, PC9};
 const uint8_t amisSlaveSelect[5] = {PB3, PB4, PB5, PB6, PB7};
 const uint8_t amisSLA[5] = {PA0, PA1, PA4, PB0, PC1};
 
-const uint8_t extruder_index = 0;
+const int extruder_index = 0;
 
-const uint8_t cm_step_amount = 800;
-const uint8_t cm_target_number = 100;
+// (10 / (diameter_mm * pi)) * steps_per_rotation
+const int cm_step_amount = 800;
+// 100cm: meter
+const int cm_target_number = 100;
 
+bool jobDone = false;
 
 AMIS30543 stepper;
 
@@ -35,7 +38,8 @@ void setup()
 
   // Set the current limit.  You should change the number here to
   // an appropriate value for your particular system.
-  stepper.setCurrentMilliamps(1800);
+  stepper.setCurrentMilliamps(700);
+  // or stepper.setCurrentMilliamps(1800);
 
   // Set the number of microsteps that correspond to one full step.
   stepper.setStepMode(4);
@@ -51,16 +55,24 @@ void setup()
 void loop()
 {
   // Step in the default direction 1000 times.
-  setDirection(extruder_index,0);
-
-  // How many cm to extrude
-  for (unsigned int x = 0; x < 100; x++)
+  if(jobDone==false)
   {
-    // Steps to extrude one cm
-    for (unsigned int x = 0; x < 800; x++)
+    setDirection(extruder_index,0);
+    int step_count = 0;
+    // How many cm to extrude
+    for (unsigned int x = 0; x < cm_target_number; x++)
     {
-      step(extruder_index);
+      // Steps to extrude one cm
+      for (unsigned int i = 0; i < cm_step_amount; i++)
+      {
+        step_count++;
+        step(extruder_index);
+      }
     }
+    Serial.print("\nCm extruded: "); Serial.print(cm_target_number);
+    Serial.print("\nSteps per cm: "); Serial.print(cm_step_amount);
+    Serial.print("\nSteps taken: "); Serial.print(step_count);
+    jobDone = true;
   }
 }
 
