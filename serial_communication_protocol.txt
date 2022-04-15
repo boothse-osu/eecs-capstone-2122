@@ -1,0 +1,34 @@
+Homing request
+<!h>
+
+Homing confirmation
+<!H>
+
+Data request
+<!d(X)>
+	X is integer number of points
+
+Data
+<!D(f;f;f;f;f;b)>
+	f is a float represented as 12345.1234
+	b is a bool represented as t for true, f for false
+	10 bytes per float * 5 floats = 50 bytes
+	50 bytes + 12 = 62
+	
+Data recieved confirmation
+<!R>
+
+End of file
+<!e>
+
+End of file confirmation
+<!E>
+
+Stop required
+<!s(msg)>
+	msg is a string which is printed on the console
+
+Message
+<!m(msg)>
+	msg is a string which is printed on the console
+
