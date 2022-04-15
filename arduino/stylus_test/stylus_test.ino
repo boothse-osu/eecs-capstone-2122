@@ -1,4 +1,5 @@
 #include <SPI.h>
+
 #include <AMIS30543.h>
 
 const uint8_t amisDirPin[5] = {PB11, PB12, PB13, PB14, PB15};
@@ -6,10 +7,8 @@ const uint8_t amisStepPin[5] = {PC5, PC6, PC7, PC8, PC9};
 const uint8_t amisSlaveSelect[5] = {PB3, PB4, PB5, PB6, PB7};
 const uint8_t amisSLA[5] = {PA0, PA1, PA4, PB0, PC1};
 
-// (10 / (diameter_mm * pi)) * steps_per_rotation
-const int cm_step_amount = 800;
-// 100cm: meter
-const int cm_radius = 5;
+// Radius of circle in steps
+const int cm_radius = 2000;
 
 bool jobDone = false;
 
@@ -106,8 +105,8 @@ void loop()
         x_shift += change;
         if(change > 0) setDirection(1,0);
         else setDirection(1,1);
-        step(1);
-        //for(int i; i<change; i++) step(1); // add abs to change
+        for(int i = 0; i<abs(change); i++) step(1); // add abs to change
+        //step(1);
         x = x_x;
       }
       if(y != y_y)
@@ -118,8 +117,8 @@ void loop()
         y_shift += change;
         if(change > 0) setDirection(0,0);
         else setDirection(0,1);
-        step(0);
-        //for(int i; i<change; i++) step(0); // add ans to change
+        for(int i = 0; i<abs(change); i++) step(0); // add abs to change
+        //step(0);
         y = y_y;
       }
     }
@@ -180,4 +179,3 @@ void setDirection(int sel, bool dir)
   digitalWrite(amisDirPin[sel], dir);
   delayMicroseconds(1);
 }
-

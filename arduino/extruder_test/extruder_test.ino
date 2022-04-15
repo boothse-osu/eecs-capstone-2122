@@ -6,12 +6,13 @@ const uint8_t amisStepPin[5] = {PC5, PC6, PC7, PC8, PC9};
 const uint8_t amisSlaveSelect[5] = {PB3, PB4, PB5, PB6, PB7};
 const uint8_t amisSLA[5] = {PA0, PA1, PA4, PB0, PC1};
 
-const int extruder_index = 0;
+const int extruder_index = 2;
 
+//  12 mm diameter
 // (10 / (diameter_mm * pi)) * steps_per_rotation
-const int cm_step_amount = 800;
+const int cm_step_amount = 460;
 // 100cm: meter
-const int cm_target_number = 100;
+const int cm_target_number = 300;
 
 bool jobDone = false;
 
@@ -38,7 +39,7 @@ void setup()
 
   // Set the current limit.  You should change the number here to
   // an appropriate value for your particular system.
-  stepper.setCurrentMilliamps(700);
+  stepper.setCurrentMilliamps(1800);
   // or stepper.setCurrentMilliamps(1800);
 
   // Set the number of microsteps that correspond to one full step.
