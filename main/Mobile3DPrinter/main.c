@@ -53,15 +53,13 @@ int main(int argc,char* argv[]) {
 
 	printf("Loaded file: %s\n",filepath);
 
-	//Setup
-	
-	//Home the printer
-	run_homing();
+	//***************
+	//Printer Setup
 
 	//Create a new printer struct and hard set the angles to zero
 	struct Printer printer;
 	
-	//Will eventually make use of defines for constants
+	//Uses defines for printer structure. See printer_defines.h
 	//Has all motor angles set to zero by default
 	printer = generate_printer();
 	forward_kinematics(&printer);
@@ -71,20 +69,70 @@ int main(int argc,char* argv[]) {
 	print_vec3(tip);
 
 	int extruding = 0;
+	
+	//***************
+	//Program state
 
 	int error = 0;
+	bool homing_wait = TRUE;
+	bool running = TRUE;
 
-	//******
+	//***************
+	//Serial input
 
 	//Get serial input
+	PORT port = usb_init();
+
+	//Send the homing command to the printer, also syncs it up
+	SendData(port, "<!h>");
+
+	//Initializes the input
+	struct InputState i_state = usb_init_state();
+
+	//Primes the input state buffers and gets the first command
+	usb_get_input(port, &i_state);
+	usb_get_command(port, &i_state);
+
+	//Wait until we get homing confirmation
+	while (homing_wait) {
+
+		if (i_state.parser_buffer[0] == 'H') {
+			printf("Homing completed\n");
+			break;
+		}
+
+		usb_get_command(port, &i_state);
+	}
+	
+	//Begin main processing loop
+
+	while (running && !error) {
+
+		switch (i_state.parser_buffer[0]) {
+			case 'd':
+				//Handle sending data
+			case 's':
+				//Handle stopping
+			case 'm':
+				//Print the message
+		}
+
+		if (!error) {
+			usb_get_command(port, &i_state);
+		}
+	}
+
+	//Handle waiting for EoF confirmation
+
 
 	//******
+	//Shutdown
 
 	//Free the memory we were using to dynamically store the printing path data
 	free(print_path.points);
 
 	//Exit the USB functionality
-	//libusb_exit(NULL);
+	usb_close(port);
 
 	return 0;
 }

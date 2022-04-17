@@ -115,8 +115,8 @@ void usb_get_command(PORT port, struct InputState* state) {
 				}
 				break;
 			case '>':
-				//End the function to allow parsing to take place
-				saw_gt = TRUE;
+				//If we were accepting, end the function to allow parsing to take place
+				if(accepting) saw_gt = TRUE;
 				break;
 			default:
 				if (accepting) usb_add_char(state,c);
