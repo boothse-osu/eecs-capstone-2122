@@ -35,12 +35,12 @@ int csv_parse(struct Path* path, char* filepath) {
 	}
 
 	//Go through all of the lines of the file and process them individually
-	char buffer[BUFFSIZE];
-	fgets(buffer, BUFFSIZE, fp);
+	char buffer[CSVBUFFSIZE];
+	fgets(buffer, CSVBUFFSIZE, fp);
 
 	int linecount = 0;
 
-	while (fgets(buffer, BUFFSIZE, fp) != NULL) {
+	while (fgets(buffer, CSVBUFFSIZE, fp) != NULL) {
 
 		//printf("Token: %s\n", buffer);
 

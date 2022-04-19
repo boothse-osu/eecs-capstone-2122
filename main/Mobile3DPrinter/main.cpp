@@ -1,8 +1,16 @@
 #include <stdio.h>
 #include <string.h>
+
+//I feel like I have to defend this
+//The windows API and C apparently do not get along to the tune of 3000 compiler errors
+//So anything which the windows API touches is C++ despite everything else being in C.
+// Have fun.
+extern "C" {
 #include "printer_struct.h"
 #include "kinematics.h"
 #include "csv_parser.h"
+}
+
 #include <assert.h>
 #include "printer_usb.h"
 
@@ -36,7 +44,7 @@ int main(int argc,char* argv[]) {
 	printf("Printing %s",filepath);
 	*/
 
-	char* filepath = "..\\ToolPath.csv";
+	char filepath[64] = "..\\ToolPath.csv";
 
 	//Parse the CSV file
 	struct Path print_path;
@@ -74,8 +82,8 @@ int main(int argc,char* argv[]) {
 	//Program state
 
 	int error = 0;
-	bool homing_wait = TRUE;
 	bool running = TRUE;
+	bool eof_called = FALSE;
 
 	//***************
 	//Serial input
@@ -94,7 +102,8 @@ int main(int argc,char* argv[]) {
 	usb_get_command(port, &i_state);
 
 	//Wait until we get homing confirmation
-	while (homing_wait) {
+	//Literally can't do anything until we get it
+	while (TRUE) {
 
 		if (i_state.parser_buffer[0] == 'H') {
 			printf("Homing completed\n");
@@ -108,13 +117,42 @@ int main(int argc,char* argv[]) {
 
 	while (running && !error) {
 
-		switch (i_state.parser_buffer[0]) {
-			case 'd':
-				//Handle sending data
+		char c = i_state.parser_buffer[0];
+		switch (c) {
+			
+			//Extract the message payload
+			char payload[BUFFSIZE];
+
+			//Message format for all of these is a single char before a parenthesis
+			// e.g. 'm(message)'
+			//We know how much to grab due to the parser_idx being the index of the end
+			//We know we can skip the first two chars
+			//Strcopy did not work as I expected so we'll just uh do this instead ;)
+
+			for (int i = 2; i < (i_state.parser_idx) - 2; i++) {
+				char chr = i_state.parser_buffer[i];
+
+				if (chr == ')') {
+					payload[i - 2] = '\0';
+				} else {
+					payload[i - 2] = chr;
+				}
+			}
+		
+			case 'd': {
+				//Handle sending an amount of data
+				//Aka the slightly more difficult part
+				int num_datas = atoi(payload);
+				printf("I am supposed to print %i datas\n", num_datas);
+				break;
+			}
 			case 's':
-				//Handle stopping
+				printf("Error: %s\n", payload);
+				error = TRUE;
+				break;
 			case 'm':
-				//Print the message
+				printf("%s\n",payload);
+				break;
 		}
 
 		if (!error) {
@@ -123,6 +161,19 @@ int main(int argc,char* argv[]) {
 	}
 
 	//Handle waiting for EoF confirmation
+	//Even though it probably doesn't matter if we get it
+	if (eof_called) {
+
+		while (TRUE) {
+
+			if (i_state.parser_buffer[0] == 'E') {
+				printf("End of file reached. Thank you for choosing The Hulk for all your Mobile 3D printing needs <(-_-<)\n");
+				break;
+			}
+
+			usb_get_command(port, &i_state);
+		}
+	}
 
 
 	//******

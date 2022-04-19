@@ -119,6 +119,9 @@
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>..\Libraries\cglm-0.8.4\include\cglm;..\Libraries\CSerialPort-master\CSerialPort;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <LanguageStandard_C>Default</LanguageStandard_C>
+      <EnableModules>false</EnableModules>
+      <CompileAs>Default</CompileAs>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -136,6 +139,9 @@
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>..\Libraries\cglm-0.8.4\include\cglm;..\Libraries\CSerialPort-master\CSerialPort;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <LanguageStandard_C>Default</LanguageStandard_C>
+      <EnableModules>false</EnableModules>
+      <CompileAs>Default</CompileAs>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -150,8 +156,7 @@
     <ClCompile Include="..\Libraries\CSerialPort-master\CSerialPort\CSerialPort.cpp" />
     <ClCompile Include="csv_parser.c" />
     <ClCompile Include="kinematics.c" />
-    <ClCompile Include="main.c" />
-    <ClCompile Include="motor_stall.c" />
+    <ClCompile Include="main.cpp" />
     <ClCompile Include="printer_struct.c" />
     <ClCompile Include="usb.cpp" />
   </ItemGroup>
