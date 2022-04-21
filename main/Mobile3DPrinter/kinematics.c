@@ -84,7 +84,7 @@ void forward_kinematics(struct Printer* prn)
 //Returns an error value, zero if no errors. One if errors.
 int inverse_kinematics(struct Printer* prn, vec3 target, vec3 normal) {
 
-	printf("Calling inverse kinematics!\n");
+	//printf("Calling inverse kinematics!\n");
 	//Handle rotational joints. May need to redo this whole section later.
 
 	//Calculate axis coordinates
@@ -136,17 +136,17 @@ int inverse_kinematics(struct Printer* prn, vec3 target, vec3 normal) {
 	//X-axis
 	float x_ang = prn->motors[0].angle + (differences[0] / prn->links[0].move_ratio);
 	if (set_motor_angle(prn, 0, x_ang)) return 1;
-	//prn->motors[0].angle = x_ang;
+	prn->motors[0].angle = x_ang;
 
 	//Z-axis
 	float z_ang = prn->motors[1].angle + (differences[2] / prn->links[1].move_ratio);
 	if (set_motor_angle(prn, 1, z_ang)) return 1;
-	//prn->motors[1].angle = z_ang;
+	prn->motors[1].angle = z_ang;
 
 	//Y-axis
 	float y_ang = prn->motors[2].angle + (differences[1] / prn->links[2].move_ratio);
 	if (set_motor_angle(prn, 2, y_ang)) return 1;
-	//prn->motors[2].angle = y_ang;
+	prn->motors[2].angle = y_ang;
 
 	//Do FK to ensure that the end of the printer is in the right place
 	forward_kinematics(prn);

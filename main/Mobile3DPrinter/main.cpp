@@ -29,6 +29,26 @@ void sphere_to_normal(vec3 norm, float theta, float phi) {
 	glm_vec3_normalize(norm);
 }
 
+//Output a point to the controller in the required format
+void output_point(struct Printer* prn, bool extrude) {
+
+	//Precise size of the outgoing string
+	char outgoing[62];
+
+	//Extrusion var to send
+	char ex;
+	if (extrude) {
+		ex = 't';
+	}
+	else {
+		ex = 'f';
+	}
+
+	snprintf(outgoing,62,"<!(%+010.4f,%+010.4f,%+010.4f,%+010.4f,%+010.4f,%c)>",prn->motors[0].angle,prn->motors[1].angle,prn->motors[2].angle,prn->motors[3].angle,prn->motors[4].angle,ex);
+
+	printf("Outgoing data: %s\n",outgoing);
+}
+
 int main(int argc,char* argv[]) {
 
 	//Get the CSV file path from command line arguments
@@ -60,6 +80,8 @@ int main(int argc,char* argv[]) {
 	}
 
 	printf("Loaded file: %s\n",filepath);
+
+	int print_path_idx = 0;
 
 	//***************
 	//Printer Setup
@@ -149,6 +171,45 @@ int main(int argc,char* argv[]) {
 				//Aka the slightly more difficult part
 				int num_datas = atoi(payload);
 				printf("I am supposed to print %i datas\n", num_datas);
+				
+				for (int i = 0; i < num_datas; i++) {
+					
+					struct Point point = print_path.points[print_path_idx];
+
+					//Put the print path data into vectors
+					vec3 position = { point.x,point.y,point.z };
+					vec3 normal;
+
+					sphere_to_normal(normal, point.theta, point.phi);
+
+					//Calculate and send the required data the required number of times
+					int ik_err = inverse_kinematics(&printer,position,normal);
+					
+					//Handle any issues with the IK
+					if (ik_err) {
+						printf("Error: IK out of bounds\n");
+						//SendData(port,"<!s>");
+						error = TRUE;
+						break;
+					}
+
+					output_point(&printer,point.extrusion);
+
+					//If we need to do a check for data recieved response, it goes here
+
+					print_path_idx++;
+					//If we've hit the end of the file, we stop running and tell the controller we're at EOF
+					if (print_path_idx == print_path.size) {
+
+						SendData(port,"<!e>");
+						printf("End of file reached!\n");
+
+						eof_called = TRUE;
+						running = FALSE;
+						break;
+					}
+				}
+
 				break;
 			}
 			case 's':
