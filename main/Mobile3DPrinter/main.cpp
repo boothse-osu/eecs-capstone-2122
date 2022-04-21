@@ -105,6 +105,8 @@ int main(int argc,char* argv[]) {
 	//Literally can't do anything until we get it
 	while (TRUE) {
 
+		printf("Waiting for homing confirmation!\n");
+
 		if (i_state.parser_buffer[0] == 'H') {
 			printf("Homing completed\n");
 			break;
@@ -118,27 +120,30 @@ int main(int argc,char* argv[]) {
 	while (running && !error) {
 
 		char c = i_state.parser_buffer[0];
-		switch (c) {
-			
-			//Extract the message payload
-			char payload[BUFFSIZE];
 
-			//Message format for all of these is a single char before a parenthesis
-			// e.g. 'm(message)'
-			//We know how much to grab due to the parser_idx being the index of the end
-			//We know we can skip the first two chars
-			//Strcopy did not work as I expected so we'll just uh do this instead ;)
+		//Extract the message payload
+		char payload[BUFFSIZE];
 
-			for (int i = 2; i < (i_state.parser_idx) - 2; i++) {
-				char chr = i_state.parser_buffer[i];
+		//Message format for all of these is a single char before a parenthesis
+		// e.g. 'm(message)'
+		//We know how much to grab due to the parser_idx being the index of the end
+		//We know we can skip the first two chars
+		//Strcopy did not work as I expected so we'll just uh do this instead ;)
 
-				if (chr == ')') {
-					payload[i - 2] = '\0';
-				} else {
-					payload[i - 2] = chr;
-				}
+		//printf("%s\n", i_state.parser_buffer);
+
+		for (int i = 2; i < (i_state.parser_idx); i++) {
+			char chr = i_state.parser_buffer[i];
+
+			if (chr == ')') {
+				payload[i-2] = '\0';
 			}
-		
+			else {
+				payload[i-2] = chr;
+			}
+		}
+
+		switch (c) {
 			case 'd': {
 				//Handle sending an amount of data
 				//Aka the slightly more difficult part

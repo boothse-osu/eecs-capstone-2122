@@ -83,6 +83,8 @@ void usb_add_char(struct InputState* state, char c) {
 
 void usb_get_command(PORT port, struct InputState* state) {
 
+	//printf("usb_get_command\n");
+
 	//How many chars of the command initliazer '<!' we have seen
 	bool accepting = FALSE;
 	bool saw_lt = FALSE;
