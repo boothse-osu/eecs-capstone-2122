@@ -4,28 +4,32 @@
 #include "Arduino.h"
 
 #define Array_Size 20
-#define Motor_Number 5
+#define MTR_NUMBER 5
 #define Output_Time 100
-#define Stall_Line 20
+#define Data_Length 50
+#define Stall_Line 10
 
-struct testPINS {
-    int PIN [Motor_Number][Data_Length];
-};
+#define Step_Mode 0.25
+#define Full_Rotation_Steps (int)(400 / Step_Mode)
+#define Distance_To_Step 60
+#define Motor_Pins {13,14,15,16,17}
 
 struct VoltageAverage {
     int pos, len, sum;
-    int voltages[Array_Size];
+    int voltages[Array_Size] = {Stall_Line*2};
 };
+
+
 
 struct MotorData {
-    struct VoltageAverage MotorAverages[Motor_Number];
+    struct VoltageAverage MotorAverages[MTR_NUMBER];
 };
 
-struct VoltageAverage createVoltageAverage(void);
+struct VoltageAverage createVoltageAverage();
 struct MotorData createMotorData(void);
-void startUp();
-double pushRollingAverage(int, struct VoltageAverage*);
+bool pushRollingAverage(int, struct VoltageAverage*);
 int runHomingSequence_c(int, struct testPINS, struct MotorData*);
 int runPrintSequence_c(int, int [Data_Length]);
+int read_analog(int*, int); // get the SLA value for stall block
 
 #endif

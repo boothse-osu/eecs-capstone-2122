@@ -4,8 +4,10 @@
 #include "stall_detection.h"
 
 //#include <stdio.h>
+///*
 
-struct VoltageAverage createVoltageAverage(void) {
+
+struct VoltageAverage createVoltageAverage() {
     struct VoltageAverage VAvg;
     VAvg.pos = 0;
     VAvg.len = 0;
@@ -13,24 +15,9 @@ struct VoltageAverage createVoltageAverage(void) {
     return VAvg;
 }
 
-struct MotorData createMotorData(void) {
-    struct MotorData data;
-    for(int i = 0; i < Motor_Number; i++) {
-        data.MotorAverages[i] = createVoltageAverage();
-    }
-    return data;
-}
 
-void startUp() {
-    int gains [] = {1,0,1,1,1};
-    set_SLA_gain(gains);
-    int transparency_off [] = {1,0,1,1,1};
-    set_SLA_transparency_off(transparency_off);
-    int transparency_on [] = {0,1,0,0,0};
-    set_SLA_transparency_on(transparency_on);
-}
 
-double pushRollingAverage(int volt, struct VoltageAverage* VAvg) {
+bool pushRollingAverage(int volt, struct VoltageAverage* VAvg) {
     VAvg->voltages[VAvg->pos] = volt;
     VAvg->sum += volt;
     VAvg->len++; VAvg->pos++;
@@ -40,9 +27,12 @@ double pushRollingAverage(int volt, struct VoltageAverage* VAvg) {
         VAvg->len--;
         VAvg->sum -= VAvg->voltages[VAvg->pos];
     }
-    return (double) VAvg->sum / VAvg->len;
+    //Serial.println("jk");
+    //Serial.println(String(VAvg->sum / VAvg->len));
+    if(VAvg->sum / VAvg->len < Stall_Line) return false;
+    else return true;
 }
-
+/*
 int runHomingSequence_c(int time, struct testPINS PINS, struct MotorData* MData){
     double averages[Motor_Number];
     int motors [Motor_Number] = {0};
@@ -99,3 +89,17 @@ int runPrintSequence_c(int time, int data_list [Data_Length]){
 
     return 0;
 }
+
+
+// get the SLA value for stall block
+int read_analog(int* voltage_data, int driver_sla_num){
+    int PINS [] = Motor_Pins;
+    if(driver_sla_num < 5) {
+        int pin = PINS[driver_sla_num];
+    }
+    return voltage_data[driver_sla_num];
+    //return readAnalog(pin) //Arduino Code: 0-1023
+}
+
+
+//*/
