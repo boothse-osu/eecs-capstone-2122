@@ -33,16 +33,48 @@ void parse_data() {
     unsigned long calcStepsBegin = millis();
     send_message("Parsed in: " + String((double)(millis() - parseBegin)/1000.0) + " seconds");
 
-    move_command(mtr_steps,true);
+    if(move_command(mtr_steps,true)) request_data(1);
+    else return;
     // steps
     
-    request_data(1);
     //send_message("Total Time: " + String((double)(millis() - timeBegin)/1000.0) + " seconds");
     Serial.println();
 }
 
 void homing_sequence(){
-    confirm_homing();
+    Serial.read(); // >
+    Serial.read(); // end
+    if(homing_command()) confirm_homing();
+    else stop_message("Homing Failed");
+}
+
+
+void debug_mode(){
+    int mtr_command[5] = {0};
+    Serial.read(); Serial.read(); 
+    Serial.println("\nmtr num, direction, 4 digit step amount");
+    Serial.println("(0-"+ String(MTR_NUMBER-1)+")  ,(0,1,-,+) ,XXXX\n");
+    Serial.println("X,X,XXXX");
+    while(Serial.available() == 0) {
+    }
+    delay(100);
+    String str;
+    for(int i = 0; i<8; i++) str += (char)Serial.read();
+    Serial.read();
+    Serial.println(str);
+
+    int mtr = str.substring(0,1).toInt();
+    String direct = str.substring(2,3);
+    int steps = str.substring(4,9).toInt();
+
+    if(direct == "+" || direct == String(POS_DIRECTION[mtr])) delay(1);
+    else if(direct == "-" || direct == String(NEG_DIRECTION[mtr])) steps *= -1;
+    else Serial.println("UNKNOWN DIRECTION");
+
+    mtr_command[mtr] = steps;
+    move_command(mtr_command, 0);
+    
+
 }
 
 void send_message(String msg) {
@@ -62,5 +94,5 @@ void request_data(int num) {
 }
 
 void confirm_homing() {
-  Serial.println("<!" + String(DATA_CON) + ">");
+  Serial.println("<!" + String(HOMING_CON) + ">");
 }

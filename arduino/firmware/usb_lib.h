@@ -2,6 +2,7 @@
 #define USB
 
 #include "Arduino.h"
+#include "stall_detection.h"
 
 const int steps_per_rotation = 1600; // I forgot again (maybe 800)
 const float steps_per_degree = (float)steps_per_rotation / 360;
@@ -15,10 +16,17 @@ const char EOF_MSG      = 'e';
 const char EOF_CON      = 'E';
 const char STOP         = 's';
 const char MESSAGE      = 'm';
+const char DEBUG        = '!';
+
+const int HOME_DIRECTION[MTR_NUMBER] = {0,0,0,0,0};
+const int POS_DIRECTION[MTR_NUMBER] = {1,1,1,1,1};
+const int NEG_DIRECTION[MTR_NUMBER] = {0,0,0,0,0};
 
 void parse_data();
 
 void homing_sequence();
+
+void debug_mode();
 
 void send_message(String);
 
