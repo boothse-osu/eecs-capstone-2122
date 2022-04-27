@@ -49,31 +49,32 @@ void setup()
 
 void loop()
 {
+  int range = 10000;
   // Step in the default direction 1000 times.
-  setDirection(0,0);
+  setDirection(0,1);
+  setDirection(1,1);
+  for (unsigned int x = 0; x < range; x++)
+  {
+    step(0);
+    step(1);
+  }
+
   setDirection(1,0);
-  for (unsigned int x = 0; x < 500; x++)
+  for (unsigned int x = 0; x < range; x++)
+  {
+    step(0);
+    step(1);
+  }
+
+  setDirection(0,0);
+  for (unsigned int x = 0; x < range; x++)
   {
     step(0);
     step(1);
   }
 
   setDirection(1,1);
-  for (unsigned int x = 0; x < 500; x++)
-  {
-    step(0);
-    step(1);
-  }
-
-  setDirection(0,1);
-  for (unsigned int x = 0; x < 500; x++)
-  {
-    step(0);
-    step(1);
-  }
-
-  setDirection(1,0);
-  for (unsigned int x = 0; x < 500; x++)
+  for (unsigned int x = 0; x < range; x++)
   {
     step(0);
     step(1);
@@ -97,7 +98,7 @@ void step(int sel)
   // you decrease the delay, the stepper motor will go fast, but
   // there is a limit to how fast it can go before it starts
   // missing steps.
-  delayMicroseconds(500);
+  delayMicroseconds(100);
 }
 
 // Writes a high or low value to the direction pin to specify

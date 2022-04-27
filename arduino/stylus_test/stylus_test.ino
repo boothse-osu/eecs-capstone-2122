@@ -166,7 +166,7 @@ void step(int sel)
   // you decrease the delay, the stepper motor will go fast, but
   // there is a limit to how fast it can go before it starts
   // missing steps.
-  delayMicroseconds(500);
+  delayMicroseconds(200);
 }
 
 // Writes a high or low value to the direction pin to specify
