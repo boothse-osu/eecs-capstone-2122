@@ -7,7 +7,7 @@
 
 //Buffer size for number of chars in lines for csv parser
 //Set to 2x what we should need
-#define BUFFSIZE 256
+#define CSVBUFFSIZE 256
 
 //Struct for points on the printing path
 struct Point {

@@ -83,6 +83,8 @@ void usb_add_char(struct InputState* state, char c) {
 
 void usb_get_command(PORT port, struct InputState* state) {
 
+	//printf("usb_get_command\n");
+
 	//How many chars of the command initliazer '<!' we have seen
 	bool accepting = FALSE;
 	bool saw_lt = FALSE;
@@ -115,8 +117,8 @@ void usb_get_command(PORT port, struct InputState* state) {
 				}
 				break;
 			case '>':
-				//End the function to allow parsing to take place
-				saw_gt = TRUE;
+				//If we were accepting, end the function to allow parsing to take place
+				if(accepting) saw_gt = TRUE;
 				break;
 			default:
 				if (accepting) usb_add_char(state,c);

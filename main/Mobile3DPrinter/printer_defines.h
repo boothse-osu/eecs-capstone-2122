@@ -59,19 +59,19 @@
 
 //Motor bounds (radians)
 //Max
-#define MOTOR0_MAX (float)(M_PI/2.0)
-#define MOTOR1_MAX (float)(M_PI/2.0)
-#define MOTOR2_MAX (float)(M_PI/2.0)
-#define MOTOR3_MAX (float)(M_PI/2.0)
-#define MOTOR4_MAX (float)(M_PI/2.0)
+#define MOTOR0_MAX (float)(10000*M_PI/2.0)
+#define MOTOR1_MAX (float)(10000*M_PI/2.0)
+#define MOTOR2_MAX (float)(10000*M_PI/2.0)
+#define MOTOR3_MAX (float)10000*(M_PI/2.0)
+#define MOTOR4_MAX (float)10000*(M_PI/2.0)
 
 #define MOTOR_MAX_LIST {MOTOR0_MAX,MOTOR1_MAX,MOTOR2_MAX,MOTOR3_MAX,MOTOR4_MAX}
 //Min
-#define MOTOR0_MIN (float)(-M_PI/2.0)
-#define MOTOR1_MIN (float)(-M_PI/2.0)
-#define MOTOR2_MIN (float)(-M_PI/2.0)
-#define MOTOR3_MIN (float)(-M_PI/2.0)
-#define MOTOR4_MIN (float)(-M_PI/2.0)
+#define MOTOR0_MIN (float)(10000*-M_PI/2.0)
+#define MOTOR1_MIN (float)(10000*-M_PI/2.0)
+#define MOTOR2_MIN (float)(10000*-M_PI/2.0)
+#define MOTOR3_MIN (float)(10000*-M_PI/2.0)
+#define MOTOR4_MIN (float)(10000*-M_PI/2.0)
 
 #define MOTOR_MIN_LIST {MOTOR0_MIN,MOTOR1_MIN,MOTOR2_MIN,MOTOR3_MIN,MOTOR4_MIN}
 

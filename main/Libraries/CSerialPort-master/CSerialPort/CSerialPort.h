@@ -21,7 +21,7 @@ SOFTWARE.
 */
 #pragma once
 
-#include <Windows.h>
+#include <windows.h>
 
 #define CP_BOUD_RATE_9600 CBR_9600
 #define CP_BOUD_RATE_1155 1155
