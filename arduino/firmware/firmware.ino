@@ -2,6 +2,7 @@
 //include <AMIS30543.h>
 #include "usb_lib.h";
 #include "printer_control.h";
+#include "stall_detection.h"
 
 unsigned long redirectStart;
 char datatype;
