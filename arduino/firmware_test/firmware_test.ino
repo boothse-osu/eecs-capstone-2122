@@ -1,5 +1,5 @@
 #include <SPI.h>
-/*
+///*
 #include <AMIS30543.h>
 
 const uint8_t amisDirPin[5] = {PB11, PB12, PB13, PB14, PB15};
@@ -25,7 +25,7 @@ void setup()
   //SPI.begin();
   Serial.begin(9600);
 
-/*
+///*
   for(int i = 0; i < 5; i++) {
     stepper.init(amisSlaveSelect[i]);
 
@@ -152,7 +152,7 @@ int run_homing()
 ///////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////
 
-/*
+///*
 
 // Sends a pulse on the NXT/STEP pin to tell the driver to take
 // one step, and also delays to control the speed of the motor.

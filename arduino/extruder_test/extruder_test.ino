@@ -53,29 +53,7 @@ void setup()
  
 }
 
-void loop()
-{
-  // Step in the default direction 1000 times.
-  if(jobDone==false)
-  {
-    setDirection(extruder_index,0);
-    int step_count = 0;
-    // How many cm to extrude
-    for (unsigned int x = 0; x < cm_target_number; x++)
-    {
-      // Steps to extrude one cm
-      for (unsigned int i = 0; i < cm_step_amount; i++)
-      {
-        step_count++;
-        step(extruder_index);
-      }
-    }
-    Serial.print("\nCm extruded: "); Serial.print(cm_target_number);
-    Serial.print("\nSteps per cm: "); Serial.print(cm_step_amount);
-    Serial.print("\nSteps taken: "); Serial.print(step_count);
-    jobDone = true;
-  }
-}
+
 
 // Sends a pulse on the NXT/STEP pin to tell the driver to take
 // one step, and also delays to control the speed of the motor.
@@ -104,4 +82,28 @@ void setDirection(int sel, bool dir)
   delayMicroseconds(1);
   digitalWrite(amisDirPin[sel], dir);
   delayMicroseconds(1);
+}
+
+void loop()
+{
+  // Step in the default direction 1000 times.
+  if(jobDone==false)
+  {
+    setDirection(extruder_index,0);
+    int step_count = 0;
+    // How many cm to extrude
+    for (unsigned int x = 0; x < cm_target_number; x++)
+    {
+      // Steps to extrude one cm
+      for (unsigned int i = 0; i < cm_step_amount; i++)
+      {
+        step_count++;
+        step(extruder_index);
+      }
+    }
+    Serial.print("\nCm extruded: "); Serial.print(cm_target_number);
+    Serial.print("\nSteps per cm: "); Serial.print(cm_step_amount);
+    Serial.print("\nSteps taken: "); Serial.print(step_count);
+    jobDone = true;
+  }
 }
