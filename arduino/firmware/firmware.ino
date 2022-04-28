@@ -64,6 +64,7 @@ void setup()
 void loop()
 {
     // Hotend Code?
+    //Serial.println(analogRead(amisSLA[0]));
 } 
 
 void serialEvent()
