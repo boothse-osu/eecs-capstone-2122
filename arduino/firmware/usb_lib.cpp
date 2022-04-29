@@ -15,16 +15,16 @@ void parse_data() {
     Serial.read(); // >
     
     Serial.read(); // < (USE EVEN WHEN NOT USING EOF)
-    Serial.read(); // !
-    Serial.read(); // e
-    Serial.read(); // <
+    //Serial.read(); // !
+    //Serial.read(); // e
+    //Serial.read(); // <
 
     //send_message(str);
     unsigned long parseBegin = millis();
     send_message("Read in: " + String((double)(millis() - timeBegin)/1000.0) + " seconds");
 
     for(int i = 0; i<5; i++) {
-        mtr_steps[i] = str.substring((i*11), (i*11)+10).toFloat() * steps_per_degree;
+        mtr_steps[i] = str.substring((i*11), (i*11)+10).toFloat() * steps_per_x;
         //Serial.println(mtr_steps[i]);
     }
     hot_end = str[55];
@@ -44,7 +44,10 @@ void parse_data() {
 void homing_sequence(){
     Serial.read(); // >
     Serial.read(); // end
-    if(homing_command()) confirm_homing();
+    if(homing_command()) {
+      confirm_homing();
+      request_data(1);
+    }
     else stop_message("Homing Failed");
 }
 
