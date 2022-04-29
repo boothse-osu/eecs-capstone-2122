@@ -36,12 +36,15 @@ bool new_move_command(long stp_cnt[5], bool ht_nd){
     float added_time = 0;
     bool ready = false;
     while(!ready) {
-      ready = true;
+        ready = true;
         for(int i = 0; i<5; i++) {
-            time_steps[i] = (mvmt_time + added_time) / abs(stp_cnt[i]);
-            if(time_steps[i]<150) {
-                added_time += 500000; // half sec
-                ready = false;
+            if(stp_cnt[i] == 0) time_steps[i] = 0;
+            else{
+                time_steps[i] = (mvmt_time + added_time) / abs(stp_cnt[i]);
+                if(time_steps[i]<150) {
+                    added_time += 500000; // half sec
+                    ready = false;
+                }
             }
         }
     }
@@ -85,6 +88,34 @@ bool new_move_command(long stp_cnt[5], bool ht_nd){
     for(int i = 0; i<5; i++) send_message("MTR "+String(i)+" microseconds per step: " + String(time_steps[i]));
     return true;
 }
+
+bool homing_command(){
+    return true;
+    struct VoltageAverage voltage_log[MTR_NUMBER];
+    for(int i=0; i<MTR_NUMBER; i++) voltage_log[i] = createVoltageAverage();
+
+    bool mtr_running [5] = {true, true, true, true, true};
+    int mtrs_done = 0;
+    
+    //for(int i = 0; i<5; i++) setDirection(i,HOME_DIRECTION[i]);
+
+    unsigned long time_nxt_step = micros() + 200;
+    for(int k = 0; k<100000; k++) {
+      if(micros()>time_nxt_step){
+        time_nxt_step += 200;
+        for(int i = 0; i<5; i++) {
+          if(mtr_running[i]) {
+            //step(i);
+            //mtr_running[i] = pushRollingAverage(random(70), &voltage_log[i]);
+            if(mtr_running[i]==false) mtrs_done++;
+          }
+        }
+        if(mtrs_done==MTR_NUMBER) return true;
+      }
+    }
+    return false;
+}
+
 
 /*
 bool move_command(int stp_cnt[5], bool ht_nd){
@@ -145,27 +176,6 @@ bool move_command(int stp_cnt[5], bool ht_nd){
     return true;
 }
 
-bool homing_command(){
-    return true;
-    struct VoltageAverage voltage_log[MTR_NUMBER];
-    for(int i=0; i<MTR_NUMBER; i++) voltage_log[i] = createVoltageAverage();
-
-    bool mtr_running [5] = {true, true, true, true, true};
-    for(int i = 0; i<5; i++) setDirection(i,HOME_DIRECTION[i]);
-
-    int mtrs_done = 0;
-    for(int k = 0; k<5000; k++) {
-      for(int i = 0; i<5; i++) {
-        if(mtr_running[i]) {
-          //step(i);
-          mtr_running[i] = pushRollingAverage(random(70), &voltage_log[i]);
-          if(mtr_running[i]==false) mtrs_done++;
-        }
-      }
-      if(mtrs_done==MTR_NUMBER) return true;
-    }
-    return false;
-}
 
 ///*
 // Sends a pulse on the NXT/STEP pin to tell the driver to take
