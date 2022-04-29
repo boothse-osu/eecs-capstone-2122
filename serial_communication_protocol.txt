@@ -9,12 +9,13 @@ Data request
 	X is integer number of points
 
 Data
-<!D(f;f;f;f;f;b)>
+<!D(f;f;f;f;f;b;f)>
 	f is a float represented as +1234.1234
 		+ represents either a + or a - to show sign of the float
 	b is a bool represented as t for true, f for false
 	10 bytes per float * 5 floats = 50 bytes
 	50 bytes + 12 = 62
+	The final float represents the distance of the movement
 	
 Data recieved confirmation
 <!R>

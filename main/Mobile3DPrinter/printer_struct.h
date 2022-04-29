@@ -49,6 +49,9 @@ void printer_get_normal(struct Printer*, vec3);
 //Printer constructor helpers
 struct Printer generate_printer();
 
+//Round the motors off to a certain precision
+void round_motors(struct Printer*);
+
 //Debug helpers
 void print_vec3(vec3);
 

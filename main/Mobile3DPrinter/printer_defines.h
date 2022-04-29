@@ -6,6 +6,9 @@
 //Scaling factor for floating points
 #define FLOAT_SCALE 1000.f
 
+//Scaling factor for rounding. 10 would round off to the nearest 10th.
+#define ROUND_PRECISION 10000
+
 //Defines for the inverse kinematics
 //All of this is used by the generate_printer function in printer_struct.c
 
@@ -14,7 +17,7 @@
 #define NUM_LINKS 5
 
 //Link home position vectors
-#define LINK0_HOME (vec3){1.f,0.f,0.f} //X
+#define LINK0_HOME (vec3){152.848f,-384.998f,-60.f} //X
 #define LINK1_HOME (vec3){0.f,0.f,1.f} //Z
 #define LINK2_HOME (vec3){0.f,1.f,0.f} //Y
 #define LINK3_HOME (vec3){0.f,1.f,0.f} //Y
@@ -43,10 +46,11 @@
 
 //Link movement ratios
 //If rotational, the ratio of motor movement in radians to link rotation in radians
-//If prismatic, the ratio of motor movement in radians to linear distance traveled
-#define LINK0_RATIO 100.f
-#define LINK1_RATIO 100.f
-#define LINK2_RATIO 100.f
+//If prismatic, the ratio of motor movement in radians to linear distance traveled in mm
+#define LINK0_RATIO 1.1459f
+#define LINK1_RATIO 0.5729f
+#define LINK2_RATIO 6.11f //Sus
+//Rotational joints
 #define LINK3_RATIO 1.f
 #define LINK4_RATIO 1.f
 
