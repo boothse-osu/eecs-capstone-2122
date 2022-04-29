@@ -3,10 +3,12 @@
 
 #include "Arduino.h"
 #include "stall_detection.h"
+#include "printer_control.h"
 
 const int steps_per_rotation = 1600; // I forgot again (maybe 800)
-//const float steps_per_degree = (float)steps_per_rotation / 360;
-const float steps_per_degree = (float)steps_per_rotation / 6.28318530718;
+const float steps_per_degree = (float)steps_per_rotation / 360;
+const float steps_per_radian = (float)steps_per_rotation / 6.28318530718;
+const float steps_per_x = steps_per_radian;
 
 const char HOMING_REQ   = 'h'; // Maybe make these strings
 const char HOMING_CON   = 'H';

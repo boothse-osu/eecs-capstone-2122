@@ -5,7 +5,7 @@
 
 #define Array_Size 10
 #define MTR_NUMBER 5
-#define Output_Time 50
+#define Output_Time 5
 #define Data_Length 50
 #define Stall_Line 10
 
