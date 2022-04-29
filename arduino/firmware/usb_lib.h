@@ -5,7 +5,8 @@
 #include "stall_detection.h"
 
 const int steps_per_rotation = 1600; // I forgot again (maybe 800)
-const float steps_per_degree = (float)steps_per_rotation / 360;
+//const float steps_per_degree = (float)steps_per_rotation / 360;
+const float steps_per_degree = (float)steps_per_rotation / 6.28318530718;
 
 const char HOMING_REQ   = 'h'; // Maybe make these strings
 const char HOMING_CON   = 'H';

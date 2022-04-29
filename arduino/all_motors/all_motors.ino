@@ -13,7 +13,7 @@ void setup()
   SPI.begin();
   Serial.begin(9600);
 
-  for(int i = 0; i < 2; i++) {
+  for(int i = 3; i < 5; i++) {
     stepper.init(amisSlaveSelect[i]);
 
     // Drive the NXT/STEP and DIR pins low initially.
@@ -49,35 +49,35 @@ void setup()
 
 void loop()
 {
-  int range = 10000;
+  int range = 100;
   // Step in the default direction 1000 times.
-  setDirection(0,1);
-  setDirection(1,1);
+  setDirection(0+3,1);
+  setDirection(1+3,1);
   for (unsigned int x = 0; x < range; x++)
   {
-    step(0);
-    step(1);
+    step(0+3);
+    step(1+3);
   }
 
-  setDirection(1,0);
+  setDirection(1+3,0);
   for (unsigned int x = 0; x < range; x++)
   {
-    step(0);
-    step(1);
+    step(0+3);
+    step(1+3);
   }
 
-  setDirection(0,0);
+  setDirection(0+3,0);
   for (unsigned int x = 0; x < range; x++)
   {
-    step(0);
-    step(1);
+    step(0+3);
+    step(1+3);
   }
 
-  setDirection(1,1);
+  setDirection(1+3,1);
   for (unsigned int x = 0; x < range; x++)
   {
-    step(0);
-    step(1);
+    step(0+3);
+    step(1+3);
   }
 
   
@@ -98,7 +98,7 @@ void step(int sel)
   // you decrease the delay, the stepper motor will go fast, but
   // there is a limit to how fast it can go before it starts
   // missing steps.
-  delayMicroseconds(100);
+  delayMicroseconds(1000);
 }
 
 // Writes a high or low value to the direction pin to specify

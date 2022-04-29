@@ -3,9 +3,9 @@
 
 #include "Arduino.h"
 
-#define Array_Size 20
+#define Array_Size 10
 #define MTR_NUMBER 5
-#define Output_Time 100
+#define Output_Time 50
 #define Data_Length 50
 #define Stall_Line 10
 
@@ -16,7 +16,7 @@
 
 struct VoltageAverage {
     int pos, len, sum;
-    int voltages[Array_Size] = {Stall_Line*2};
+    int voltages[Array_Size] = {Stall_Line*5};
 };
 
 
