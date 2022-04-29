@@ -122,6 +122,13 @@ struct Printer generate_printer() {
 	return prn;
 }
 
+void round_motors(struct Printer* prn) {
+
+	for (int i = 0; i < NUM_MOTORS; i++) {
+		prn->motors[i].angle = floor(prn->motors[i].angle * ROUND_PRECISION) / ROUND_PRECISION;
+	}
+}
+
 //Helpful utilities/despearate debug functions.
 
 void print_mat4(mat4 mat) {

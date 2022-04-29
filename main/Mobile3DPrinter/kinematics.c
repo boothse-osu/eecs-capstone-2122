@@ -151,6 +151,8 @@ int inverse_kinematics(struct Printer* prn, vec3 target, vec3 normal) {
 	//Do FK to ensure that the end of the printer is in the right place
 	forward_kinematics(prn);
 
+	round_motors(prn);
+
 	return 0;
 
 }
