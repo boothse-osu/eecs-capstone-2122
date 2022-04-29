@@ -68,6 +68,7 @@ bool move_command(int stp_cnt[5], bool ht_nd){
 }
 
 bool homing_command(){
+    return true;
     struct VoltageAverage voltage_log[MTR_NUMBER];
     for(int i=0; i<MTR_NUMBER; i++) voltage_log[i] = createVoltageAverage();
 
