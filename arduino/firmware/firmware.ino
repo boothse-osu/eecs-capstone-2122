@@ -23,7 +23,7 @@ const uint8_t amisSlaveSelect[5] = {PB3, PB4, PB5, PB6, PB7};
 const uint8_t amisSLA[5] = {PA0, PA1, PA4, PB0, PC1};
 //*/
 unsigned long redirectStart;
-char datatype;
+String datatype;
 
 //AMIS30543 stepper;
 
@@ -33,6 +33,7 @@ void setup()
 {
   SPI.begin();
   Serial.begin(9600);
+  Serial.setTimeout(10);
 
 
 /*
@@ -86,22 +87,30 @@ void serialEvent()
     while(Serial.available()) 
     {
         redirectStart = millis();
-        
-        delay(100); // Delay to recieve full message before you read it
-    
-        if(Serial.read() == '<' && Serial.read() == '!') {
+
+        String str = Serial.readString();
+        Serial.println(str);
+        Serial.println(str.substring(0,2));
+        Serial.println(str.substring(2,3));
+        Serial.println(str.substring(4,60));
+        Serial.println(str.substring(61,62));
+        Serial.println(str.length());
+
+        send_message("Recieved message in: " + String((double)(millis() - redirectStart)/1000.0) + " seconds");
+
+
+        if(str.substring(0,2) == "<!") {
             //send_message("GOOD COMMAND");
-        
-            datatype = Serial.read(); 
+            
+            datatype = str.substring(2,3); 
 
             send_message("Recieved message in: " + String((double)(millis() - redirectStart)/1000.0) + " seconds");
 
-            if      (datatype == DATA) parse_data();
+            if      (datatype == DATA && str.substring(61,62) == ">") parse_data();
             else if (datatype == HOMING_REQ) homing_sequence();
             else if (datatype == DEBUG) debug_mode();
             else delay(100);
         }
-        else send_message("UNKNOWN CHARACTER RECIEVED");
-        
+        else send_message("BAD COMMAND");
    }
 }
