@@ -112,6 +112,10 @@ int main(int argc,char* argv[]) {
 
 	//Get serial input
 	PORT port = usb_init();
+	if (!port) {
+		printf("Failed to open the COM%i port. Please make sure the printer is connected and on the correct port\n",PORTNO);
+		exit(1);
+	}
 
 	//Send the homing command to the printer, also syncs it up
 	SendData(port, "<!h>");

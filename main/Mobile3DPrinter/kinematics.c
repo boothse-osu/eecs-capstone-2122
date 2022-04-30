@@ -182,8 +182,8 @@ int ik_test_case(struct Printer* prn, vec3 target, vec3 normal) {
 	printer_get_tip(prn, target_results);
 	printer_get_normal(prn, norm_results);
 
-	//print_vec3(target_results);
-	//print_vec3(norm_results);
+	print_vec3(target_results);
+	print_vec3(norm_results);
 	print_printer_link_positions(prn);
 
 	float margin = 0.001f;
