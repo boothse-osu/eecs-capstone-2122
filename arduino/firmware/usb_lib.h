@@ -25,7 +25,7 @@ const int HOME_DIRECTION[MTR_NUMBER] = {0,0,0,0,0};
 const int POS_DIRECTION[MTR_NUMBER] = {1,1,1,1,1};
 const int NEG_DIRECTION[MTR_NUMBER] = {0,0,0,0,0};
 
-void parse_data();
+void parse_data(String);
 
 void homing_sequence();
 

@@ -18,6 +18,7 @@ struct VoltageAverage createVoltageAverage() {
 
 
 bool pushRollingAverage(int volt, struct VoltageAverage* VAvg) {
+    return true;
     VAvg->voltages[VAvg->pos] = volt;
     VAvg->sum += volt;
     VAvg->len++; VAvg->pos++;
@@ -25,7 +26,7 @@ bool pushRollingAverage(int volt, struct VoltageAverage* VAvg) {
     if (VAvg->len > Array_Size) {
         VAvg->len--;
         VAvg->sum -= VAvg->voltages[VAvg->pos];
-        //if(volt < ((VAvg->sum / VAvg->len)/2)) return false; // testing new stall detection
+        if(volt < ((VAvg->sum / VAvg->len)/2)) return false; // testing new stall detection
     }
     //Serial.println(String(VAvg->sum / VAvg->len));
     return true;

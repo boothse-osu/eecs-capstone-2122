@@ -1,5 +1,5 @@
 #include <SPI.h>
-//#include <AMIS30543.h>
+#include <AMIS30543.h>
 #include "usb_lib.h";
 #include "printer_control.h";
 #include "stall_detection.h";
@@ -23,9 +23,9 @@ const uint8_t amisSlaveSelect[5] = {PB3, PB4, PB5, PB6, PB7};
 const uint8_t amisSLA[5] = {PA0, PA1, PA4, PB0, PC1};
 //*/
 unsigned long redirectStart;
-String datatype;
+char datatype;
 
-//AMIS30543 stepper;
+AMIS30543 stepper;
 
 
 
@@ -36,7 +36,7 @@ void setup()
   Serial.setTimeout(10);
 
 
-/*
+///*
   for(int i = 0; i < 5; i++) {
     stepper.init(amisSlaveSelect[i]);
 
@@ -89,28 +89,27 @@ void serialEvent()
         redirectStart = millis();
 
         String str = Serial.readString();
-        Serial.println(str);
-        Serial.println(str.substring(0,2));
-        Serial.println(str.substring(2,3));
-        Serial.println(str.substring(4,60));
-        Serial.println(str.substring(61,62));
-        Serial.println(str.length());
-
-        send_message("Recieved message in: " + String((double)(millis() - redirectStart)/1000.0) + " seconds");
+        //Serial.println(str);
+        //Serial.println(str.substring(0,2));
+        //Serial.println(str.charAt(2));
+        //Serial.println(str.substring(4,60));
+        //Serial.println(str.substring(61,62));
+        //Serial.println(str.length());
 
 
         if(str.substring(0,2) == "<!") {
             //send_message("GOOD COMMAND");
             
-            datatype = str.substring(2,3); 
+            datatype = str.charAt(2); 
 
-            send_message("Recieved message in: " + String((double)(millis() - redirectStart)/1000.0) + " seconds");
+            //send_message("Recieved message in: " + String((double)(millis() - redirectStart)/1000.0) + " seconds");
 
-            if      (datatype == DATA && str.substring(61,62) == ">") parse_data();
+            if      (datatype == DATA && str.substring(61,62) == ">") parse_data(str.substring(4,60));
             else if (datatype == HOMING_REQ) homing_sequence();
             else if (datatype == DEBUG) debug_mode();
             else delay(100);
         }
         else send_message("BAD COMMAND");
    }
+   send_message("Done in: " + String((double)(millis() - redirectStart)/1000.0) + " seconds");
 }
