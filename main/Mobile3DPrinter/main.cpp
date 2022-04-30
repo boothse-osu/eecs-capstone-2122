@@ -187,6 +187,11 @@ int main(int argc,char* argv[]) {
 					
 					//Handle any issues with the IK
 					if (ik_err) {
+						
+						for (int i = 0; i < NUM_MOTORS; i++) {
+							print_motor(&printer.motors[i]);
+						}
+
 						printf("Error: IK out of bounds\n");
 						//SendData(port,"<!s>");
 						error = TRUE;
