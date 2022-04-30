@@ -21,16 +21,14 @@ bool pushRollingAverage(int volt, struct VoltageAverage* VAvg) {
     VAvg->voltages[VAvg->pos] = volt;
     VAvg->sum += volt;
     VAvg->len++; VAvg->pos++;
-    if (VAvg->pos >= Array_Size)
-        VAvg->pos = 0;
+    if (VAvg->pos >= Array_Size) VAvg->pos = 0;
     if (VAvg->len > Array_Size) {
         VAvg->len--;
         VAvg->sum -= VAvg->voltages[VAvg->pos];
+        //if(volt < ((VAvg->sum / VAvg->len)/2)) return false; // testing new stall detection
     }
-    //Serial.println("jk");
     //Serial.println(String(VAvg->sum / VAvg->len));
-    if(VAvg->sum / VAvg->len < Stall_Line) return false;
-    else return true;
+    return true;
 }
 /*
 int runHomingSequence_c(int time, struct testPINS PINS, struct MotorData* MData){

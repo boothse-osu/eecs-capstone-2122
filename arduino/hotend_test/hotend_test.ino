@@ -2,8 +2,8 @@
 
 // define pins and constants
 #define LED 13
-#define HOTEND 3
-#define TEMPIN A0
+#define HOTEND PA2
+#define TEMPIN PA3
 #define TREADCNT 5
 #define KP 15
 #define KI .3

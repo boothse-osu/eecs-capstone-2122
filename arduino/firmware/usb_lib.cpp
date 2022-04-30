@@ -7,33 +7,34 @@ unsigned long timeBegin;
 void parse_data() {
     timeBegin = millis();
     String str;
-    int mtr_steps[5];
+    long mtr_steps[5];
     String hot_end;
     Serial.read(); // (
     for(int i = 0; i<56; i++) str += (char)Serial.read();
     Serial.read(); // )
     Serial.read(); // >
     
-    Serial.read(); // < (USE EVEN WHEN NOT USING EOF)
-    Serial.read(); // !
-    Serial.read(); // e
-    Serial.read(); // <
+    //Serial.read(); // < (USE EVEN WHEN NOT USING EOF)
+    //Serial.read(); // !
+    //Serial.read(); // e
+    //Serial.read(); // <
 
-    //send_message(str);
+    send_message(str);
     unsigned long parseBegin = millis();
     send_message("Read in: " + String((double)(millis() - timeBegin)/1000.0) + " seconds");
 
     for(int i = 0; i<5; i++) {
-        mtr_steps[i] = str.substring((i*11), (i*11)+10).toFloat() * steps_per_degree;
-        //Serial.println(mtr_steps[i]);
+      mtr_steps[i] = round(str.substring((i*11), (i*11)+10).toDouble() * steps_per_x);
+      Serial.println(mtr_steps[i]);
     }
+    
     hot_end = str[55];
     confirm_data();
 
     unsigned long calcStepsBegin = millis();
     send_message("Parsed in: " + String((double)(millis() - parseBegin)/1000.0) + " seconds");
 
-    if(move_command(mtr_steps,true)) request_data(1);
+    if(new_move_command(mtr_steps,true)) request_data(1);
     else return;
     // steps
     
@@ -44,13 +45,16 @@ void parse_data() {
 void homing_sequence(){
     Serial.read(); // >
     Serial.read(); // end
-    if(homing_command()) confirm_homing();
+    if(true){//homing_command()) {
+      confirm_homing();
+      request_data(1);
+    }
     else stop_message("Homing Failed");
 }
 
 
 void debug_mode(){
-    int mtr_command[5] = {0};
+    long mtr_command[5] = {0};
     Serial.read(); Serial.read(); 
     Serial.println("\nmtr num, direction, 4 digit step amount");
     Serial.println("(0-"+ String(MTR_NUMBER-1)+")  ,(0,1,-,+) ,XXXX\n");
@@ -72,7 +76,7 @@ void debug_mode(){
     else Serial.println("UNKNOWN DIRECTION");
 
     mtr_command[mtr] = steps;
-    move_command(mtr_command, 0);
+    new_move_command(mtr_command, 0);
     
 
 }
