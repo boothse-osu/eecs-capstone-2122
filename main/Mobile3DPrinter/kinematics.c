@@ -182,22 +182,38 @@ int ik_test_case(struct Printer* prn, vec3 target, vec3 normal) {
 	printer_get_tip(prn, target_results);
 	printer_get_normal(prn, norm_results);
 
-	print_vec3(target_results);
-	print_vec3(norm_results);
+	//print_vec3(target_results);
+	//print_vec3(norm_results);
 	print_printer_link_positions(prn);
 
 	float margin = 0.001f;
+	bool target_error = false;
+	bool normal_error = false;
 	for (int i = 0; i < 3; i++) {
 		//printf("Target: %f Results: %f", target[i], target_results[i]);
-		assert(target_results[i] <= target[i] + margin && target_results[i] >= target[i] - margin);
+		if(!(target_results[i] <= target[i] + margin && target_results[i] >= target[i] - margin)) target_error = true;
 	}
-	printf("		XYZ target <%f,%f,%f>: \x1B[32mPASSED\033[0m\n", target[0], target[1], target[2]);
+	if (target_error) {
+		printf("		XYZ target <%f,%f,%f>: \x1B[31mFAILED\033[0m\n", target[0], target[1], target[2]);
+		printf("		XYZ result: <%f,%f,%f>\n", target_results[0], target_results[1], target_results[2]);
+	}
+	else {
+		printf("		XYZ target <%f,%f,%f>: \x1B[32mPASSED\033[0m\n", target[0], target[1], target[2]);
+		printf("		XYZ result: <%f,%f,%f>\n", target_results[0], target_results[1], target_results[2]);
+	}
 
 	for (int i = 0; i < 3; i++) {
 		//printf("I: %i\n",i);
-		assert(norm_results[i] <= normal[i] + margin && norm_results[i] >= normal[i] - margin);
+		if(!(norm_results[i] <= normal[i] + margin && norm_results[i] >= normal[i] - margin)) normal_error = true;
 	}
-	printf("		Normal target <%f,%f,%f>: \x1B[32mPASSED\033[0m\n", normal[0], normal[1], normal[2]);
+	if (normal_error) {
+		printf("		Normal target <%f,%f,%f>: \x1B[31mFAILED\033[0m\n", normal[0], normal[1], normal[2]);
+		printf("		Normal result: <%f,%f,%f>\n", norm_results[0], norm_results[1], norm_results[2]);
+	}
+	else {
+		printf("		Normal target <%f,%f,%f>: \x1B[32mPASSED\033[0m\n", normal[0], normal[1], normal[2]);
+		printf("		Normal result: <%f,%f,%f>\n", norm_results[0], norm_results[1], norm_results[2]);
+	}
 
 	for (int i = 0; i < 5; i++) {
 		for (int j = 0; j < 4; j++) {
