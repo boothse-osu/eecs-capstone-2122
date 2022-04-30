@@ -4,24 +4,24 @@
 
 unsigned long timeBegin;
 
-void parse_data() {
+void parse_data(String str) {
     timeBegin = millis();
-    String str;
+    //String str;
     long mtr_steps[5];
     String hot_end;
-    Serial.read(); // (
-    for(int i = 0; i<56; i++) str += (char)Serial.read();
-    Serial.read(); // )
-    Serial.read(); // >
+    //Serial.read(); // (
+    //for(int i = 0; i<56; i++) str += (char)Serial.read();
+    //Serial.read(); // )
+    //Serial.read(); // >
     
     //Serial.read(); // < (USE EVEN WHEN NOT USING EOF)
     //Serial.read(); // !
     //Serial.read(); // e
     //Serial.read(); // <
 
-    send_message(str);
+    //send_message(str);
     unsigned long parseBegin = millis();
-    send_message("Read in: " + String((double)(millis() - timeBegin)/1000.0) + " seconds");
+    //send_message("Read in: " + String((double)(millis() - timeBegin)/1000.0) + " seconds");
 
     for(int i = 0; i<5; i++) {
       mtr_steps[i] = round(str.substring((i*11), (i*11)+10).toDouble() * steps_per_x);
@@ -32,14 +32,14 @@ void parse_data() {
     confirm_data();
 
     unsigned long calcStepsBegin = millis();
-    send_message("Parsed in: " + String((double)(millis() - parseBegin)/1000.0) + " seconds");
+    //send_message("Parsed in: " + String((double)(millis() - parseBegin)/1000.0) + " seconds");
 
     if(new_move_command(mtr_steps,true)) request_data(1);
     else return;
     // steps
     
     //send_message("Total Time: " + String((double)(millis() - timeBegin)/1000.0) + " seconds");
-    Serial.println();
+    //Serial.println();
 }
 
 void homing_sequence(){

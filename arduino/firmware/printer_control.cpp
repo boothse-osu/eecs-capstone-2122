@@ -1,7 +1,7 @@
 #include "Arduino.h"
 
 #include "SPI.h"
-//#include "AMIS30543.h"
+#include "AMIS30543.h"
 
 #include "usb_lib.h"
 #include "printer_control.h"
@@ -26,8 +26,8 @@ bool new_move_command(long stp_cnt[5], bool ht_nd){
 
     // Set each motor in the correct direction
     for(int i = 0; i<5; i++) {
-    //  if(stp_cnt[i] >= 0) setDirection(i,POS_DIRECTION[i]);
-    //  else setDirection(i,NEG_DIRECTION[i]);
+      if(stp_cnt[i] >= 0) setDirection(i,POS_DIRECTION[i]);
+      else setDirection(i,NEG_DIRECTION[i]);
     }
 
     // Time inbetween steps on a specific motor
@@ -70,11 +70,11 @@ bool new_move_command(long stp_cnt[5], bool ht_nd){
 
         for(int i = 0; i<5; i++){
             if(timeNow>=time_nxt_step[i] && steps_taken[i]!=stp_cnt[i]){
-                //step(0)
-                //if(abs(steps_taken[i])%Output_Time==0 && pushRollingAverage(analogRead(amisSLA[i]), &voltage_log[i]) == false) {
-                //    stop_message("Stall on motor " + String(i));
-                //    return false;
-                //}
+                step(0)
+                if(abs(steps_taken[i])%Output_Time==0 && pushRollingAverage(analogRead(amisSLA[i]), &voltage_log[i]) == false) {
+                    stop_message("Stall on motor " + String(i));
+                    return false;
+                }
                 time_nxt_step[i] += time_steps[i];
                 steps_taken[i]+= stp_cnt[i] / abs(stp_cnt[i]);
             }
@@ -83,7 +83,7 @@ bool new_move_command(long stp_cnt[5], bool ht_nd){
 
         if(timeTotal > timeEnd) break;
     }
-    send_message("Done in "+String((double)(millis()-start_time)/1000.0)+" seconds");
+    //send_message("Done in "+String((double)(millis()-start_time)/1000.0)+" seconds");
     for(int i = 0; i<5; i++) send_message("MTR "+String(i)+" steps taken: " + String(steps_taken[i]));
     for(int i = 0; i<5; i++) send_message("MTR "+String(i)+" microseconds per step: " + String(time_steps[i]));
     return true;
@@ -97,7 +97,7 @@ bool homing_command(){
     bool mtr_running [5] = {true, true, true, true, true};
     int mtrs_done = 0;
     
-    //for(int i = 0; i<5; i++) setDirection(i,HOME_DIRECTION[i]);
+    for(int i = 0; i<5; i++) setDirection(i,HOME_DIRECTION[i]);
 
     unsigned long time_nxt_step = micros() + 200;
     for(int k = 0; k<100000; k++) {
@@ -106,7 +106,7 @@ bool homing_command(){
         for(int i = 0; i<5; i++) {
           if(mtr_running[i]) {
             //step(i);
-            //mtr_running[i] = pushRollingAverage(random(70), &voltage_log[i]);
+            mtr_running[i] = pushRollingAverage(random(70), &voltage_log[i]);
             if(mtr_running[i]==false) mtrs_done++;
           }
         }
@@ -175,7 +175,7 @@ bool move_command(int stp_cnt[5], bool ht_nd){
     for(int i = 0; i<5; i++) send_message("MTR "+String(i)+" microseconds per step: " + String(time_steps[i]));
     return true;
 }
-
+*/
 
 ///*
 // Sends a pulse on the NXT/STEP pin to tell the driver to take
