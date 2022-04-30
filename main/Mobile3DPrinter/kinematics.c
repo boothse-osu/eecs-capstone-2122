@@ -5,6 +5,8 @@
 //Returns a one otherwise
 int set_motor_angle(struct Printer* prn, int idx, float angle) {
 	
+	printf("Changing angle %i to %f!\n", idx, angle);
+
 	//Ensure it is within bounds, otherwie set the angle
 	if (angle < prn->motors[idx].min_angle) {
 		return 1;
@@ -13,8 +15,6 @@ int set_motor_angle(struct Printer* prn, int idx, float angle) {
 	if (angle > prn->motors[idx].max_angle) {
 		return 1;
 	}
-	
-	//printf("Changing angle %i to %f!\n", idx, angle);
 
 	prn->motors[idx].angle = angle;
 
