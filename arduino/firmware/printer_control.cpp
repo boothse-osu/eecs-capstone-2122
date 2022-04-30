@@ -70,7 +70,7 @@ bool new_move_command(long stp_cnt[5], bool ht_nd){
 
         for(int i = 0; i<5; i++){
             if(timeNow>=time_nxt_step[i] && steps_taken[i]!=stp_cnt[i]){
-                step(0)
+                step(i)
                 if(abs(steps_taken[i])%Output_Time==0 && pushRollingAverage(analogRead(amisSLA[i]), &voltage_log[i]) == false) {
                     stop_message("Stall on motor " + String(i));
                     return false;
