@@ -34,16 +34,16 @@ bool new_move_command(long stp_cnt[5], bool ht_nd){
     // Should add a case where: if a time_step[i] is less than 150, add
     // time to mvmt_time and recalculate. This will avoid missing steps
     float added_time = 0;
-    bool ready = false;
-    while(!ready) {
-        ready = true;
+    bool mtr_ready = false;
+    while(!mtr_ready) {
+        mtr_ready = true;
         for(int i = 0; i<5; i++) {
             if(stp_cnt[i] == 0) time_steps[i] = 0;
             else{
                 time_steps[i] = (mvmt_time + added_time) / abs(stp_cnt[i]);
-                if(time_steps[i]<150) {
+                if(time_steps[i]<200) {
                     added_time += 500000; // half sec
-                    ready = false;
+                    mtr_ready = false;
                 }
             }
         }
@@ -63,18 +63,24 @@ bool new_move_command(long stp_cnt[5], bool ht_nd){
     unsigned long timeEnd = timeNow + (mvmt_time + added_time);
     unsigned long timeTotal;
 
+    signed int list_sla [abs(stp_cnt[0])] = {0};
     while(true){
         timeNow = micros();
                   
         timeTotal = micros();
 
         for(int i = 0; i<5; i++){
+          
             if(timeNow>=time_nxt_step[i] && steps_taken[i]!=stp_cnt[i]){
-                step(i)
-                if(abs(steps_taken[i])%Output_Time==0 && pushRollingAverage(analogRead(amisSLA[i]), &voltage_log[i]) == false) {
-                    stop_message("Stall on motor " + String(i));
-                    return false;
-                }
+                step(i);
+                
+                //if(abs(steps_taken[i])%1==0) list_sla[abs(steps_taken[i])] = analogRead(amisSLA[i]); // mtr_ready = false;//
+
+                
+                //if(abs(steps_taken[i])%Output_Time==0 && pushRollingAverage(analogRead(amisSLA[i]), &voltage_log[i]) == false) {
+                //    stop_message("Stall on motor " + String(i));
+                //    return false;
+                //}
                 time_nxt_step[i] += time_steps[i];
                 steps_taken[i]+= stp_cnt[i] / abs(stp_cnt[i]);
             }
@@ -83,6 +89,9 @@ bool new_move_command(long stp_cnt[5], bool ht_nd){
 
         if(timeTotal > timeEnd) break;
     }
+    //for(int i=0; i<abs(stp_cnt[0]); i++) Serial.println(list_sla[i]);
+
+    
     //send_message("Done in "+String((double)(millis()-start_time)/1000.0)+" seconds");
     for(int i = 0; i<5; i++) send_message("MTR "+String(i)+" steps taken: " + String(steps_taken[i]));
     for(int i = 0; i<5; i++) send_message("MTR "+String(i)+" microseconds per step: " + String(time_steps[i]));
