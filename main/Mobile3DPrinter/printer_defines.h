@@ -14,7 +14,7 @@
 
 //Number of links
 //Should be 5, but might be higher if there are links without motors which are important
-#define NUM_LINKS 5
+#define NUM_LINKS 6
 
 //Link home position vectors
 #define LINK0_HOME (vec3){152.848f,-304.998f,-60.f} //X
@@ -22,8 +22,9 @@
 #define LINK2_HOME (vec3){-83.679f,-130.5f,95.75f} //Y
 #define LINK3_HOME (vec3){-27.352f,230.25f,-42.008f} //YX
 #define LINK4_HOME (vec3){0.f,0.f,1.f} //YZ
+#define LINK5_HOME (vec3){0.f,1.f,0.f} //Extra bit at the end of the printer
 
-#define LINK_HOME_LIST {LINK0_HOME,LINK1_HOME,LINK2_HOME,LINK3_HOME,LINK4_HOME}
+#define LINK_HOME_LIST {LINK0_HOME,LINK1_HOME,LINK2_HOME,LINK3_HOME,LINK4_HOME,LINK5_HOME}
 
 //Whether or not the link has a prismatic joint at its base 1 for yes, 0 for no
 #define LINK0_PRISMATIC 1
@@ -31,6 +32,7 @@
 #define LINK2_PRISMATIC 1
 #define LINK3_PRISMATIC 0
 #define LINK4_PRISMATIC 0
+#define LINK5_PRISMATIC 1
 
 #define LINK_PRISMATIC_LIST {LINK0_PRISMATIC,LINK1_PRISMATIC,LINK2_PRISMATIC,LINK3_PRISMATIC,LINK4_PRISMATIC}
 

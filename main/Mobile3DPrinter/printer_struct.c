@@ -114,10 +114,13 @@ struct Printer generate_printer() {
 
 	links[4] = generate_link(LINK4_HOME, LINK4_PRISMATIC, LINK4_AXIS, LINK4_RATIO);
 
+	//Dummy link for normal purposes. Has no associated motor.
+	links[5] = generate_link(LINK5_HOME, 1, (vec3){ 0,0,0 }, 0.f);
+
 	//Create the printer
 
 	//Cursed, but nothing else was working...
-	struct Printer prn = { {links[0],links[1],links[2],links[3],links[4]},{motors[0],motors[1],motors[2],motors[3],motors[4]} };
+	struct Printer prn = { {links[0],links[1],links[2],links[3],links[4],links[5]},{motors[0],motors[1],motors[2],motors[3],motors[4]} };
 
 	return prn;
 }
@@ -167,12 +170,12 @@ void print_motor(struct Motor* motor) {
 
 void print_printer(struct Printer* prn) {
 	
-	for (int i = 0; i < 5; i++) {
+	for (int i = 0; i < NUM_LINKS; i++) {
 		printf("Link %i ",i);
 		print_link(&(prn->links[i]));
 	}
 
-	for (int i = 0; i < 5; i++) {
+	for (int i = 0; i < NUM_MOTORS; i++) {
 		printf("Motor %i ", i);
 		print_motor(&(prn->motors[i]));
 	}
