@@ -19,7 +19,7 @@ void parse_data(String str) {
     //Serial.read(); // e
     //Serial.read(); // <
 
-    //send_message(str);
+    send_message(str);
     unsigned long parseBegin = millis();
     //send_message("Read in: " + String((double)(millis() - timeBegin)/1000.0) + " seconds");
 
@@ -62,19 +62,20 @@ void debug_mode(){
     while(Serial.available() == 0) {
     }
     delay(100);
-    String str;
-    for(int i = 0; i<8; i++) str += (char)Serial.read();
-    Serial.read();
+    String str = Serial.readString();
+    //for(int i = 0; i<8; i++) str += (char)Serial.read();
+    //Serial.read();
     Serial.println(str);
-
+    
     int mtr = str.substring(0,1).toInt();
     String direct = str.substring(2,3);
-    int steps = str.substring(4,9).toInt();
+    long steps = str.substring(4,9).toInt();
 
     if(direct == "+" || direct == String(POS_DIRECTION[mtr])) delay(1);
     else if(direct == "-" || direct == String(NEG_DIRECTION[mtr])) steps *= -1;
     else Serial.println("UNKNOWN DIRECTION");
 
+    
     mtr_command[mtr] = steps;
     new_move_command(mtr_command, 0);
     
