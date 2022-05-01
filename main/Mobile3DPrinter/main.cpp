@@ -44,7 +44,7 @@ void output_point(struct Printer* prn, bool extrude) {
 		ex = 'f';
 	}
 
-	snprintf(outgoing,62,"<!(%+010.4f,%+010.4f,%+010.4f,%+010.4f,%+010.4f,%c)>",prn->motors[0].angle,prn->motors[1].angle,prn->motors[2].angle,prn->motors[3].angle,prn->motors[4].angle,ex);
+	snprintf(outgoing,62,"<!D(%+010.4f,%+010.4f,%+010.4f,%+010.4f,%+010.4f,%c)>",prn->motors[0].angle,prn->motors[1].angle,prn->motors[2].angle,prn->motors[3].angle,prn->motors[4].angle,ex);
 
 	printf("Outgoing data: %s\n",outgoing);
 }
@@ -183,6 +183,8 @@ int main(int argc,char* argv[]) {
 					//Put the print path data into vectors
 					vec3 position = { point.x,point.y,point.z };
 					vec3 normal;
+
+					printf("Attenpting to print: %f %f %f\n",point.x,point.y,point.z);
 
 					sphere_to_normal(normal, point.theta, point.phi);
 

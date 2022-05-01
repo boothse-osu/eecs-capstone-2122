@@ -9,18 +9,28 @@ int main() {
 	struct Printer prn = generate_printer();
 
 	//print_printer(&prn);
+	vec3 home_position;
+	printer_get_tip(&prn,home_position);
+
+	vec3 home_normal;
+	printer_get_normal(&prn, home_normal);
+
+	printf("Home normal:\n");
+	print_vec3(home_normal);
+	printf("Home position:\n");
+	print_vec3(home_position);
 
 	printf("Move just the first motor\n");
-	if(ik_test_case(&prn, (vec3) { 2.f, 3.f, 1.f }, (vec3){0.f, 1.f,0.f})) return;
+	if(ik_test_case(&prn, (vec3) { 2.f, 3.f, 1.f }, (vec3){0.f, -1.f,0.f})) return;
 
 	printf("Move just the second motor\n");
-	if(ik_test_case(&prn, (vec3) { 2.f, 3.f, 2.f }, (vec3) { 0.f, 1.f, 0.f })) return;
+	if(ik_test_case(&prn, (vec3) { 2.f, 3.f, 2.f }, (vec3) { 0.f, -1.f, 0.f })) return;
 
 	printf("Move just the third motor\n");
-	if (ik_test_case(&prn, (vec3) { 2.f, 4.f, 2.f }, (vec3) { 0.f, 1.f, 0.f })) return;
+	if (ik_test_case(&prn, (vec3) { 2.f, 4.f, 2.f }, (vec3) { 0.f, -1.f, 0.f })) return;
 
 	printf("Move around Z less than 90 degrees\n");
-	if (ik_test_case(&prn, (vec3) { 2.f, 4.f, 2.f }, (vec3) { 1.f, 1.f, 0.f })) return;
+	if (ik_test_case(&prn, (vec3) { 2.f, 4.f, 2.f }, (vec3) { 1.f, -1.f, 0.f })) return;
 
 	printf("Move around Z to 90 degrees\n");
 	if (ik_test_case(&prn, (vec3) { 2.f, 4.f, 2.f }, (vec3) { 1.f, 0.f, 0.f })) return;

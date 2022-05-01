@@ -86,23 +86,34 @@ int inverse_kinematics(struct Printer* prn, vec3 target, vec3 normal) {
 
 	//printf("Calling inverse kinematics!\n");
 	//Handle rotational joints. May need to redo this whole section later.
-
 	//Calculate axis coordinates
 	
+	vec3 current_normal;
+	printer_get_normal(prn,current_normal);
+
 	//r1 = arctan(x/y)
-	float r1 = (float)atan2(-1.f*(double)normal[0], normal[1]);
-	//r2 = arctan()
-	float r2 = (float)atan2(normal[2], sqrt(((double)normal[0]*(double)normal[0])+((double)normal[1]*(double)normal[1])));
+	//XY plane
+	float current_r1 = (float)atan2(-1.f * (double)current_normal[0], current_normal[1]);
+	float target_r1 = (float)atan2(-1.f*(double)normal[0], normal[1]);
+	float r1_diff = target_r1 - current_r1;
+	printf("Current R1: %f Target R1: %f R1 Diff: %f\n", current_r1,target_r1,r1_diff);
+
+	//r2 = arctan(z/sqrt(x^2+y^2))
+	//YZ plane
+	float current_r2 = (float)atan2(current_normal[2], sqrt(((double)current_normal[0]*(double)current_normal[0])+((double)current_normal[1]*(double)current_normal[1])));
+	float target_r2 = (float)atan2(normal[2], sqrt(((double)normal[0] * (double)normal[0]) + ((double)normal[1] * (double)normal[1])));
+	float r2_diff = target_r2 - current_r2;
+	printf("Current R2: %f Target R2: %f R2 Diff: %f\n", current_r2, target_r2, r2_diff);
 
 	//Set the rotational joints to those coordinates if possible
 	//Making assumptions about these last two motors being Z axis rotation and X axis rotation
 	//	specifically
 	//prn->motors[3].angle = r1;
-	if(set_motor_angle(prn, 3, r1)) return 1;
+	if(set_motor_angle(prn, 3, prn->motors[3].angle + r1_diff)) return 1;
 	//printf("Z-Axis: %f\n",r1);
 
 	//prn->motors[4].angle = r2;
-	if (set_motor_angle(prn, 4, r2)) return 1;
+	if (set_motor_angle(prn, 4, prn->motors[4].angle + r2_diff)) return 1;
 	//printf("X-Axis: %f\n",r2);
 
 	//Do FK on the last two joints to get the final two links as a single vector
@@ -129,8 +140,8 @@ int inverse_kinematics(struct Printer* prn, vec3 target, vec3 normal) {
 
 	//Move the pristmatic joints one by one
 	vec3 differences = { target[0] - end_effector[0],target[1] - end_effector[1],target[2] - end_effector[2] };
-	//printf("Differences: ");
-	//print_vec3(differences);
+	printf("Differences: ");
+	print_vec3(differences);
 
 	//Again making assumptions based on the design of our specific printer
 	//X-axis
@@ -215,16 +226,19 @@ int ik_test_case(struct Printer* prn, vec3 target, vec3 normal) {
 		printf("		Normal result: <%f,%f,%f>\n", norm_results[0], norm_results[1], norm_results[2]);
 	}
 
+	bool structure_error = false;
 	for (int i = 0; i < 5; i++) {
 		for (int j = 0; j < 4; j++) {
 			for (int k = 0; k < 4; k++) {
-				assert(link_matrices[i][j][k] == prn->links[i].link_mat[j][k]);
+				if(!(link_matrices[i][j][k] == prn->links[i].link_mat[j][k])) structure_error = true;
 			}
 		}
 	}
-	printf("		Verified structure has not been changed: \x1B[32mPASSED\033[0m\n");
+	if(!structure_error) printf("		Verified structure has not been changed: \x1B[32mPASSED\033[0m\n");
 
-	printf("		Test case: \x1B[32mPASSED\033[0m\n");
+	if(!structure_error && !normal_error && !target_error) printf("		Test case: \x1B[32mPASSED\033[0m\n");
+
+	print_printer(prn);
 
 	return 0;
 }

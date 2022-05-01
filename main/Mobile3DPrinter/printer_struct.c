@@ -20,7 +20,7 @@ void printer_get_tip(struct Printer* prn, vec3 out) {
 //Normal vector from the print surface
 void printer_get_normal(struct Printer* prn, vec3 out) {
 
-	//Get the position of link 3 minus the position of link 4
+	//Get the position of the end of link 3 minus the position of link 4
 	vec3 lnk5;
 	get_link_position(&(prn->links[4]), lnk5);
 	vec3 lnk4;
