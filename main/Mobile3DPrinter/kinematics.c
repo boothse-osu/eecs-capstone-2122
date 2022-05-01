@@ -109,11 +109,11 @@ int inverse_kinematics(struct Printer* prn, vec3 target, vec3 normal) {
 	//Making assumptions about these last two motors being Z axis rotation and X axis rotation
 	//	specifically
 	//prn->motors[3].angle = r1;
-	if(set_motor_angle(prn, 3, prn->motors[3].angle + r1_diff)) return 1;
+	//if(set_motor_angle(prn, 3, prn->motors[3].angle + r1_diff)) return 1;
 	//printf("Z-Axis: %f\n",r1);
 
 	//prn->motors[4].angle = r2;
-	if (set_motor_angle(prn, 4, prn->motors[4].angle + r2_diff)) return 1;
+	//if (set_motor_angle(prn, 4, prn->motors[4].angle + r2_diff)) return 1;
 	//printf("X-Axis: %f\n",r2);
 
 	//Do FK on the last two joints to get the final two links as a single vector
