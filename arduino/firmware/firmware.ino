@@ -19,12 +19,6 @@
 
 
 // <!D(-0030.0000,-0000.0000,+0000.0000,+0000.5000,+0000.5000,t)>
-/*
-const uint8_t amisDirPin[5] = {PB11, PB12, PB13, PB14, PB15};
-const uint8_t amisStepPin[5] = {PC5, PC6, PC7, PC8, PC9};
-const uint8_t amisSlaveSelect[5] = {PB3, PB4, PB5, PB6, PB7};
-const uint8_t amisSLA[5] = {PA0, PA1, PA4, PB0, PC1};
-//*/
 unsigned long redirectStart;
 char datatype;
 
