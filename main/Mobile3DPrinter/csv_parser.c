@@ -36,52 +36,47 @@ int csv_parse(struct Path* path, char* filepath) {
 
 	//Go through all of the lines of the file and process them individually
 	char buffer[CSVBUFFSIZE];
+	//Clears the first line
 	fgets(buffer, CSVBUFFSIZE, fp);
-
-	int linecount = 0;
 
 	while (fgets(buffer, CSVBUFFSIZE, fp) != NULL) {
 
-		//printf("Token: %s\n", buffer);
+		//printf("Buffer: %s\n", buffer);
 
-		//Ignore header line
-		if (linecount != 0) {
+		//Break the string into tokens and put the tokens into Point structs
 
-			//Break the string into tokens and put the tokens into Point structs
+		const char* delims = ",\n\r";
+		char* token = strtok(buffer, delims);
+		//printf("Token: %s\n", token);
+		int token_count = 0;
 
-			const char* delims = ",\n";
-			char* token = strtok(buffer, delims);
-			int token_count = 0;
+		struct Point temptok;
 
-			struct Point temptok;
+		while (token != NULL) {
 
-			while (token != NULL) {
+			//printf("%s\n", token);
 
-				//printf("%s\n", token);
+			switch (token_count) {
 
-				switch (token_count) {
+			case 0: temptok.x = (float)atof(token); break;
 
-				case 0: temptok.x = (float)atof(token); break;
+			case 1: temptok.y = (float)atof(token); break;
 
-				case 1: temptok.y = (float)atof(token); break;
+			case 2: temptok.z = (float)atof(token); break;
 
-				case 2: temptok.z = (float)atof(token); break;
+			case 3: temptok.theta = (float)atof(token); break;
 
-				case 3: temptok.theta = (float)atof(token); break;
+			case 4: temptok.phi = (float)atof(token); break;
 
-				case 4: temptok.phi = (float)atof(token); break;
-
-				case 5: temptok.extrusion = atoi(token); break;
-				}
-
-				token = strtok(NULL, delims);
-				token_count++;
+			case 5: temptok.extrusion = atoi(token); break;
 			}
 
-			add_point(path, temptok);
+			token = strtok(NULL, delims);
+			//printf("Token: %s\n",token);
+			token_count++;
 		}
 
-		linecount++;
+		add_point(path, temptok);
 	}
 
 	fclose(fp);

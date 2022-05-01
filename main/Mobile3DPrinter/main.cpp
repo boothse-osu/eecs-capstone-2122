@@ -30,10 +30,10 @@ void sphere_to_normal(vec3 norm, float theta, float phi) {
 }
 
 //Output a point to the controller in the required format
-void output_point(struct Printer* prn, bool extrude) {
+void output_point(PORT port, struct Printer* prn, bool extrude) {
 
 	//Precise size of the outgoing string
-	char outgoing[62];
+	char outgoing[63];
 
 	//Extrusion var to send
 	char ex;
@@ -44,9 +44,10 @@ void output_point(struct Printer* prn, bool extrude) {
 		ex = 'f';
 	}
 
-	snprintf(outgoing,62,"<!(%+010.4f,%+010.4f,%+010.4f,%+010.4f,%+010.4f,%c)>",prn->motors[0].angle,prn->motors[1].angle,prn->motors[2].angle,prn->motors[3].angle,prn->motors[4].angle,ex);
+	snprintf(outgoing,63,"<!D(%+010.4f,%+010.4f,%+010.4f,%+010.4f,%+010.4f,%c)>",prn->motors[0].angle,prn->motors[1].angle,prn->motors[2].angle,prn->motors[3].angle,prn->motors[4].angle,ex);
 
 	printf("Outgoing data: %s\n",outgoing);
+	SendData(port, outgoing);
 }
 
 int main(int argc,char* argv[]) {
@@ -112,6 +113,10 @@ int main(int argc,char* argv[]) {
 
 	//Get serial input
 	PORT port = usb_init();
+	if (!port) {
+		printf("Failed to open the COM%i port. Please make sure the printer is connected and on the correct port\n",PORTNO);
+		exit(1);
+	}
 
 	//Send the homing command to the printer, also syncs it up
 	SendData(port, "<!h>");
@@ -180,6 +185,8 @@ int main(int argc,char* argv[]) {
 					vec3 position = { point.x,point.y,point.z };
 					vec3 normal;
 
+					printf("Attenpting to print: %f %f %f\n",point.x,point.y,point.z);
+
 					sphere_to_normal(normal, point.theta, point.phi);
 
 					//Calculate and send the required data the required number of times
@@ -198,7 +205,7 @@ int main(int argc,char* argv[]) {
 						break;
 					}
 
-					output_point(&printer,point.extrusion);
+					output_point(port,&printer,point.extrusion);
 
 					//If we need to do a check for data recieved response, it goes here
 
