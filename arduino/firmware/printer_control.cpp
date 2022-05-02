@@ -41,7 +41,7 @@ bool new_move_command(long stp_cnt[5], bool ht_nd){
             if(stp_cnt[i] == 0) time_steps[i] = 0;
             else{
                 time_steps[i] = (mvmt_time + added_time) / abs(stp_cnt[i]);
-                if(time_steps[i]<200) {
+                if(time_steps[i]<min_mtr_delay) {
                     added_time += 500000; // half sec
                     mtr_ready = false;
                 }
@@ -59,38 +59,35 @@ bool new_move_command(long stp_cnt[5], bool ht_nd){
     
     send_message("Starting move command");
 
+    signed int list_sla [abs(stp_cnt[2])] = {0};
+
+    int i;
     unsigned long timeNow = micros();
     unsigned long timeEnd = timeNow + (mvmt_time + added_time);
-    unsigned long timeTotal;
-
-    signed int list_sla [abs(stp_cnt[0])] = {0};
-    while(true){
+    while(timeNow < timeEnd){
         timeNow = micros();
-                  
-        timeTotal = micros();
 
-        for(int i = 0; i<5; i++){
+        //maybe faster to turn this into function
+        for(i = 0; i<5; i++){
           
-            if(timeNow>=time_nxt_step[i] && steps_taken[i]!=stp_cnt[i]){
+            //maybe comment out 2nd part of if statement
+            if(timeNow>=time_nxt_step[i] && steps_taken[i]!=abs(stp_cnt[i])){
                 step(i);
                 
-                //if(abs(steps_taken[i])%1==0) list_sla[abs(steps_taken[i])] = analogRead(amisSLA[i]); // mtr_ready = false;//
+                //if(i==2 && abs(steps_taken[i])%1==0) list_sla[abs(steps_taken[i])] = analogRead(amisSLA[i]); // mtr_ready = false;//
 
-                
-                //if(abs(steps_taken[i])%Output_Time==0 && pushRollingAverage(analogRead(amisSLA[i]), &voltage_log[i]) == false) {
+                //maybe remove abs from modulo
+                //if(abs(steps_taken[i])%Stall_Check_Step[i]==0 && pushRollingAverage(i, &voltage_log[i]) == false) {
                 //    stop_message("Stall on motor " + String(i));
                 //    return false;
                 //}
                 time_nxt_step[i] += time_steps[i];
-                steps_taken[i]+= stp_cnt[i] / abs(stp_cnt[i]);
+                steps_taken[i]++;
             }
         }
-        
-
-        if(timeTotal > timeEnd) break;
     }
-    //for(int i=0; i<abs(stp_cnt[0]); i++) Serial.println(list_sla[i]);
 
+    //for(int i=0; i<abs(stp_cnt[2]); i++) Serial.println(list_sla[i]);
     
     //send_message("Done in "+String((double)(millis()-start_time)/1000.0)+" seconds");
     for(int i = 0; i<5; i++) send_message("MTR "+String(i)+" steps taken: " + String(steps_taken[i]));
@@ -99,27 +96,53 @@ bool new_move_command(long stp_cnt[5], bool ht_nd){
 }
 
 bool homing_command(){
-    return true;
+    //return true;
     struct VoltageAverage voltage_log[MTR_NUMBER];
     for(int i=0; i<MTR_NUMBER; i++) voltage_log[i] = createVoltageAverage();
 
-    bool mtr_running [5] = {true, true, true, true, true};
+    bool mtr_running [5] = {false, true, false, false, false};
     int mtrs_done = 0;
     
     for(int i = 0; i<5; i++) setDirection(i,HOME_DIRECTION[i]);
 
-    unsigned long time_nxt_step = micros() + 200;
-    for(int k = 0; k<100000; k++) {
+    unsigned long time_nxt_step = micros() + 5000;
+    while(true) {
       if(micros()>time_nxt_step){
-        time_nxt_step += 200;
+        time_nxt_step = micros() + 5000;
+        step(4);
+        mtr_running[4] = pushRollingAverage(4, &voltage_log[4]);
+        if(mtr_running[4]==false) break;
+      }
+    }
+    send_message("Motor 4 at home");
+
+    time_nxt_step = micros() + 20000;
+    while(true) {
+      if(micros()>time_nxt_step){
+        time_nxt_step = micros() + 5000;
+        step(3);
+        mtr_running[3] = pushRollingAverage(3, &voltage_log[3]);
+        if(mtr_running[3]==false) break;
+      }
+    }
+    send_message("Motor 3 at home");
+
+    time_nxt_step = micros() + 350;
+    send_message("Starting Homing");
+    while(true) {
+      if(micros()>time_nxt_step){
+        time_nxt_step = micros() + 350;
         for(int i = 0; i<5; i++) {
           if(mtr_running[i]) {
-            //step(i);
-            mtr_running[i] = pushRollingAverage(random(70), &voltage_log[i]);
-            if(mtr_running[i]==false) mtrs_done++;
+            step(i);
+            mtr_running[i] = pushRollingAverage(i, &voltage_log[i]);
+            if(mtr_running[i]==false) {
+              send_message("Motor " + String(i) + " at home");
+              mtrs_done++;
+            }
           }
         }
-        if(mtrs_done==MTR_NUMBER) return true;
+        if(mtrs_done==1) return true;
       }
     }
     return false;

@@ -43,9 +43,7 @@ void parse_data(String str) {
 }
 
 void homing_sequence(){
-    Serial.read(); // >
-    Serial.read(); // end
-    if(true){//homing_command()) {
+    if(homing_command()) {
       confirm_homing();
       request_data(1);
     }

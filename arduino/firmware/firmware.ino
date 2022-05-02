@@ -12,19 +12,19 @@
 // <!D(+0030.0000,-0030.0000,+0030.0000,-0030.0000,+0030.0000,t)>
 // <!D(+0180.0000,-0120.0000,+0120.0000,-0120.0000,+0120.0000,t)>
 
-// 0010.0000
-
 // <!D(-1000.0000,-0000.0000,-0500.0000,+0030.0000,+0030.0000,t)><!e>
 // <!h>
 
+// <!D(-0030.0000,-0000.0000,+0000.0000,+0000.0000,+0000.0000,t)>
+// <!D(-0000.0000,-0000.0000,+0000.0000,+0000.2500,+0000.2500,t)>
 
-// <!D(-0030.0000,-0000.0000,+0000.0000,+0000.5000,+0000.5000,t)>
+// <!!>
+// 4,0,0100
+
 unsigned long redirectStart;
 char datatype;
 
-AMIS30543 stepper;
-
-
+AMIS30543 stepper[5] = {};
 
 void setup()
 {
@@ -35,7 +35,7 @@ void setup()
 
 ///*
   for(int i = 0; i < 5; i++) {
-    stepper.init(amisSlaveSelect[i]);
+    stepper[i].init(amisSlaveSelect[i]);
 
     // Drive the NXT/STEP and DIR pins low initially.
     digitalWrite(amisStepPin[i], LOW);
@@ -47,24 +47,24 @@ void setup()
     delay(1);
   
     // Reset the driver to its default settings.
-    stepper.resetSettings();
+    stepper[i].resetSettings();
   
     // Set the current limit.  You should change the number here to
     // an appropriate value for your particular system.
     if (i < 3) {
-      stepper.setCurrentMilliamps(1800);
+      stepper[i].setCurrentMilliamps(1800);
     } else {
-      stepper.setCurrentMilliamps(700);
+      stepper[i].setCurrentMilliamps(700);
     }
   
     // Set the number of microsteps that correspond to one full step.
-    stepper.setStepMode(4);
+    stepper[i].setStepMode(4);
   
-    stepper.setSlaTransparencyOff();
-    stepper.setSlaGainHalf();
+    stepper[i].setSlaTransparencyOff();
+    stepper[i].setSlaGainHalf();
   
     // Enable the motor outputs.
-    stepper.enableDriver();
+    stepper[i].enableDriver();
   }
 //*/
 }
@@ -102,7 +102,12 @@ void serialEvent()
             //send_message("Recieved message in: " + String((double)(millis() - redirectStart)/1000.0) + " seconds");
 
             if      (datatype == DATA && str.substring(61,62) == ">") parse_data(str.substring(4,60));
-            else if (datatype == HOMING_REQ) homing_sequence();
+            else if (datatype == HOMING_REQ) {
+              stepper[2].disableDriver();
+              homing_sequence();
+              Serial.println("done"<<);
+              stepper[2].enableDriver();
+            }
             else if (datatype == DEBUG) debug_mode();
             else delay(100);
         }
