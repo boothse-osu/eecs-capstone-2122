@@ -20,14 +20,14 @@ void printer_get_tip(struct Printer* prn, vec3 out) {
 //Normal vector from the print surface
 void printer_get_normal(struct Printer* prn, vec3 out) {
 
-	//Get the position of the end of link 3 minus the position of link 4
+	//Get the position of the end of link 4 minus the position of link 5
 	vec3 lnk5;
-	get_link_position(&(prn->links[4]), lnk5);
+	get_link_position(&(prn->links[5]), lnk5);
 	vec3 lnk4;
-	get_link_position(&(prn->links[3]), lnk4);
+	get_link_position(&(prn->links[4]), lnk4);
 
 	vec3 norm;
-	glm_vec3_sub(lnk4, lnk5, norm);
+	glm_vec3_sub(lnk5, lnk4, norm);
 
 	//Reverse it
 	glm_vec3_scale(norm, -1.f, norm);
@@ -49,10 +49,13 @@ struct Motor generate_motor(float min, float max) {
 }
 
 //Generates a prismatic link
-struct Link generate_link(vec3 home, int prismatic, vec3 axis, float ratio) {
+struct Link generate_link(vec3 start, vec3 end, int prismatic, vec3 axis, float ratio) {
 
 	struct Link lnk;
 
+	//Subtract the start from the end
+	vec3 home;
+	glm_vec3_sub(end,start,home);
 	glm_vec3_copy(home, lnk.home);
 
 	//Set the link matrix
@@ -104,18 +107,18 @@ struct Printer generate_printer() {
 	struct Link links[NUM_LINKS];
 
 	//Once the IK bug is squashed, this can be refactored to look like the motor code
-	links[0] = generate_link(LINK0_HOME, LINK0_PRISMATIC, LINK0_AXIS, LINK0_RATIO);
+	links[0] = generate_link((vec3) {0.f,0.f,0.f},LINK0_END, LINK0_PRISMATIC, LINK0_AXIS, LINK0_RATIO);
 
-	links[1] = generate_link(LINK1_HOME, LINK1_PRISMATIC, LINK1_AXIS, LINK1_RATIO);
+	links[1] = generate_link(LINK0_END, LINK1_END, LINK1_PRISMATIC, LINK1_AXIS, LINK1_RATIO);
 
-	links[2] = generate_link(LINK2_HOME, LINK2_PRISMATIC, LINK2_AXIS, LINK2_RATIO);
+	links[2] = generate_link(LINK1_END, LINK2_END, LINK2_PRISMATIC, LINK2_AXIS, LINK2_RATIO);
 
-	links[3] = generate_link(LINK3_HOME, LINK3_PRISMATIC, LINK3_AXIS, LINK3_RATIO);
+	links[3] = generate_link(LINK2_END, LINK3_END, LINK3_PRISMATIC, LINK3_AXIS, LINK3_RATIO);
 
-	links[4] = generate_link(LINK4_HOME, LINK4_PRISMATIC, LINK4_AXIS, LINK4_RATIO);
+	links[4] = generate_link(LINK3_END, LINK4_END, LINK4_PRISMATIC, LINK4_AXIS, LINK4_RATIO);
 
 	//Dummy link for normal purposes. Has no associated motor.
-	links[5] = generate_link(LINK5_HOME, 1, (vec3){ 0,0,0 }, 0.f);
+	links[5] = generate_link(LINK4_END, LINK5_END, 1, (vec3){ 0,0,0 }, 0.f);
 
 	//Create the printer
 
