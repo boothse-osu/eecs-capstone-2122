@@ -2,13 +2,13 @@
 
 // define pins and constants
 #define LED 13
-#define HOTEND PA2
-#define TEMPIN PA3
+#define HOTEND PA10
+#define TEMPIN PC4
 #define TREADCNT 5
 #define KP 15
 #define KI .3
 #define KD 0
-#define BETA 4390
+#define BETA 4267
 #define BTEMP 298.15 
 #define BRES 100000
 #define SRES 10000
@@ -18,6 +18,7 @@
 #define TEMPRANGE 10
 #define TEMPDELTA 2
 #define UNDERHEAT 3
+#define DISCON 10
 
 // set up PID control
 double hotin, hotset, hotout;
@@ -60,7 +61,7 @@ bool runawayCheck() {
     else {
       underheatCount = 0;
     }
-    if (hotin < 0) {
+    if (hotin < DISCON) {
       Serial.println("sensor disconnected");
       alarm = true;
     }
