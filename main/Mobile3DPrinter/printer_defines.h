@@ -14,16 +14,18 @@
 
 //Number of links
 //Should be 5, but might be higher if there are links without motors which are important
-#define NUM_LINKS 5
+#define NUM_LINKS 6
 
-//Link home position vectors
-#define LINK0_HOME (vec3){152.848f,-304.998f,-60.f} //X
-#define LINK1_HOME (vec3){6.183f,178.988f,50.5f} //Z
-#define LINK2_HOME (vec3){-83.679f,-130.5f,95.75f} //Y
-#define LINK3_HOME (vec3){-27.352f,230.25f,-42.008f} //YX
-#define LINK4_HOME (vec3){0.f,0.f,1.f} //YZ
+//Positions of the end of each link
+//0,0,0 is the end of the X motor
+#define LINK0_END (vec3){6.183f,178.998f,50.5f} //X
+#define LINK1_END (vec3){-77.496f,48.498f,148.25f} //Z
+#define LINK2_END (vec3){-104.848f,278.748f,106.242f} //Y
+#define LINK3_END (vec3){-104.903f,286.24f,113.75f} //YX
+#define LINK4_END (vec3){-64.458f,279.043f,113.75f} //YZ
+#define LINK5_END (vec3){-64.458f,279.043f,45.95f} //Extra bit at the end of the printer
 
-#define LINK_HOME_LIST {LINK0_HOME,LINK1_HOME,LINK2_HOME,LINK3_HOME,LINK4_HOME}
+#define LINK_END_LIST {LINK0_END,LINK1_END,LINK2_END,LINK3_END,LINK4_END,LINK5_END}
 
 //Whether or not the link has a prismatic joint at its base 1 for yes, 0 for no
 #define LINK0_PRISMATIC 1
@@ -63,19 +65,19 @@
 
 //Motor bounds (radians)
 //Max
-#define MOTOR0_MAX (float)(10000*M_PI/2.0)
-#define MOTOR1_MAX (float)(10000*M_PI/2.0)
-#define MOTOR2_MAX (float)(10000*M_PI/2.0)
-#define MOTOR3_MAX (float)10000*(M_PI/2.0)
-#define MOTOR4_MAX (float)10000*(M_PI/2.0)
+#define MOTOR0_MAX 570.f / LINK0_RATIO
+#define MOTOR1_MAX 340.f / LINK1_RATIO
+#define MOTOR2_MAX 560.f / LINK2_RATIO
+#define MOTOR3_MAX (M_PI/2.0) / LINK3_RATIO
+#define MOTOR4_MAX (M_PI/2.0) / LINK4_RATIO
 
 #define MOTOR_MAX_LIST {MOTOR0_MAX,MOTOR1_MAX,MOTOR2_MAX,MOTOR3_MAX,MOTOR4_MAX}
 //Min
-#define MOTOR0_MIN (float)(10000*-M_PI/2.0)
-#define MOTOR1_MIN (float)(10000*-M_PI/2.0)
-#define MOTOR2_MIN (float)(10000*-M_PI/2.0)
-#define MOTOR3_MIN (float)(10000*-M_PI/2.0)
-#define MOTOR4_MIN (float)(10000*-M_PI/2.0)
+#define MOTOR0_MIN -10.f / LINK0_RATIO
+#define MOTOR1_MIN -10.f / LINK1_RATIO
+#define MOTOR2_MIN -560.f / LINK2_RATIO
+#define MOTOR3_MIN (-M_PI/2.0) / LINK3_RATIO
+#define MOTOR4_MIN (-M_PI/2.0) / LINK4_RATIO
 
 #define MOTOR_MIN_LIST {MOTOR0_MIN,MOTOR1_MIN,MOTOR2_MIN,MOTOR3_MIN,MOTOR4_MIN}
 
