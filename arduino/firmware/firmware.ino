@@ -18,6 +18,10 @@
 // <!D(-0030.0000,-0000.0000,+0000.0000,+0000.0000,+0000.0000,t)>
 // <!D(-0000.0000,-0000.0000,+0000.0000,+0000.2500,+0000.2500,t)>
 
+// (+0080.0000,-0020.0000,+0060.0000,+0000.5000,+0000.5000,t)>!!!!!!
+
+// <!D(-0000.0000,-0000.0000,+0000.0000,-0000.7854,+0000.0000,t)>
+
 // <!!>
 // 4,0,0100
 
@@ -105,7 +109,7 @@ void serialEvent()
             else if (datatype == HOMING_REQ) {
               stepper[2].disableDriver();
               homing_sequence();
-              Serial.println("done"<<);
+              Serial.println("done");
               stepper[2].enableDriver();
             }
             else if (datatype == DEBUG) debug_mode();

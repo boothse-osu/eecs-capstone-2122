@@ -100,7 +100,7 @@ bool homing_command(){
     struct VoltageAverage voltage_log[MTR_NUMBER];
     for(int i=0; i<MTR_NUMBER; i++) voltage_log[i] = createVoltageAverage();
 
-    bool mtr_running [5] = {false, true, false, false, false};
+    bool mtr_running [5] = {true, true, false, false, false};
     int mtrs_done = 0;
     
     for(int i = 0; i<5; i++) setDirection(i,HOME_DIRECTION[i]);
@@ -142,7 +142,7 @@ bool homing_command(){
             }
           }
         }
-        if(mtrs_done==1) return true;
+        if(mtrs_done==2) return true;
       }
     }
     return false;
