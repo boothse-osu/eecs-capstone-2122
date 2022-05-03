@@ -114,7 +114,7 @@ void serialEvent()
               homing_sequence();
               stepper[2].enableDriver();
             }
-            else if (datatype == FILAMENT) hotendParse(str.substring(4));
+            else if (datatype == FILAMENT) filament_sequence();
             else if (datatype == TEMP_SET) hotendParse(str.substring(4));
             else if (datatype == DEBUG) debug_mode();
             else delay(100);
