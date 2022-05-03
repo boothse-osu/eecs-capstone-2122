@@ -116,6 +116,8 @@ void serialEvent()
             }
             else if (datatype == FILAMENT) filament_sequence();
             else if (datatype == TEMP_SET) hotendParse(str.substring(4));
+            else if (datatype == TEMP_REP) 
+              send_message("Current temp: " + String(hotin) + "°C, Target temp: " + String(hotset) + "°C");
             else if (datatype == DEBUG) debug_mode();
             else delay(100);
         }

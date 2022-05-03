@@ -23,6 +23,7 @@ const int min_mtr_delay = 200;
 bool new_move_command(long[5], bool);
 bool move_command(int[5], bool);
 bool homing_command();
+bool extrude();
 void step(int);
 void setDirection(int, bool);
 #endif

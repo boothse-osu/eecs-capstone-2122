@@ -72,10 +72,7 @@ bool runawayCheck() {
     lastTempTime = currentTime;
     lastTemp = hotin;
   }
-  if (alarm) {
-    return true;
-  }
-  return false;
+  return alarm;
 }
 
 void hotendParse(String str) {

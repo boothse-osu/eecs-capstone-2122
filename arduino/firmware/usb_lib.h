@@ -21,6 +21,7 @@ const char STOP         = 's';
 const char MESSAGE      = 'm';
 const char DEBUG        = '!';
 const char TEMP_SET     = 'n';
+const char TEMP_REP     = 't';
 const char FILAMENT     = 'f';
 
 const int HOME_DIRECTION[MTR_NUMBER] = {0,1,0,1,0};
@@ -28,6 +29,8 @@ const int POS_DIRECTION[MTR_NUMBER] = {1,1,1,1,1};
 const int NEG_DIRECTION[MTR_NUMBER] = {0,0,0,0,0};
 
 void parse_data(String);
+
+void filament_sequence();
 
 void homing_sequence();
 

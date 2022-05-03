@@ -158,7 +158,7 @@ bool extrude(){
     int cm_target_number = 40;
     int target = cm_step_amount * cm_target_number;
     int steps = 0;
-    time_nxt_step = micros() + 300;
+    unsigned long time_nxt_step = micros() + 300;
     while(true) {
       if(micros()>time_nxt_step){
         time_nxt_step = micros() + 350;
