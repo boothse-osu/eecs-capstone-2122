@@ -77,10 +77,10 @@ bool new_move_command(long stp_cnt[5], bool ht_nd){
                 //if(i==2 && abs(steps_taken[i])%1==0) list_sla[abs(steps_taken[i])] = analogRead(amisSLA[i]); // mtr_ready = false;//
 
                 //maybe remove abs from modulo
-                //if(abs(steps_taken[i])%Stall_Check_Step[i]==0 && pushRollingAverage(i, &voltage_log[i]) == false) {
-                //    stop_message("Stall on motor " + String(i));
-                //    return false;
-                //}
+                if(abs(steps_taken[i])%Stall_Check_Step[i]==0 && pushRollingAverage(i, &voltage_log[i]) == false) {
+                    stop_message("Stall on motor " + String(i));
+                    return false;
+                }
                 time_nxt_step[i] += time_steps[i];
                 steps_taken[i]++;
             }
