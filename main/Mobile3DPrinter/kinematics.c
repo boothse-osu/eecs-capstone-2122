@@ -31,7 +31,7 @@ void forward_kinematics(struct Printer* prn)
 	//	for an arbitary configuration anyways. If I could, I would.
 
 	//Go through the motors and links and update the link matrices based on the angles.
-	for (int i = 0; i < 5; i++) {
+	for (int i = 0; i < 6; i++) {
 
 		if (prn->links[i].prismatic) {
 			
@@ -61,7 +61,7 @@ void forward_kinematics(struct Printer* prn)
 	}
 
 	//Now, take all the relative values in the links and update their absolute matrices
-	for (int i = 0; i < 5; i++) {
+	for (int i = 0; i < NUM_LINKS; i++) {
 
 		mat4 prev_matrix;
 
@@ -236,7 +236,7 @@ int ik_test_case(struct Printer* prn, vec3 target, vec3 normal) {
 
 	if(!structure_error && !normal_error && !target_error) printf("		Test case: \x1B[32mPASSED\033[0m\n");
 
-	print_printer(prn);
+	//print_printer(prn);
 
 	return 0;
 }

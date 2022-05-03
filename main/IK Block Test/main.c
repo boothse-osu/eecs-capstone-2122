@@ -8,6 +8,8 @@ int main() {
 
 	struct Printer prn = generate_printer();
 
+	forward_kinematics(&prn);
+
 	//print_printer(&prn);
 	vec3 home_position;
 	printer_get_tip(&prn,home_position);
@@ -20,8 +22,8 @@ int main() {
 	printf("Home position:\n");
 	print_vec3(home_position);
 
-	printf("Home structure:\n");
-	print_printer(&prn);
+	//printf("Home structure:\n");
+	//print_printer(&prn);
 
 	printf("Move just the first motor\n");
 	if(ik_test_case(&prn, (vec3) { 2.f, 3.f, 1.f }, (vec3){0.f, -1.f,0.f})) return;

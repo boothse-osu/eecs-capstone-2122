@@ -3,18 +3,18 @@
 
 //Gets the position of the end of a link
 void get_link_position(struct Link* lnk, vec3 out) {
-
-	glm_mat4_mulv3(lnk->absolute_mat, lnk->home, 1.f, out);
+	
+	//glm_mat4_mulv3(lnk->absolute_mat, lnk->home, 1.f, out);
 
 	//Used to work(ish), kept just in case the above turns out to be broken
-	//vec3 zero = GLM_VEC3_ZERO_INIT
-	//glm_mat4_mulv3(lnk->absolute_mat, zero, 1.f, out);
+	vec3 zero = GLM_VEC3_ZERO_INIT;
+	glm_mat4_mulv3(lnk->absolute_mat, zero, 1.f, out);
 }
 
 //Gets position of the end effector
 void printer_get_tip(struct Printer* prn, vec3 out) {
 
-	get_link_position(&(prn->links[4]), out);
+	get_link_position(&(prn->links[5]), out);
 }
 
 //Normal vector from the print surface
@@ -118,7 +118,7 @@ struct Printer generate_printer() {
 	links[4] = generate_link(LINK3_END, LINK4_END, LINK4_PRISMATIC, LINK4_AXIS, LINK4_RATIO);
 
 	//Dummy link for normal purposes. Has no associated motor.
-	links[5] = generate_link(LINK4_END, LINK5_END, 1, (vec3){ 0,0,0 }, 0.f);
+	links[5] = generate_link(LINK4_END, LINK5_END, 1, (vec3){ 0,0,1.f }, 1.f);
 
 	//Create the printer
 
