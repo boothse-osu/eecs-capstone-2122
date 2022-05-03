@@ -5,6 +5,8 @@
 #include "stall_detection.h"
 #include "printer_control.h"
 
+
+// first 3 motors are 1600, last two are 800!!!!!!!!!!!!!!
 const int steps_per_rotation = 800; // I forgot again (maybe 800)
 const float steps_per_degree = (float)steps_per_rotation / 360;
 const float steps_per_radian = (float)steps_per_rotation / 6.28318530718;

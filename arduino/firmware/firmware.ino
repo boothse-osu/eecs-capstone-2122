@@ -4,6 +4,32 @@
 #include "printer_control.h"
 #include "stall_detection.h"
 #include "hotend_control.hpp"
+
+// Positional acc +/- 1deg && Arb Positioning
+// <!D(+0000.0000,+0000.0000,+0000.0000,-0000.7854,+0000.0000,t)>
+
+// 5 motor
+// <!D(+0080.0000,-0020.0000,-0060.0000,+0000.5000,+0000.5000,t)>
+
+// Serial
+// <!!>
+
+// Stall Detection
+// <!!> 
+// 4,0,0100
+
+// Filament
+// <!f>
+
+// Thermal Runaway
+// <!n(200)> <!t> disconnect sensor
+
+// Safety
+// visual inspection
+
+
+
+
 // <!D(+0123.1234,-0234.2345,+0345.3456,-0456.4567,+0567.5678,t)><!e>
 // <!D(+0000.0000,-0000.0000,+0000.0000,-0030.0000,+0030.0000,t)><!e>
 // <!D(-1000.0000,-0000.0000,+0000.0000,-0030.0000,-0030.0000,t)><!e>
