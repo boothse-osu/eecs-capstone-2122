@@ -1,8 +1,9 @@
 #include <SPI.h>
 #include <AMIS30543.h>
-#include "usb_lib.h";
-#include "printer_control.h";
-#include "stall_detection.h";
+#include "usb_lib.h"
+#include "printer_control.h"
+#include "stall_detection.h"
+#include "hotend_control.hpp"
 // <!D(+0123.1234,-0234.2345,+0345.3456,-0456.4567,+0567.5678,t)><!e>
 // <!D(+0000.0000,-0000.0000,+0000.0000,-0030.0000,+0030.0000,t)><!e>
 // <!D(-1000.0000,-0000.0000,+0000.0000,-0030.0000,-0030.0000,t)><!e>
@@ -71,12 +72,14 @@ void setup()
     stepper[i].enableDriver();
   }
 //*/
+
+  hotendSetup();
 }
 
 
 void loop()
 {
-
+    runHotend();
     // Hotend Code?
     //Serial.println(analogRead(amisSLA[0]));
 } 
@@ -109,9 +112,9 @@ void serialEvent()
             else if (datatype == HOMING_REQ) {
               stepper[2].disableDriver();
               homing_sequence();
-              Serial.println("done");
               stepper[2].enableDriver();
             }
+            else if (datatype == TEMP_SET) hotendParse(str.substring(4));
             else if (datatype == DEBUG) debug_mode();
             else delay(100);
         }
