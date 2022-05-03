@@ -149,6 +149,26 @@ bool homing_command(){
 }
 
 
+bool extrude(){
+    //return true;
+    int extrude_mtr_index = 2;
+
+    setDirection(extrude_mtr_index,0);
+    int cm_step_amount = 461;
+    int cm_target_number = 40;
+    int target = cm_step_amount * cm_target_number;
+    int steps = 0;
+    time_nxt_step = micros() + 300;
+    while(true) {
+      if(micros()>time_nxt_step){
+        time_nxt_step = micros() + 350;
+        step(extrude_mtr_index);
+        steps++;
+        if(steps==target) return true;
+      }
+    }
+}
+
 /*
 bool move_command(int stp_cnt[5], bool ht_nd){
     struct VoltageAverage voltage_log[MTR_NUMBER];

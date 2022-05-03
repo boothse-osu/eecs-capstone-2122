@@ -42,6 +42,12 @@ void parse_data(String str) {
     //Serial.println();
 }
 
+void filament_sequence(){
+    if(extrude()) {
+      send_message("Done Extruding");
+    }
+}
+
 void homing_sequence(){
     if(homing_command()) {
       confirm_homing();

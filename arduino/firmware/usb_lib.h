@@ -21,6 +21,7 @@ const char STOP         = 's';
 const char MESSAGE      = 'm';
 const char DEBUG        = '!';
 const char TEMP_SET     = 'n';
+const char FILAMENT     = 'f';
 
 const int HOME_DIRECTION[MTR_NUMBER] = {0,1,0,1,0};
 const int POS_DIRECTION[MTR_NUMBER] = {1,1,1,1,1};
