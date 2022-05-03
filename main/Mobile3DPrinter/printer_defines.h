@@ -60,24 +60,28 @@
 
 //Number of motors
 //Should be same as number of links, but plausable that it might not be the case
-#define NUM_MOTORS 5
+#define NUM_MOTORS 6
 //Will need to change the motor lists as well if changing
 
 //Motor bounds (radians)
 //Max
-#define MOTOR0_MAX 570.f / LINK0_RATIO
-#define MOTOR1_MAX 340.f / LINK1_RATIO
-#define MOTOR2_MAX 560.f / LINK2_RATIO
-#define MOTOR3_MAX (M_PI/2.0) / LINK3_RATIO
-#define MOTOR4_MAX (M_PI/2.0) / LINK4_RATIO
+#define MOTOR0_MAX 10000.f * 570.f / LINK0_RATIO
+#define MOTOR1_MAX 10000.f * 340.f / LINK1_RATIO
+#define MOTOR2_MAX 10000.f * 560.f / LINK2_RATIO
+#define MOTOR3_MAX 10000.f * (M_PI/2.0) / LINK3_RATIO
+#define MOTOR4_MAX 10000.f * (M_PI/2.0) / LINK4_RATIO
+//Dummy motor. Should never be moved.
+#define MOTOR5_MAX (M_PI/2.0)
 
 #define MOTOR_MAX_LIST {MOTOR0_MAX,MOTOR1_MAX,MOTOR2_MAX,MOTOR3_MAX,MOTOR4_MAX}
 //Min
-#define MOTOR0_MIN -10.f / LINK0_RATIO
-#define MOTOR1_MIN -10.f / LINK1_RATIO
-#define MOTOR2_MIN -560.f / LINK2_RATIO
-#define MOTOR3_MIN (-M_PI/2.0) / LINK3_RATIO
-#define MOTOR4_MIN (-M_PI/2.0) / LINK4_RATIO
+#define MOTOR0_MIN 10000.f * -10.f / LINK0_RATIO
+#define MOTOR1_MIN 10000.f * -10.f / LINK1_RATIO
+#define MOTOR2_MIN 10000.f * -560.f / LINK2_RATIO
+#define MOTOR3_MIN 10000.f * (-M_PI/2.0) / LINK3_RATIO
+#define MOTOR4_MIN 10000.f * (-M_PI/2.0) / LINK4_RATIO
+//Dummy motor. Should never be moved.
+#define MOTOR5_MIN (-M_PI/2.0)
 
 #define MOTOR_MIN_LIST {MOTOR0_MIN,MOTOR1_MIN,MOTOR2_MIN,MOTOR3_MIN,MOTOR4_MIN}
 
