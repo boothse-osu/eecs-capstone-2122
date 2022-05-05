@@ -45,7 +45,7 @@
 /////////////////////////////////////////////////////////////////////
 
 // Timer for how a serial event runs, blocking the main loop.
-unsigned long redirectStart;
+unsigned long processing_start;
 
 // Char holding the serial request command signifier.
 char signifier;
@@ -117,7 +117,7 @@ void serialEvent()
   while(Serial.available()) 
   {
     // Start the timer to record serial processing time.
-    redirectStart = millis();
+    processing_start = millis();
 
     // Read the entire buffer into a string
     String serial_message = Serial.readString();
@@ -127,7 +127,7 @@ void serialEvent()
     // <!h>       - Homing Command
     // <!n(200)>  - Set Hot-end to New Temp (200)
     if(serial_message.substring(0,2) == "<!") {
-      
+
       // Get command signifier char from buffer string.
       signifier = serial_message.charAt(2); 
 
@@ -135,43 +135,45 @@ void serialEvent()
       // Re-direct to the command that was called.
 
       // Signifier shows a move command and the move data is the right 
-      // length.
-      if (signifier == DATA && serial_message.substring(61,62) == ">") 
-        // Send the data to a data parser that will extract variables
-        // and call a move command.
+      // length. Send the data to a data parser that will extract 
+      // variables and call a move command.
+      if (signifier == MOVE_DATA && serial_message.substring(61,62) == ">") 
         handle_move(serial_message.substring(4,60));
 
-      // Signifier shows a homing request.
+      // Signifier shows a homing request. Disable the z-axis motor so 
+      // it will fall to its lowest point, initiate a homing sequence, 
+      // wait for the z-axis to fall and re-enable it.
       else if (signifier == HOMING_REQ) {
-        // Disable the z-axis motor so it will fall to the lowest point.
+        setDirection(2,0);
+        for(int i = 0; i<50; i++){
+          step(2);
+          delayMicroseconds(300);
+        }
         stepper[2].disableDriver();
-        
-        // Initiate a homing sequence.
+        stepper[4].disableDriver();
         handle_homing();
-
-        // Wait for the z-axis to fall and re-enable it.
-        //delay(1000*3); // 3sec delay to allow the z-axis to reach the bottom.
+        //delay(1000*3); // 3sec delay
         stepper[2].enableDriver();
+        stepper[4].enableDriver();
       }
 
-      // Signifier shows a filament extrusion test request.
+      // Signifier shows a filament extrusion test request. Initiate a 
+      // filament test.
       else if (signifier == FILAMENT) 
-        // Initiate a filament test.
         handle_filament_test();
 
-      // Signifier shows a hot-end tempature change request.
+      // Signifier shows a hot-end tempature change request. Call hot-end 
+      // tempature change handler.
       else if (signifier == TEMP_SET) 
-        // Call hot-end tempature change handler.
         hotendParse(serial_message.substring(4));
 
-      // Signifier shows a hot-end status request.
+      // Signifier shows a hot-end status request. Send message containing 
+      // hot-end information.
       else if (signifier == TEMP_REP) 
-        // Send message containing hot-end information.
         send_message("Current temp: " + String(hotin) + "°C, Target temp: " + String(hotset) + "°C");
       
-      // Signifer shows a debug mode request.
+      // Signifer shows a debug mode request. Call debug mode handler.
       else if (signifier == DEBUG) 
-        // Call debug mode handler.
         handle_debug();
       
       else send_message("UNKOWN COMMAND");;
@@ -180,5 +182,5 @@ void serialEvent()
   }
 
   // Send message of the time it took to process buffer.
-  send_message("Done in: " + String((double)(millis() - redirectStart)/1000.0) + " seconds");
+  send_message("Done in: " + String((double)(millis() - processing_start)/1000.0) + " seconds");
 }

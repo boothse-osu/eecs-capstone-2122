@@ -21,7 +21,7 @@ bool new_move_command(long stp_cnt[5], bool ht_nd){
     long steps_taken[5] = {0, 0, 0, 0, 0};
 
     // Data for stall detection, may be moved to stall_detection.cpp
-    struct VoltageAverage voltage_log[MTR_NUMBER];
+    struct StallData voltage_log[MTR_NUMBER];
     for(int i=0; i<MTR_NUMBER; i++) voltage_log[i] = createVoltageAverage();
 
     // Set each motor in the correct direction
@@ -59,7 +59,7 @@ bool new_move_command(long stp_cnt[5], bool ht_nd){
     
     send_message("Starting move command");
 
-    signed int list_sla [abs(stp_cnt[2])] = {0};
+    signed int list_sla [abs(stp_cnt[1])] = {0};
 
     int i;
     unsigned long timeNow = micros();
@@ -74,10 +74,10 @@ bool new_move_command(long stp_cnt[5], bool ht_nd){
             if(timeNow>=time_nxt_step[i] && steps_taken[i]!=abs(stp_cnt[i])){
                 step(i);
                 
-                //if(i==2 && abs(steps_taken[i])%1==0) list_sla[abs(steps_taken[i])] = analogRead(amisSLA[i]); // mtr_ready = false;//
+                if(i==1 && abs(steps_taken[i])%1==0) list_sla[abs(steps_taken[i])] = analogRead(amisSLA[i]); // mtr_ready = false;//
 
                 //maybe remove abs from modulo
-                if(abs(steps_taken[i])%Stall_Check_Step[i]==0 && pushRollingAverage(i, &voltage_log[i]) == false) {
+                if(abs(steps_taken[i])%Stall_Check_Step[i]==0 && pushVoltage(i, &voltage_log[i]) == false) {
                     stop_message("Stall on motor " + String(i));
                     return false;
                 }
@@ -87,7 +87,7 @@ bool new_move_command(long stp_cnt[5], bool ht_nd){
         }
     }
 
-    //for(int i=0; i<abs(stp_cnt[2]); i++) Serial.println(list_sla[i]);
+    for(int i=0; i<abs(stp_cnt[1]); i++) Serial.println(list_sla[i]);
     
     //send_message("Done in "+String((double)(millis()-start_time)/1000.0)+" seconds");
     for(int i = 0; i<5; i++) send_message("MTR "+String(i)+" steps taken: " + String(steps_taken[i]));
@@ -97,7 +97,7 @@ bool new_move_command(long stp_cnt[5], bool ht_nd){
 
 bool homing_command(){
     //return true;
-    struct VoltageAverage voltage_log[MTR_NUMBER];
+    struct StallData voltage_log[MTR_NUMBER];
     for(int i=0; i<MTR_NUMBER; i++) voltage_log[i] = createVoltageAverage();
 
     bool mtr_running [5] = {true, true, false, false, false};
@@ -105,29 +105,8 @@ bool homing_command(){
     
     for(int i = 0; i<5; i++) setDirection(i,HOME_DIRECTION[i]);
 
-    unsigned long time_nxt_step = micros() + 5000;
-    while(true) {
-      if(micros()>time_nxt_step){
-        time_nxt_step = micros() + 5000;
-        step(4);
-        mtr_running[4] = pushRollingAverage(4, &voltage_log[4]);
-        if(mtr_running[4]==false) break;
-      }
-    }
-    send_message("Motor 4 at home");
-
-    time_nxt_step = micros() + 20000;
-    while(true) {
-      if(micros()>time_nxt_step){
-        time_nxt_step = micros() + 5000;
-        step(3);
-        mtr_running[3] = pushRollingAverage(3, &voltage_log[3]);
-        if(mtr_running[3]==false) break;
-      }
-    }
-    send_message("Motor 3 at home");
-
-    time_nxt_step = micros() + 350;
+    
+    unsigned long time_nxt_step = micros() + 350;
     send_message("Starting Homing");
     while(true) {
       if(micros()>time_nxt_step){
@@ -135,17 +114,42 @@ bool homing_command(){
         for(int i = 0; i<5; i++) {
           if(mtr_running[i]) {
             step(i);
-            mtr_running[i] = pushRollingAverage(i, &voltage_log[i]);
+            mtr_running[i] = pushVoltage(i, &voltage_log[i]);
             if(mtr_running[i]==false) {
               send_message("Motor " + String(i) + " at home");
               mtrs_done++;
             }
           }
         }
-        if(mtrs_done==2) return true;
+        if(mtrs_done==2) break;
       }
     }
-    return false;
+
+
+/*
+    time_nxt_step = micros() + 7500;
+    while(true) {
+      if(micros()>time_nxt_step){
+        time_nxt_step = micros() + 7500;
+        step(4);
+        mtr_running[4] = pushVoltage(4, &voltage_log[4]);
+        if(mtr_running[4]==false) break;
+      }
+    }
+    send_message("Motor 4 at home");
+*/
+    time_nxt_step = micros() + 7500;
+    while(true) {
+      if(micros()>time_nxt_step){
+        time_nxt_step = micros() + 7500;
+        step(3);
+        mtr_running[3] = pushVoltage(3, &voltage_log[3]);
+        if(mtr_running[3]==false) break;
+      }
+    }
+    send_message("Motor 3 at home");
+
+  return true;
 }
 
 
@@ -169,67 +173,6 @@ bool extrude(){
     }
 }
 
-/*
-bool move_command(int stp_cnt[5], bool ht_nd){
-    struct VoltageAverage voltage_log[MTR_NUMBER];
-    for(int i=0; i<MTR_NUMBER; i++) voltage_log[i] = createVoltageAverage();
-    unsigned long start_time = millis();
-
-    for(int i = 0; i<5; i++) {
-      if(stp_cnt[i] >= 0) setDirection(i,0);
-      else setDirection(i,1);
-    }
-  
-    int steps_taken[5] = {0, 0, 0, 0, 0};
-    for(int i = 0; i<5; i++) time_steps[i] = mvmt_time / abs(stp_cnt[i]);
-
-    unsigned long timeBegin = micros();
-    float time_nxt_step [5] = {0, 0, 0, 0, 0};
-    for(int i = 0; i<5; i++) time_nxt_step[i] += timeBegin + time_steps[i];
-    
-    send_message("Starting Up");
-    Serial.println();
-    
-    
-    unsigned long timeEnd = micros() + mvmt_time;
-    unsigned long timeNow;
-    unsigned long timeTotal;
-    unsigned int stall_check = Output_Time;
-    while(true) {
-        timeTotal = micros();
-
-        for(int i = 0; i<5; i++) {
-            timeNow = micros();
-            //Serial.println(String((timeNow-time_nxt_step[i])/time_steps[i]));
-            for(int k = 0; k<(timeNow-time_nxt_step[i])/time_steps[i]; k++){
-                //send_message("Step mtr " + String(i));
-                step(i);
-                if(stall_check==abs(steps_taken[i]) && false) {
-                  stall_check += Output_Time;
-                  Serial.println(analogRead(amisSLA[i]));
-                  if(pushRollingAverage(analogRead(amisSLA[i]), &voltage_log[i]) == false) {
-                    
-                    stop_message("Stall on motor " + String(i));
-                    return false;
-                  }
-                }
-                //Serial.println(analogRead(amisSLA[i]));
-                time_nxt_step[i] += time_steps[i];
-                steps_taken[i]+= stp_cnt[i] / abs(stp_cnt[i]);
-                if(steps_taken[i]== stp_cnt[i]) break;
-            }  
-        }
-        if(timeTotal > timeEnd) break;
-    }
-    send_message("Done in "+String((double)(millis()-start_time)/1000.0)+" seconds");
-    for(int i = 0; i<5; i++) send_message("MTR "+String(i)+" steps taken: " + String(steps_taken[i]));
-    Serial.println();
-    for(int i = 0; i<5; i++) send_message("MTR "+String(i)+" microseconds per step: " + String(time_steps[i]));
-    return true;
-}
-*/
-
-///*
 // Sends a pulse on the NXT/STEP pin to tell the driver to take
 // one step, and also delays to control the speed of the motor.
 void step(int sel)
@@ -258,4 +201,3 @@ void setDirection(int sel, bool dir)
   digitalWrite(amisDirPin[sel], dir);
   delayMicroseconds(1);
 }
-//*/

@@ -1,54 +1,61 @@
+// Cpp - Arduino Library
 #include "Arduino.h"
+
+// USB Communication Function Library
 #include "usb_lib.h"
+
+// Printer Movement Function Library
+// Contains PIN info
 #include "printer_control.h"
+
+// Stall Detection Function Library
 #include "stall_detection.h"
 
-struct VoltageAverage createVoltageAverage() {
-    struct VoltageAverage VAvg;
-    VAvg.pos = 0;
-    VAvg.len = 0;
-    VAvg.sum = 0;
-    VAvg.stall_trigger = 0;
-    VAvg.stall_line = 0.0;
-    return VAvg;
+// Constructor for VoltageAverage structs. Sets everything to initial 
+// values
+struct StallData createVoltageAverage() {
+    struct StallData SData;
+    SData.len = 0;
+    SData.sum = 0;
+    SData.stall_trigger = 0;
+    SData.stall_line = 0.0;
+    return SData;
 }
 
-// record the average and set a stall line under that
-// then we can ignore adding to the average again
-bool pushRollingAverage(int index, struct VoltageAverage* VAvg) {
-    //return true;
 
-    if(VAvg->len > Stall_Array_Size[index]) {
+int voltages[1000];
+// Push a new Voltage for motor number index and pass all of
+// its stall data in a struct SData.
+// Returns: True - No Stall | False - Stall
+// - (note) No longer using rolling average due to stalls on some motors being
+// - too gradual.
+bool pushVoltage(int index, struct StallData* SData) {
+    // If enough voltages have been pushed to have an accurate average.
+    if(SData->len > Stall_Array_Size[index]) {
+
+      // Read the SLA voltage from the indexed motor driver.
       int test = analogRead(amisSLA[index]);
-      //Serial.println("volt: " + String(test));
-      if (test <= VAvg->stall_line) {
-        VAvg->stall_trigger++;
-        if(VAvg->stall_trigger == Stall_Trigger_Amt[index]) return false;
+      
+      // If voltage is below stall line, add a trigger. Otherwise, reset
+      // trigger.
+      if (test <= SData->stall_line) {
+        SData->stall_trigger++;
+
+        // If a stall has been triggered enough times in a row for the 
+        // specific motor, return a false (indicating stall)
+        if(SData->stall_trigger == Stall_Trigger_Amt[index]){
+          //Serial.println("Line: " + String(SData->stall_line));
+          return false;
+        }
       }
-      else {
-        VAvg->stall_trigger = 0;
-      }
+      else SData->stall_trigger = 0;
     }
+    // If we are still fine-tuning the average: grab the voltage, increment
+    // the length of data, and recalculate the new stall-line
     else {
-      VAvg->sum += analogRead(amisSLA[index]);
-      VAvg->len++;
-      VAvg->stall_line = ((VAvg->sum / VAvg->len)/Stall_Line_Mult[index])+5;
-      //Serial.println(String(((VAvg->sum / VAvg->len)/2)+5));
+      SData->sum += analogRead(amisSLA[index]);
+      SData->len++;
+      SData->stall_line = ((SData->sum / SData->len)/Stall_Line_Frac[index])+5;
     }
     return true;
-
-
-/*    
-    VAvg->voltages[VAvg->pos] = analogRead(amisSLA[index]);
-    VAvg->sum += VAvg->voltages[VAvg->pos];
-    VAvg->len++; VAvg->pos++;
-    if (VAvg->pos >= Array_Size) VAvg->pos = 0;
-    if (VAvg->len > Array_Size) {
-        VAvg->len--;
-        VAvg->sum -= VAvg->voltages[VAvg->pos];
-        if(VAvg->voltages[VAvg->pos] < ((VAvg->sum / VAvg->len)/2)) return false; // testing new stall detection
-    }
-    //Serial.println(String(VAvg->sum / VAvg->len));
-    return true;
-*/
 }
