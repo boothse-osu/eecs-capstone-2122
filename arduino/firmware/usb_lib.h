@@ -7,6 +7,9 @@
 // Stall Detection Function Library
 #include "stall_detection.h"
 
+
+
+
 // Printer Movement Function Library
 #include "printer_control.h"
 
@@ -45,7 +48,7 @@ const int NEG_DIRECTION[MTR_NUMBER] = {0,0,0,0,0};
 
 void handle_move(String);
 
-void handle_filament_test();
+void handle_filament_test(String);
 
 void handle_homing();
 

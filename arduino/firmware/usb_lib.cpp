@@ -29,8 +29,17 @@ void handle_move(String str) {
     else return;
 }
 
-void handle_filament_test(){
-    if(extrude()) {
+void handle_filament_test(String str){
+    double cm = str.substring(0,6).toDouble();
+    int distance = str.substring(7,10).toInt();
+    //Serial.println(cm,4);
+    //Serial.println(distance);
+    //return;
+    //int seconds = str.substring(5,10).toInt();
+    //Serial.println(cm, 4);
+    //return;
+    //Serial.println(delay_time);
+    if(extrude(cm, distance)) {
       send_message("Done Extruding");
     }
 }
@@ -59,7 +68,7 @@ void handle_debug(){
     
     int mtr = str.substring(0,1).toInt();
     String direct = str.substring(2,3);
-    long steps = str.substring(4,9).toInt();
+    long steps = str.substring(4,10).toInt(); // 9 for 4 digit number
 
     if(direct == "+" || direct == String(POS_DIRECTION[mtr])) delay(1);
     else if(direct == "-" || direct == String(NEG_DIRECTION[mtr])) steps *= -1;

@@ -24,14 +24,17 @@
 // <!D(+0000.0000,+0000.0000,+0000.0000,-0000.7854,+0000.0000,t)>
 
 // 5 motor
-// <!D(+0080.0000,-0020.0000,-0060.0000,+0000.5000,+0000.5000,t)>
+// <!D(+0020.0000,-0020.0000,+0020.0000,+0000.5000,+0000.5000,t)>
+
+// 4 motor
+// <!D(+0020.0000,-0020.0000,-0000.0000,+0000.5000,+0000.5000,t)>
 
 // Serial
 // <!!>
 
 // Stall Detection
 // <!!> 
-// 4,0,0100
+// 4,0,00100
 
 // Filament
 // <!f>
@@ -160,7 +163,7 @@ void serialEvent()
       // Signifier shows a filament extrusion test request. Initiate a 
       // filament test.
       else if (signifier == FILAMENT) 
-        handle_filament_test();
+        handle_filament_test(serial_message.substring(4));
 
       // Signifier shows a hot-end tempature change request. Call hot-end 
       // tempature change handler.

@@ -42,7 +42,7 @@ bool new_move_command(long stp_cnt[5], bool ht_nd){
             else{
                 time_steps[i] = (mvmt_time + added_time) / abs(stp_cnt[i]);
                 if(time_steps[i]<min_mtr_delay) {
-                    added_time += 500000; // half sec
+                    added_time += 5000; // half sec
                     mtr_ready = false;
                 }
             }
@@ -59,7 +59,7 @@ bool new_move_command(long stp_cnt[5], bool ht_nd){
     
     send_message("Starting move command");
 
-    signed int list_sla [abs(stp_cnt[1])] = {0};
+    //signed int list_sla [abs(stp_cnt[1])] = {0};
 
     int i;
     unsigned long timeNow = micros();
@@ -74,22 +74,22 @@ bool new_move_command(long stp_cnt[5], bool ht_nd){
             if(timeNow>=time_nxt_step[i] && steps_taken[i]!=abs(stp_cnt[i])){
                 step(i);
                 
-                if(i==1 && abs(steps_taken[i])%1==0) list_sla[abs(steps_taken[i])] = analogRead(amisSLA[i]); // mtr_ready = false;//
+                //if(i==1 && abs(steps_taken[i])%1==0) list_sla[abs(steps_taken[i])] = analogRead(amisSLA[i]); // mtr_ready = false;//
 
                 //maybe remove abs from modulo
-                if(abs(steps_taken[i])%Stall_Check_Step[i]==0 && pushVoltage(i, &voltage_log[i]) == false) {
-                    stop_message("Stall on motor " + String(i));
-                    return false;
-                }
+                //if(abs(steps_taken[i])%Stall_Check_Step[i]==0 && pushVoltage(i, &voltage_log[i]) == false) {
+                //    stop_message("Stall on motor " + String(i));
+                //    return false;
+                //}
                 time_nxt_step[i] += time_steps[i];
                 steps_taken[i]++;
             }
         }
     }
 
-    for(int i=0; i<abs(stp_cnt[1]); i++) Serial.println(list_sla[i]);
+    //for(int i=0; i<abs(stp_cnt[1]); i++) Serial.println(list_sla[i]);
     
-    //send_message("Done in "+String((double)(millis()-start_time)/1000.0)+" seconds");
+    send_message("Done in "+String((double)(millis()-start_time)/1000.0)+" seconds");
     for(int i = 0; i<5; i++) send_message("MTR "+String(i)+" steps taken: " + String(steps_taken[i]));
     for(int i = 0; i<5; i++) send_message("MTR "+String(i)+" microseconds per step: " + String(time_steps[i]));
     return true;
@@ -125,19 +125,6 @@ bool homing_command(){
       }
     }
 
-
-/*
-    time_nxt_step = micros() + 7500;
-    while(true) {
-      if(micros()>time_nxt_step){
-        time_nxt_step = micros() + 7500;
-        step(4);
-        mtr_running[4] = pushVoltage(4, &voltage_log[4]);
-        if(mtr_running[4]==false) break;
-      }
-    }
-    send_message("Motor 4 at home");
-*/
     time_nxt_step = micros() + 7500;
     while(true) {
       if(micros()>time_nxt_step){
@@ -153,19 +140,23 @@ bool homing_command(){
 }
 
 
-bool extrude(){
+bool extrude(double cms, int cm){
     //return true;
     int extrude_mtr_index = 2;
 
-    setDirection(extrude_mtr_index,0);
     int cm_step_amount = 461;
-    int cm_target_number = 40;
-    int target = cm_step_amount * cm_target_number;
+    int delay_time = 1000000/(cm_step_amount*cms);
+
+    if (cm>0)setDirection(extrude_mtr_index,0);
+    else setDirection(extrude_mtr_index,1);
+    
+    int cm_target_number = cms;
+    int target = cm_step_amount * abs(cm);
     int steps = 0;
     unsigned long time_nxt_step = micros() + 300;
     while(true) {
       if(micros()>time_nxt_step){
-        time_nxt_step = micros() + 350;
+        time_nxt_step = micros() + delay_time;
         step(extrude_mtr_index);
         steps++;
         if(steps==target) return true;
