@@ -11,6 +11,24 @@ void handle_move(String str) {
     long mtr_steps[5];
     String hot_end = str.substring(55,56);
 
+    send_message(str);
+    unsigned long parseBegin = millis();
+
+    for(int i = 0; i<5; i++) {
+      mtr_steps[i] = round(str.substring((i*11), (i*11)+10).toDouble() * (steps_per_rotations[i] / step_mode));
+      Serial.println(mtr_steps[i]);
+    }
+    
+    confirm_data();
+
+    unsigned long calcStepsBegin = millis();
+    if(new_move_command(mtr_steps,true)) request_data(1);
+    else return;
+}
+
+void handle_print_move(String str) {
+    long mtr_steps[5];
+    String hot_end = str.substring(55,56);
 
     send_message(str);
     unsigned long parseBegin = millis();
@@ -20,12 +38,14 @@ void handle_move(String str) {
       Serial.println(mtr_steps[i]);
     }
     
+    double cms = 2.0;
+    int cm_step_amount = 461;
+    long delay_time = 1000000/(cm_step_amount*cms);
 
     confirm_data();
 
     unsigned long calcStepsBegin = millis();
-
-    if(new_move_command(mtr_steps,true)) request_data(1);
+    if(print_move_command(mtr_steps,delay_time)) request_data(1);
     else return;
 }
 

@@ -143,6 +143,9 @@ void serialEvent()
       if (signifier == MOVE_DATA && serial_message.substring(61,62) == ">") 
         handle_move(serial_message.substring(4,60));
 
+      else if (signifier == MOVE_DATA && serial_message.substring(61,62) == ">") 
+        handle_print_move(serial_message.substring(4));
+
       // Signifier shows a homing request. Disable the z-axis motor so 
       // it will fall to its lowest point, initiate a homing sequence, 
       // wait for the z-axis to fall and re-enable it.

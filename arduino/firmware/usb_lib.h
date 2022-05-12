@@ -48,6 +48,8 @@ const int NEG_DIRECTION[MTR_NUMBER] = {0,0,0,0,0};
 
 void handle_move(String);
 
+void handle_print_move(String);
+
 void handle_filament_test(String);
 
 void handle_homing();
