@@ -26,7 +26,7 @@ int main() {
 	//print_printer(&prn);
 
 	printf("Move just the first motor\n");
-	if(ik_test_case(&prn, (vec3) { 2.f, 3.f, 1.f }, (vec3){0.f, 1.f,0.f})) return;
+	if(ik_test_case(&prn, (vec3) { 2.f, 3.f, 1.f }, (vec3){0.f, -1.f,0.f})) return;
 
 	printf("Move just the second motor\n");
 	if(ik_test_case(&prn, (vec3) { 2.f, 3.f, 2.f }, (vec3) { 0.f, -1.f, 0.f })) return;
