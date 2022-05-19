@@ -125,7 +125,7 @@ bool print_move_command(long stp_cnt[5], long extrude_delay){
       else setDirection(i,NEG_DIRECTION[i]);
     }
 
-    // Time inbetween steps on a specific motor
+    // Time between steps on a specific motor
     // Should add a case where: if a time_step[i] is less than 150, add
     // time to mvmt_time and recalculate. This will avoid missing steps
     float added_time = 0;
@@ -145,11 +145,11 @@ bool print_move_command(long stp_cnt[5], long extrude_delay){
     }
 
 
-
+    // Set extrusion to correct direction
     if (extrude_delay>0)setDirection(extruder_pin,0);
     else setDirection(extruder_pin,1);
+    // Set motor step delay
     long time_steps_extruder = abs(extrude_delay);
-    long stp_cnt_extruder = -1;
 
 
     // Timer that the motors will trigger off
@@ -164,19 +164,29 @@ bool print_move_command(long stp_cnt[5], long extrude_delay){
 
     send_message("Starting move command");
 
+    // SLA Log for testing
     //signed int list_sla [abs(stp_cnt[1])] = {0};
 
     int i;
+    // Record current time for stepping
     unsigned long timeNow = micros();
+
+    // Code ends at time of completion for speed
     unsigned long timeEnd = timeNow + (mvmt_time + added_time);
-    while(timeNow < timeEnd){
+    bool done_mtrs [5] = {false};
+    int motors_done = 0;
+    while(motors_done > 5){
         timeNow = micros();
 
         //maybe faster to turn this into function
         for(i = 0; i<5; i++){
           
             //maybe comment out 2nd part of if statement
-            if(timeNow>=time_nxt_step[i] && steps_taken[i]!=abs(stp_cnt[i])){
+            if(done_mtrs[i]==true){
+            } else if(steps_taken[i]==abs(stp_cnt[i])){
+              done_mtrs[i] = true;
+              motors_done++;
+            } else if(timeNow>=time_nxt_step[i]){
                 step(i);
                 
                 //if(i==1 && abs(steps_taken[i])%1==0) list_sla[abs(steps_taken[i])] = analogRead(amisSLA[i]); // mtr_ready = false;//
