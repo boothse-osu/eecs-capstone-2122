@@ -1,9 +1,16 @@
+// Cpp - Arduino Library
 #include "Arduino.h"
 
+//
 #include "SPI.h"
+
+// Motor Driver Library
 #include "AMIS30543.h"
 
+// USB Communication Function Library
 #include "usb_lib.h"
+
+// Printer Movement Function Library
 #include "printer_control.h"
 
 // Used to record the time between steps for each motor or each move command
@@ -30,7 +37,7 @@ bool new_move_command(long stp_cnt[5], bool ht_nd){
       else setDirection(i,NEG_DIRECTION[i]);
     }
 
-    // Time inbetween steps on a specific motor
+    // Time between steps on a specific motor
     // Should add a case where: if a time_step[i] is less than 150, add
     // time to mvmt_time and recalculate. This will avoid missing steps
     float added_time = 0;
@@ -59,7 +66,9 @@ bool new_move_command(long stp_cnt[5], bool ht_nd){
     
     send_message("Starting move command");
 
-    //signed int list_sla [abs(stp_cnt[1])] = {0};
+    int motor_check = 0;
+    signed int list_sla [abs(stp_cnt[motor_check])] = {0};
+    
 
     int i;
     unsigned long timeNow = micros();
@@ -67,27 +76,29 @@ bool new_move_command(long stp_cnt[5], bool ht_nd){
     while(timeNow < timeEnd){
         timeNow = micros();
 
-        //maybe faster to turn this into function
         for(i = 0; i<5; i++){
           
-            //maybe comment out 2nd part of if statement
             if(timeNow>=time_nxt_step[i] && steps_taken[i]!=abs(stp_cnt[i])){
                 step(i);
                 
-                //if(i==1 && abs(steps_taken[i])%1==0) list_sla[abs(steps_taken[i])] = analogRead(amisSLA[i]); // mtr_ready = false;//
+                if(i==motor_check && abs(steps_taken[i])%1==0) list_sla[abs(steps_taken[i])] = analogRead(amisSLA[i]); // mtr_ready = false;//
 
                 //maybe remove abs from modulo
-                //if(abs(steps_taken[i])%Stall_Check_Step[i]==0 && pushVoltage(i, &voltage_log[i]) == false) {
-                //    stop_message("Stall on motor " + String(i));
-                //    return false;
-                //}
+                if(abs(steps_taken[i])%Stall_Check_Step[i]==0 && pushVoltage(i, &voltage_log[i]) == false) {
+                    
+                    for(int k=0; k<abs(steps_taken[motor_check])&&k<1000; k++) Serial.println(list_sla[k]);
+                    stop_message("Stall on motor " + String(i));
+                    //for(int k = 0; k<5; k++) send_message("MTR "+String(k)+" steps taken: " + String(steps_taken[k]));
+                    //for(int k = 0; k<5; k++) send_message("MTR "+String(k)+" microseconds per step: " + String(time_steps[k]));
+                    return false;
+                }
                 time_nxt_step[i] += time_steps[i];
                 steps_taken[i]++;
             }
         }
     }
 
-    //for(int i=0; i<abs(stp_cnt[1]); i++) Serial.println(list_sla[i]);
+    for(int i=0; i<abs(steps_taken[motor_check])&&i<1000; i++) Serial.println(list_sla[i]);
     
     send_message("Done in "+String((double)(millis()-start_time)/1000.0)+" seconds");
     for(int i = 0; i<5; i++) send_message("MTR "+String(i)+" steps taken: " + String(steps_taken[i]));
@@ -95,7 +106,7 @@ bool new_move_command(long stp_cnt[5], bool ht_nd){
     return true;
 }
 
-// ht_nd: UNUSED AT THIS POINT
+
 bool print_move_command(long stp_cnt[5], long extrude_delay){
     // timer for feedback on how long this function ran
     unsigned long start_time = millis();
@@ -138,6 +149,7 @@ bool print_move_command(long stp_cnt[5], long extrude_delay){
     if (extrude_delay>0)setDirection(extruder_pin,0);
     else setDirection(extruder_pin,1);
     time_steps[extruder_pin] = abs(extrude_delay);
+    stp_cnt[extruder_pin] = -1;
 
     // Timer that the motors will trigger off
     unsigned long timeBegin = micros();
@@ -226,13 +238,15 @@ bool homing_command(){
       }
     }
     send_message("Motor 3 at home");
+    
+    send_message("Motor 4 at home");
+    send_message("Motor 2 at home");
 
   return true;
 }
 
 
 bool extrude(double cms, int cm){
-    //return true;
     int extrude_mtr_index = 2;
 
     int cm_step_amount = 461;
