@@ -20,6 +20,7 @@ float time_steps [5];
 // stp_cnt: 5 long array of ints for the amount of steps to move for each motor
 // ht_nd: UNUSED AT THIS POINT
 // This move is only used to allow for commands from 5 motor only IK
+// Will be all deleted when IK is updated
 bool new_move_command(long stp_cnt[5], bool ht_nd){
     // timer for feedback on how long this function ran
     unsigned long start_time = millis();
@@ -275,7 +276,7 @@ bool homing_command(){
   return true;
 }
 
-
+// Temporary Test Function
 bool extrude(double cms, int cm){
     int extrude_mtr_index = 2;
 
