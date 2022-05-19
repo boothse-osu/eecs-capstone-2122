@@ -64,11 +64,12 @@ void handle_print_move(String str) {
 
   send_message(String(cms));
   // If cm/s = 0 delay = 0 to avoid divide by zero
+  long delay_time;
   if(cms==0) delay_time = 0;
   else {
     // Translate cm/s into microsecond step delay for motors
     int cm_step_amount = 461;
-    long delay_time = 1000000/(cm_step_amount*cms);
+    delay_time = 1000000/(cm_step_amount*cms);
   }
   send_message(String(delay_time));
 

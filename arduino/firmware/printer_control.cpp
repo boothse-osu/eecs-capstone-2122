@@ -148,8 +148,9 @@ bool print_move_command(long stp_cnt[5], long extrude_delay){
 
     if (extrude_delay>0)setDirection(extruder_pin,0);
     else setDirection(extruder_pin,1);
-    time_steps[extruder_pin] = abs(extrude_delay);
-    stp_cnt[extruder_pin] = -1;
+    long time_steps_extruder = abs(extrude_delay);
+    long stp_cnt_extruder = -1;
+
 
     // Timer that the motors will trigger off
     unsigned long timeBegin = micros();
@@ -158,6 +159,7 @@ bool print_move_command(long stp_cnt[5], long extrude_delay){
     float time_nxt_step [5] = {0, 0, 0, 0, 0};
     // Calculate the time of first step for each motor
     for(int i = 0; i<5; i++) time_nxt_step[i] += timeBegin + time_steps[i];
+    float time_nxt_step_extruder = timeBegin + time_steps_extruder;
     
 
     send_message("Starting move command");
@@ -187,6 +189,10 @@ bool print_move_command(long stp_cnt[5], long extrude_delay){
                 time_nxt_step[i] += time_steps[i];
                 steps_taken[i]++;
             }
+        }
+        if(timeNow>=time_nxt_step_extruder){
+          step(extruder_pin);
+          time_nxt_step_extruder += time_steps_extruder;
         }
     }
 
