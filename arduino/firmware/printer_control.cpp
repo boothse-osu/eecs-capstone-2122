@@ -78,7 +78,7 @@ bool new_move_command(long stp_cnt[5], bool ht_nd){
     while(timeNow < timeEnd){
         timeNow = micros();
 
-        delayMicroseconds()
+        delayMicroseconds(150);
         for(i = 0; i<5; i++){
           
             if(timeNow>=time_nxt_step[i] && steps_taken[i]!=abs(stp_cnt[i])){
