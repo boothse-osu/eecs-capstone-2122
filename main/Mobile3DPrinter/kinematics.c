@@ -7,16 +7,19 @@ int set_motor_angle(struct Printer* prn, int idx, float angle) {
 	
 	printf("Changing angle %i to %f!\n", idx, angle);
 
-	//Ensure it is within bounds, otherwie set the angle
-	if (angle < prn->motors[idx].min_angle) {
-		return 1;
-	}
+	if (ANGLE_BOUNDS) {
+		//Ensure it is within bounds, otherwie set the angle
+		if (angle < prn->motors[idx].min_angle) {
+			return 1;
+		}
 
-	if (angle > prn->motors[idx].max_angle) {
-		return 1;
+		if (angle > prn->motors[idx].max_angle) {
+			return 1;
+		}
 	}
 
 	prn->motors[idx].angle = angle;
+
 
 	return 0;
 }
@@ -82,37 +85,33 @@ void forward_kinematics(struct Printer* prn)
 //Inverse kinematics function
 //Warning: Not at all portable. Basically designed with a lot of assumptions.
 //Returns an error value, zero if no errors. One if errors.
-int inverse_kinematics(struct Printer* prn, vec3 target, vec3 normal) {
+int inverse_kinematics(struct Printer* prn, vec3 target, float theta, float phi) {
 
 	//printf("Calling inverse kinematics!\n");
 	//Handle rotational joints. May need to redo this whole section later.
 	//Calculate axis coordinates
 	
-	vec3 current_normal;
-	printer_get_normal(prn,current_normal);
+	vec2 norm;
+	printer_get_normal(prn,norm);
 
-	//r1 = arctan(x/y)
-	//XY plane
-	float current_r1 = (float)atan2(-1.f * (double)current_normal[0], current_normal[1]);
-	float target_r1 = (float)atan2(-1.f*(double)normal[0], normal[1]);
-	float r1_diff = target_r1 - current_r1;
-	printf("Current R1: %f Target R1: %f R1 Diff: %f\n", current_r1,target_r1,r1_diff);
+	//Theta
+	//XY plane, Z axis
+	float theta_current = norm[0];
+	float theta_diff = theta - theta_current;
+	printf("Current R1: %f Target R1: %f R1 Diff: %f\n", theta_current,theta,theta_diff);
 
-	//r2 = arctan(z/sqrt(x^2+y^2))
-	//YZ plane
-	float current_r2 = (float)atan2(current_normal[2], sqrt(((double)current_normal[0]*(double)current_normal[0])+((double)current_normal[1]*(double)current_normal[1])));
-	float target_r2 = (float)atan2(normal[2], sqrt(((double)normal[0] * (double)normal[0]) + ((double)normal[1] * (double)normal[1])));
-	float r2_diff = target_r2 - current_r2;
-	printf("Current R2: %f Target R2: %f R2 Diff: %f\n", current_r2, target_r2, r2_diff);
+	//Phi
+	//YZ plane,  
+	float phi_current = norm[1];
+	float phi_diff = phi - phi_current;
+	printf("Current R2: %f Target R2: %f R2 Diff: %f\n", phi_current, phi, phi_diff);
 
 	//Set the rotational joints to those coordinates if possible
 	//Making assumptions about these last two motors being Z axis rotation and X axis rotation
 	//	specifically
-	if(set_motor_angle(prn, 3, prn->motors[3].angle + r1_diff)) return 1;
-	//printf("Z-Axis: %f\n",r1);
+	if (set_motor_angle(prn, 3, prn->motors[3].angle + theta_diff)) return 1;
 
-	if (set_motor_angle(prn, 4, prn->motors[4].angle + r2_diff)) return 1;
-	//printf("X-Axis: %f\n",r2);
+	if (set_motor_angle(prn, 4, prn->motors[4].angle + phi_diff)) return 1;
 
 	//Do FK on the last two joints to get the final two links as a single vector
 	forward_kinematics(prn);
@@ -167,11 +166,9 @@ int inverse_kinematics(struct Printer* prn, vec3 target, vec3 normal) {
 }
 
 //Performs a test case
-int ik_test_case(struct Printer* prn, vec3 target, vec3 normal) {
+int ik_test_case(struct Printer* prn, vec3 target, float theta, float phi) {
 
-	glm_vec3_normalize(normal);
-
-	printf("	Starting test case for target <%f,%f,%f> and normal <%f,%f,%f>\n", target[0], target[1], target[2], normal[0], normal[1], normal[2]);
+	printf("	Starting test case for target <%f,%f,%f> and normal <%f,%f>\n", target[0], target[1], target[2], theta, phi);
 
 	//The only thing that would be changed
 	mat4 link_matrices[5];
@@ -181,13 +178,13 @@ int ik_test_case(struct Printer* prn, vec3 target, vec3 normal) {
 	}
 
 	forward_kinematics(prn);
-	if (inverse_kinematics(prn, target, normal)) {
+	if (inverse_kinematics(prn, target, theta, phi)) {
 		printf("Motor angles outside bounds\n");
 		return 1;
 	};
 
 	vec3 target_results;
-	vec3 norm_results;
+	vec2 norm_results;
 	printer_get_tip(prn, target_results);
 	printer_get_normal(prn, norm_results);
 
@@ -211,19 +208,21 @@ int ik_test_case(struct Printer* prn, vec3 target, vec3 normal) {
 		printf("		XYZ result: <%f,%f,%f>\n", target_results[0], target_results[1], target_results[2]);
 	}
 
-	for (int i = 0; i < 3; i++) {
-		//printf("I: %i\n",i);
-		if(!(norm_results[i] <= normal[i] + margin && norm_results[i] >= normal[i] - margin)) normal_error = true;
-	}
+	//Check for normal errors
+	if (!(norm_results[0] <= theta + margin && norm_results[0] >= theta - margin)) normal_error = true;
+	if (!(norm_results[1] <= phi + margin && norm_results[1] >= phi - margin)) normal_error = true;
+
+	//Handle normal errors
 	if (normal_error) {
-		printf("		Normal target <%f,%f,%f>: \x1B[31mFAILED\033[0m\n", normal[0], normal[1], normal[2]);
-		printf("		Normal result: <%f,%f,%f>\n", norm_results[0], norm_results[1], norm_results[2]);
+		printf("		Normal target <%f,%f>: \x1B[31mFAILED\033[0m\n", theta, phi);
+		printf("		Normal result: <%f,%f>\n", norm_results[0], norm_results[1]);
 	}
 	else {
-		printf("		Normal target <%f,%f,%f>: \x1B[32mPASSED\033[0m\n", normal[0], normal[1], normal[2]);
-		printf("		Normal result: <%f,%f,%f>\n", norm_results[0], norm_results[1], norm_results[2]);
+		printf("		Normal target <%f,%f>: \x1B[32mPASSED\033[0m\n", theta, phi);
+		printf("		Normal result: <%f,%f>\n", norm_results[0], norm_results[1]);
 	}
 
+	//Ensure the structure of the printer has not somehow warped (Not a real concern, meant for a class check-off)
 	bool structure_error = false;
 	for (int i = 0; i < 5; i++) {
 		for (int j = 0; j < 4; j++) {

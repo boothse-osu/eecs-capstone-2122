@@ -9,6 +9,11 @@
 //Scaling factor for rounding. 10 would round off to the nearest 10th.
 #define ROUND_PRECISION 10000
 
+//Determines whether or not the angle bounds checker is on
+//Mostly for debug purposes
+
+#define ANGLE_BOUNDS 0
+
 //Defines for the inverse kinematics
 //All of this is used by the generate_printer function in printer_struct.c
 

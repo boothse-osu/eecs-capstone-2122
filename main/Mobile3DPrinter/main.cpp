@@ -183,14 +183,11 @@ int main(int argc,char* argv[]) {
 
 					//Put the print path data into vectors
 					vec3 position = { point.x,point.y,point.z };
-					vec3 normal;
 
-					printf("Attenpting to print: %f %f %f\n",point.x,point.y,point.z);
-
-					sphere_to_normal(normal, point.theta, point.phi);
+					printf("Attempting to print: <%f %f %f> with normal %f, %f\n",point.x,point.y,point.z,point.theta,point.phi);
 
 					//Calculate and send the required data the required number of times
-					int ik_err = inverse_kinematics(&printer,position,normal);
+					int ik_err = inverse_kinematics(&printer,position,point.theta,point.phi);
 					
 					//Handle any issues with the IK
 					if (ik_err) {
