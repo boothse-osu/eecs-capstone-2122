@@ -211,7 +211,7 @@ bool print_move_command(long stp_cnt[5], long extrude_delay){
       }
     }
     // If the Extruder needs to step: step it an calculate next step time
-    if(timeNow>=time_nxt_step_extruder){
+    if(timeNow>=time_nxt_step_extruder && extrude_delay != 0){
       step(extruder_pin);
       time_nxt_step_extruder += time_steps_extruder;
     }
