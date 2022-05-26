@@ -36,9 +36,9 @@ const char MESSAGE      = 'm'; // Message (does nothing but log)
 // Direction for motors to reach their homed position
 const int HOME_DIRECTION[MTR_NUMBER] = {0,1,0,1,0};
 // Direction of motors corresponding to positive IK movement
-const int POS_DIRECTION[MTR_NUMBER] = {1,1,1,1,1};
+const int POS_DIRECTION[MTR_NUMBER] = {1,0,1,1,1};
 // Direction of motors corresponding to negative IK movement
-const int NEG_DIRECTION[MTR_NUMBER] = {0,0,0,0,0};
+const int NEG_DIRECTION[MTR_NUMBER] = {0,1,0,0,0};
 
 // Translates a 5 motor move command and calculates step amounts for
 // each motor. Calls a the movement function and then requests more data.

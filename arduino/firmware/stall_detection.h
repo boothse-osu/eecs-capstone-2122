@@ -16,7 +16,7 @@
 // Stall_Line_Frac:   What should the stall-line be compared to the
 //                      Average.
 //                      Average/Stall_Line_Mult = Stall-Line
-const int Stall_Array_Size[5]   =  {20,   20,   20,   10,   10};
+const int Stall_Array_Size[5]   =  {50,   50,   50,   25,   25};
 const int Stall_Check_Step[5]   =  {5,    5,    5,    1,    1};
 const int Stall_Trigger_Amt[5]  =  {2,    2,    2,    5,    5};
 const float Stall_Line_Frac[5]  =  {2,    3,    3,    2,    2};
