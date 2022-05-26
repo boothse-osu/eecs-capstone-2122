@@ -18,7 +18,7 @@
 
 /////////////////////////////////////////////////////////////////////
 
-// Requirement Grading:
+// Command Examples:
 
 // Positional acc +/- 1deg && Arb Positioning
 // <!D(+0000.0000,+0000.0000,+0000.0000,-0000.7854,+0000.0000,t)>
@@ -29,21 +29,15 @@
 // 4 motor
 // <!D(+0020.0000,-0020.0000,-0000.0000,+0000.5000,+0000.5000,t)>
 
-// 4 motor extrude
+// 5 motor + extrude
 // <!D(+0000.0000,-0000.0000,-0000.0000,+0000.0000,+0000.0000,-00.0000)>
 
-// Serial
-// <!!>
 
-// Stall Detection
-// <!!> 
-// 4,0,00100
+// Set Hot-End Temp
+// <!n(200)> 
 
-// Thermal Runaway
-// <!n(200)> <!t> disconnect sensor
-
-// Safety
-// visual inspection
+// Request Hot-End Status
+// <!t>
 
 /////////////////////////////////////////////////////////////////////
 
@@ -54,7 +48,7 @@ unsigned long processing_start;
 char signifier;
 
 // Array of Motor Driver Steppers.
-AMIS30543 stepper[5] = {};
+AMIS30543 stepper[6] = {};
 
 void setup()
 {
@@ -66,7 +60,7 @@ void setup()
   Serial.setTimeout(10);
 
   // Setup for each motor driver
-  for(int i = 0; i < 5; i++) {
+  for(int i = 0; i < 6; i++) {
     stepper[i].init(amisSlaveSelect[i]);
 
     // Drive the NXT/STEP and DIR pins low initially.
@@ -83,7 +77,7 @@ void setup()
   
     // Set the current limit.  You should change the number here to
     // an appropriate value for your particular system.
-    if (i < 3) {
+    if (i < 3 || i == 5) {
       stepper[i].setCurrentMilliamps(1800);
     } else {
       stepper[i].setCurrentMilliamps(700);
@@ -106,6 +100,9 @@ void setup()
 
 void loop()
 {
+  //step(extruder_pin);
+  //delayMicroseconds(200);
+  
   // Maintain hot-end temp and check for thermal runaway.
   runHotend();
 

@@ -84,24 +84,24 @@ bool new_move_command(long stp_cnt[5], bool ht_nd){
             if(timeNow>=time_nxt_step[i] && steps_taken[i]!=abs(stp_cnt[i])){
                 step(i);
                 
-                if(i==motor_check && abs(steps_taken[i])%1==0) list_sla[abs(steps_taken[i])] = analogRead(amisSLA[i]); // mtr_ready = false;//
+                //if(i==motor_check && abs(steps_taken[i])%1==0) list_sla[abs(steps_taken[i])] = analogRead(amisSLA[i]); // mtr_ready = false;//
 
                 //maybe remove abs from modulo
-                if(abs(steps_taken[i])%Stall_Check_Step[i]==0 && pushVoltage(i, &voltage_log[i]) == false) {
+                //if(abs(steps_taken[i])%Stall_Check_Step[i]==0 && pushVoltage(i, &voltage_log[i]) == false) {
                     
-                    for(int k=0; k<abs(steps_taken[motor_check])&&k<1000; k++) Serial.println(list_sla[k]);
-                    stop_message("Stall on motor " + String(i));
+                    //for(int k=0; k<abs(steps_taken[motor_check])&&k<1000; k++) Serial.println(list_sla[k]);
+                //    stop_message("Stall on motor " + String(i));
                     //for(int k = 0; k<5; k++) send_message("MTR "+String(k)+" steps taken: " + String(steps_taken[k]));
                     //for(int k = 0; k<5; k++) send_message("MTR "+String(k)+" microseconds per step: " + String(time_steps[k]));
-                    return false;
-                }
+                //    return false;
+                //}
                 time_nxt_step[i] += time_steps[i];
                 steps_taken[i]++;
             }
         }
     }
 
-    for(int i=0; i<abs(steps_taken[motor_check])&&i<1000; i++) Serial.println(list_sla[i]);
+    //for(int i=0; i<abs(steps_taken[motor_check])&&i<1000; i++) Serial.println(list_sla[i]);
     
     send_message("Done in "+String((double)(millis()-start_time)/1000.0)+" seconds");
     for(int i = 0; i<5; i++) send_message("MTR "+String(i)+" steps taken: " + String(steps_taken[i]));
@@ -178,17 +178,18 @@ bool print_move_command(long stp_cnt[5], long extrude_delay){
   bool done_mtrs [5] = {false};
   int motors_done = 0;
   // End when all motors are done
-  while(motors_done > 5){
+  while(motors_done < 5){
     timeNow = micros();
 
     // Step on each of the joint motors if needed
-    delayMicroseconds()
+    delayMicroseconds(200);
     for(i = 0; i<5; i++){
       
       // If motor is done don't step it
-      if(done_mtrs[i]==true){}
+      if(done_mtrs[i]==true) {}
       // If the if now finishing make it as done
       else if(steps_taken[i]==abs(stp_cnt[i])){
+        //Serial.println("Done: Motor " + String(i));
         done_mtrs[i] = true;
         motors_done++;
       // If the motor is ready to step
@@ -199,10 +200,10 @@ bool print_move_command(long stp_cnt[5], long extrude_delay){
 
         // Stall detection check
         //maybe remove abs from modulo
-        //if(abs(steps_taken[i])%Stall_Check_Step[i]==0 && pushVoltage(i, &voltage_log[i]) == false) {
-        //    stop_message("Stall on motor " + String(i));
-        //    return false;
-        //}
+        if(abs(steps_taken[i])%Stall_Check_Step[i]==0 && pushVoltage(i, &voltage_log[i]) == false) {
+            stop_message("Stall on motor " + String(i));
+            return false;
+        }
 
         // Calculate new step trigger time
         time_nxt_step[i] += time_steps[i];
@@ -244,7 +245,7 @@ bool homing_command(){
     while(true) {
       if(micros()>time_nxt_step){
         time_nxt_step = micros() + 350;
-        for(int i = 0; i<5; i++) {
+        for(int i = 0; i<2; i++) {
           if(mtr_running[i]) {
             step(i);
             mtr_running[i] = pushVoltage(i, &voltage_log[i]);
@@ -280,7 +281,7 @@ bool homing_command(){
 
 // Temporary Test Function
 bool extrude(double cms, int cm){
-    int extrude_mtr_index = 2;
+    int extrude_mtr_index = extruder_pin;
 
     int cm_step_amount = 461;
     int delay_time = 1000000/(cm_step_amount*cms);

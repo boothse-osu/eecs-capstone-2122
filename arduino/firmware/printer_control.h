@@ -14,20 +14,20 @@
 #include "stall_detection.h"
 
 // PINS for Motors: ECE
-const uint8_t amisDirPin[6] = {PB11, PB12, PB13, PB14, PB15, PB8};
-const uint8_t amisStepPin[6] = {PC5, PC6, PC7, PC8, PC9, PB9};
-const uint8_t amisSlaveSelect[6] = {PB3, PB4, PB5, PB6, PB7, PC3};
-const uint8_t amisSLA[6] = {PA0, PA1, PA4, PB0, PC1, PC0};
+const uint8_t amisDirPin[6] =       {PB11,  PB12, PB13, PB14, PB15, PB8};
+const uint8_t amisStepPin[6] =      {PC5,   PC6,  PC7,  PC8,  PC9,  PB9};
+const uint8_t amisSlaveSelect[6] =  {PB3,   PB4,  PB5,  PB6,  PB7,  PC3};
+const uint8_t amisSLA[6] =          {PA0,   PA1,  PA4,  PB0,  PC1,  PC0};
 
 // Placeholder value for time to complete movement
 // This will be sent from the IK
 const float mvmt_time = 5000; //  3 000 000 = 3 seconds
 
 // Minimum delay before motor slip
-const int min_mtr_delay = 200;
+const int min_mtr_delay = 250;
 
 // Pin replaced by extruder until board is fixed
-const int extruder_pin = 6;
+const int extruder_pin = 5;
 
 // move motors in accordance to old 5 motor IK data messages
 bool new_move_command(long[5], bool);
