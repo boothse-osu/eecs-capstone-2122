@@ -24,7 +24,7 @@ const uint8_t amisSLA[6] =          {PA0,   PA1,  PA4,  PB0,  PC1,  PC0};
 const float mvmt_time = 5000; //  3 000 000 = 3 seconds
 
 // Minimum delay before motor slip
-const int min_mtr_delay = 250;
+const int min_mtr_delay = 200;
 
 // Pin replaced by extruder until board is fixed
 const int extruder_pin = 5;
