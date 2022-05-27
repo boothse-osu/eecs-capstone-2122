@@ -94,6 +94,11 @@ bool new_move_command(long stp_cnt[5], bool ht_nd){
         steps_taken[i]++;
       }
     }
+    // If the Extruder needs to step: step it an calculate next step time
+    if(ht_nd == 't' && timeNow>=time_nxt_step_extruder){
+      step(extruder_pin);
+      time_nxt_step_extruder += time_steps_extruder;
+    }
   }
     
   //send_message("Done in "+String((double)(millis()-start_time)/1000.0)+" seconds");
