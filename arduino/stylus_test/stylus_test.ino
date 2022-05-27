@@ -119,8 +119,8 @@ void loop()
       if(x != x_x)
       {
         change = x_x-x;
-        Serial.print("\nX: ");
-        Serial.print(change);
+        //Serial.print("\nX: ");
+        //Serial.print(change);
         x_shift += change;
         if(change > 0) setDirection(1,0);
         else setDirection(1,1);
@@ -131,8 +131,8 @@ void loop()
       if(y != y_y)
       {
         change = y_y-y;
-        Serial.print("\nY: ");
-        Serial.print(change);
+        //Serial.print("\nY: ");
+        //Serial.print(change);
         y_shift += change;
         if(change > 0) setDirection(0,0);
         else setDirection(0,1);
