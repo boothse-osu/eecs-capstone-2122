@@ -30,7 +30,7 @@ void sphere_to_normal(vec3 norm, float theta, float phi) {
 }
 
 //Output a point to the controller in the required format
-void output_point(PORT port, struct Printer* prn, bool extrude) {
+void output_point(PORT port, vec3 delta, bool extrude) {
 
 	//Precise size of the outgoing string
 	char outgoing[63];
@@ -44,7 +44,7 @@ void output_point(PORT port, struct Printer* prn, bool extrude) {
 		ex = 'f';
 	}
 
-	snprintf(outgoing,63,"<!D(%+010.4f,%+010.4f,%+010.4f,%+010.4f,%+010.4f,%c)>",prn->motors[0].angle,prn->motors[1].angle,prn->motors[2].angle,prn->motors[3].angle,prn->motors[4].angle,ex);
+	snprintf(outgoing,63,"<!D(%+010.4f,%+010.4f,%+010.4f,%+010.4f,%+010.4f,%c)>",delta[0],delta[1],delta[2],0.f,0.f,ex);
 
 	printf("Outgoing data: %s\n",outgoing);
 	SendData(port, outgoing);
@@ -65,7 +65,7 @@ int main(int argc,char* argv[]) {
 	printf("Printing %s",filepath);
 	*/
 
-	char filepath[64] = "..\\ToolPath.csv";
+	char filepath[64] = "..\\Circle_Path.csv";
 
 	//Parse the CSV file
 	struct Path print_path;
@@ -120,6 +120,7 @@ int main(int argc,char* argv[]) {
 
 	//Send the homing command to the printer, also syncs it up
 	SendData(port, "<!h>");
+	printf("Sending homing request!\n");
 
 	//Initializes the input
 	struct InputState i_state = usb_init_state();
@@ -127,7 +128,7 @@ int main(int argc,char* argv[]) {
 	//Primes the input state buffers and gets the first command
 	usb_get_input(port, &i_state);
 	usb_get_command(port, &i_state);
-
+	
 	//Wait until we get homing confirmation
 	//Literally can't do anything until we get it
 	while (TRUE) {
@@ -189,8 +190,11 @@ int main(int argc,char* argv[]) {
 
 					sphere_to_normal(normal, point.theta, point.phi);
 
+					//Changes in XYZ for movement
+					vec3 deltaxyz;
+
 					//Calculate and send the required data the required number of times
-					int ik_err = inverse_kinematics(&printer,position,normal);
+					int ik_err = inverse_kinematics(&printer,position,normal,deltaxyz);
 					
 					//Handle any issues with the IK
 					if (ik_err) {
@@ -205,7 +209,7 @@ int main(int argc,char* argv[]) {
 						break;
 					}
 
-					output_point(port,&printer,point.extrusion);
+					output_point(port,deltaxyz,point.extrusion);
 
 					//If we need to do a check for data recieved response, it goes here
 
@@ -230,6 +234,8 @@ int main(int argc,char* argv[]) {
 				break;
 			case 'm':
 				printf("%s\n",payload);
+				break;
+			default:
 				break;
 		}
 

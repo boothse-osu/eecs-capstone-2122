@@ -50,7 +50,7 @@
 //If rotational, the ratio of motor movement in radians to link rotation in radians
 //If prismatic, the ratio of motor movement in radians to linear distance traveled in mm
 #define LINK0_RATIO 1.1459f
-#define LINK1_RATIO 0.5729f
+#define LINK1_RATIO 1.1459f
 #define LINK2_RATIO 6.11f //Sus
 //Rotational joints
 #define LINK3_RATIO 1.f

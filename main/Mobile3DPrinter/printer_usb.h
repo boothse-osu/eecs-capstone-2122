@@ -3,10 +3,12 @@
 
 #include "CSerialPort.h"
 
+//Serial port number for communication
+#define PORTNO 4
+
 //Size of the input character buffer.
 #define BUFFSIZE 64
 //Which COMM port the program tries to use. May need to be changed from machine to machine.
-#define PORTNO 4
 
 struct InputState {
 	//Buffer for uncleaned input

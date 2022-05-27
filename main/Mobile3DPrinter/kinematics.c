@@ -7,6 +7,7 @@ int set_motor_angle(struct Printer* prn, int idx, float angle) {
 	
 	printf("Changing angle %i to %f!\n", idx, angle);
 
+	/*
 	//Ensure it is within bounds, otherwie set the angle
 	if (angle < prn->motors[idx].min_angle) {
 		return 1;
@@ -15,6 +16,7 @@ int set_motor_angle(struct Printer* prn, int idx, float angle) {
 	if (angle > prn->motors[idx].max_angle) {
 		return 1;
 	}
+	*/
 
 	prn->motors[idx].angle = angle;
 
@@ -82,12 +84,13 @@ void forward_kinematics(struct Printer* prn)
 //Inverse kinematics function
 //Warning: Not at all portable. Basically designed with a lot of assumptions.
 //Returns an error value, zero if no errors. One if errors.
-int inverse_kinematics(struct Printer* prn, vec3 target, vec3 normal) {
+int inverse_kinematics(struct Printer* prn, vec3 target, vec3 normal, vec3 deltaxyz) {
 
 	//printf("Calling inverse kinematics!\n");
 	//Handle rotational joints. May need to redo this whole section later.
 	//Calculate axis coordinates
 	
+	/*
 	vec3 current_normal;
 	printer_get_normal(prn,current_normal);
 
@@ -113,12 +116,12 @@ int inverse_kinematics(struct Printer* prn, vec3 target, vec3 normal) {
 
 	if (set_motor_angle(prn, 4, prn->motors[4].angle + r2_diff)) return 1;
 	//printf("X-Axis: %f\n",r2);
+	*/
 
 	//Do FK on the last two joints to get the final two links as a single vector
 	forward_kinematics(prn);
 
 	//DEBUG
-	/*
 	printf("Position\n");
 	vec3 results;
 	printer_get_tip(prn, results);
@@ -127,7 +130,6 @@ int inverse_kinematics(struct Printer* prn, vec3 target, vec3 normal) {
 	printer_get_normal(prn, results);
 	print_vec3(results);
 	print_printer_link_positions(prn);
-	*/
 	//END
 
 	//Move the prismatic joints to get it to where it needs to go
@@ -143,19 +145,19 @@ int inverse_kinematics(struct Printer* prn, vec3 target, vec3 normal) {
 
 	//Again making assumptions based on the design of our specific printer
 	//X-axis
-	float x_ang = prn->motors[0].angle + (differences[0] / prn->links[0].move_ratio);
-	if (set_motor_angle(prn, 0, x_ang)) return 1;
-	prn->motors[0].angle = x_ang;
+	float x_ang = (differences[0] / prn->links[0].move_ratio);
+	if (set_motor_angle(prn, 0, prn->motors[0].angle + x_ang)) return 1;
+	deltaxyz[0] = x_ang;
 
 	//Z-axis
-	float z_ang = prn->motors[1].angle + (differences[2] / prn->links[1].move_ratio);
-	if (set_motor_angle(prn, 1, z_ang)) return 1;
-	prn->motors[1].angle = z_ang;
+	float z_ang = (differences[2] / prn->links[1].move_ratio);
+	if (set_motor_angle(prn, 1, prn->motors[1].angle + z_ang)) return 1;
+	deltaxyz[2] = z_ang;
 
 	//Y-axis
-	float y_ang = prn->motors[2].angle + (differences[1] / prn->links[2].move_ratio);
-	if (set_motor_angle(prn, 2, y_ang)) return 1;
-	prn->motors[2].angle = y_ang;
+	float y_ang = (differences[1] / prn->links[2].move_ratio);
+	if (set_motor_angle(prn, 2, prn->motors[2].angle + y_ang)) return 1;
+	deltaxyz[1] = y_ang;
 
 	//Do FK to ensure that the end of the printer is in the right place
 	forward_kinematics(prn);
@@ -180,8 +182,10 @@ int ik_test_case(struct Printer* prn, vec3 target, vec3 normal) {
 		glm_mat4_copy(prn->links[i].link_mat, link_matrices[i]);
 	}
 
+	vec3 dummy;
+
 	forward_kinematics(prn);
-	if (inverse_kinematics(prn, target, normal)) {
+	if (inverse_kinematics(prn, target, normal, dummy)) {
 		printf("Motor angles outside bounds\n");
 		return 1;
 	};
