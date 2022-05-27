@@ -15,98 +15,103 @@
 
 // Used to record the time between steps for each motor or each move command
 float time_steps [5];
+// Set extruder motor step delay
+long time_steps_extruder = 1000;
+// Time at which the next step should be taken for each motor
+float time_nxt_step [5];
 
 // 
 // stp_cnt: 5 long array of ints for the amount of steps to move for each motor
-// ht_nd: UNUSED AT THIS POINT
+// ht_nd: will extrude if 't' and won't if 'f'
 // This move is only used to allow for commands from 5 motor only IK
 // Will be all deleted when IK is updated
 bool new_move_command(long stp_cnt[5], bool ht_nd){
-    // timer for feedback on how long this function ran
-    unsigned long start_time = millis();
+  int i;
 
-    // Might not need to be initialized here
-    // Records the amount of steps taken
-    long steps_taken[5] = {0, 0, 0, 0, 0};
+  // Might not need to be initialized here
+  // Records the amount of steps taken
+  long steps_taken[5] = {0, 0, 0, 0, 0};
 
-    // Data for stall detection, may be moved to stall_detection.cpp
-    struct StallData voltage_log[MTR_NUMBER];
-    for(int i=0; i<MTR_NUMBER; i++) voltage_log[i] = createVoltageAverage();
+  // Data for stall detection, may be moved to stall_detection.cpp
+  //struct StallData voltage_log[MTR_NUMBER];
+  //for(int i=0; i<MTR_NUMBER; i++) voltage_log[i] = createVoltageAverage();
 
-    // Set each motor in the correct direction
+  // Set each motor in the correct direction
+  for(i = 0; i<5; i++) {
+    if(stp_cnt[i] >= 0) setDirection(i,POS_DIRECTION[i]);
+    else setDirection(i,NEG_DIRECTION[i]);
+  }
+  setDirection(extruder_pin,0);
+  
+
+  // Time between steps on a specific motor
+  // Should add a case where: if a time_step[i] is less than 150, add
+  // time to mvmt_time and recalculate. This will avoid missing steps
+  unsigned long added_time = 0;
+  bool mtr_ready = false;
+  while(!mtr_ready) {
+    mtr_ready = true;
     for(int i = 0; i<5; i++) {
-      if(stp_cnt[i] >= 0) setDirection(i,POS_DIRECTION[i]);
-      else setDirection(i,NEG_DIRECTION[i]);
-    }
-
-    // Time between steps on a specific motor
-    // Should add a case where: if a time_step[i] is less than 150, add
-    // time to mvmt_time and recalculate. This will avoid missing steps
-    float added_time = 0;
-    bool mtr_ready = false;
-    while(!mtr_ready) {
-        mtr_ready = true;
-        for(int i = 0; i<5; i++) {
-            if(stp_cnt[i] == 0) time_steps[i] = 0;
-            else{
-                time_steps[i] = (mvmt_time + added_time) / abs(stp_cnt[i]);
-                if(time_steps[i]<min_mtr_delay) {
-                    added_time += 5000; // half sec
-                    mtr_ready = false;
-                }
-            }
+      if(stp_cnt[i] == 0) time_steps[i] = 0;
+      else{
+        time_steps[i] = (mvmt_time + added_time) / abs(stp_cnt[i]);
+        if(time_steps[i]<min_mtr_delay) {
+          added_time += 5000; // half sec
+          mtr_ready = false;
         }
+      }
     }
+  }
 
-    // Timer that the motors will trigger off
-    unsigned long timeBegin = micros();
-    
-    // Time at which the next step should be taken for each motor
-    float time_nxt_step [5] = {0, 0, 0, 0, 0};
-    // Calculate the time of first step for each motor
-    for(int i = 0; i<5; i++) time_nxt_step[i] += timeBegin + time_steps[i];
-    
-    send_message("Starting move command");
+  // Timer that the motors will trigger off
+  unsigned long timeBegin = micros();
+  
+  
+  // Calculate the time of first step for each motor
+  for(i = 0; i<5; i++) time_nxt_step[i] = timeBegin + time_steps[i];   
+  float time_nxt_step_extruder = timeBegin + time_steps_extruder;
 
-    int motor_check = 0;
-    signed int list_sla [abs(stp_cnt[motor_check])] = {0};
-    
+  // Record current time for stepping
+  unsigned long timeNow = micros();
 
-    int i;
-    unsigned long timeNow = micros();
-    unsigned long timeEnd = timeNow + (mvmt_time + added_time);
-    while(timeNow < timeEnd){
-        timeNow = micros();
+  // Set all motors to not done
+  bool done_mtrs [5] = {false};
+  int motors_done = 0;
+  // End when all motors are done
+  while(motors_done < 5){
+    timeNow = micros();
 
-        delayMicroseconds(150);
-        for(i = 0; i<5; i++){
-          
-            if(timeNow>=time_nxt_step[i] && steps_taken[i]!=abs(stp_cnt[i])){
-                step(i);
-                
-                //if(i==motor_check && abs(steps_taken[i])%1==0) list_sla[abs(steps_taken[i])] = analogRead(amisSLA[i]); // mtr_ready = false;//
+    //delayMicroseconds(150);
+    for(i = 0; i<5; i++){
+      
+      // If motor is done don't step it
+      if(done_mtrs[i]==true) {}
+      // If the if now finishing make it as done
+      else if(steps_taken[i]==abs(stp_cnt[i])){
+        //Serial.println("Done: Motor " + String(i));
+        done_mtrs[i] = true;
+        motors_done++;
+      // If the motor is ready to step
+      } else if(timeNow>=time_nxt_step[i]){
+        step(i);
 
-                //maybe remove abs from modulo
-                //if(abs(steps_taken[i])%Stall_Check_Step[i]==0 && pushVoltage(i, &voltage_log[i]) == false) {
-                    
-                    //for(int k=0; k<abs(steps_taken[motor_check])&&k<1000; k++) Serial.println(list_sla[k]);
-                //    stop_message("Stall on motor " + String(i));
-                    //for(int k = 0; k<5; k++) send_message("MTR "+String(k)+" steps taken: " + String(steps_taken[k]));
-                    //for(int k = 0; k<5; k++) send_message("MTR "+String(k)+" microseconds per step: " + String(time_steps[k]));
-                //    return false;
-                //}
-                time_nxt_step[i] += time_steps[i];
-                steps_taken[i]++;
-            }
-        }
+        // Stall detection check
+        //if(abs(steps_taken[i])%Stall_Check_Step[i]==0 && pushVoltage(i, &voltage_log[i]) == false) {
+        //    stop_message("Stall on motor " + String(i));
+        //    return false;
+        //}
+
+        // Calculate new step trigger time
+        time_nxt_step[i] += time_steps[i];
+        steps_taken[i]++;
+      }
     }
-
-    //for(int i=0; i<abs(steps_taken[motor_check])&&i<1000; i++) Serial.println(list_sla[i]);
+  }
     
-    send_message("Done in "+String((double)(millis()-start_time)/1000.0)+" seconds");
-    for(int i = 0; i<5; i++) send_message("MTR "+String(i)+" steps taken: " + String(steps_taken[i]));
-    for(int i = 0; i<5; i++) send_message("MTR "+String(i)+" microseconds per step: " + String(time_steps[i]));
-    return true;
+  //send_message("Done in "+String((double)(millis()-start_time)/1000.0)+" seconds");
+  //for(int i = 0; i<5; i++) send_message("MTR "+String(i)+" steps taken: " + String(steps_taken[i]));
+  //for(int i = 0; i<5; i++) send_message("MTR "+String(i)+" microseconds per step: " + String(time_steps[i]));
+  return true;
 }
 
 
@@ -131,7 +136,7 @@ bool print_move_command(long stp_cnt[5], long extrude_delay){
   // Time between steps on a specific motor
   // Should add a case where: if a time_step[i] is less than 150, add
   // time to mvmt_time and recalculate. This will avoid missing steps
-  float added_time = 0;
+  long added_time = 0;
   bool mtr_ready = false;
   while(!mtr_ready) {
     mtr_ready = true;
@@ -200,10 +205,10 @@ bool print_move_command(long stp_cnt[5], long extrude_delay){
 
         // Stall detection check
         //maybe remove abs from modulo
-        if(abs(steps_taken[i])%Stall_Check_Step[i]==0 && pushVoltage(i, &voltage_log[i]) == false) {
-            stop_message("Stall on motor " + String(i));
-            return false;
-        }
+        //if(abs(steps_taken[i])%Stall_Check_Step[i]==0 && pushVoltage(i, &voltage_log[i]) == false) {
+        //    stop_message("Stall on motor " + String(i));
+        //    return false;
+        //}
 
         // Calculate new step trigger time
         time_nxt_step[i] += time_steps[i];

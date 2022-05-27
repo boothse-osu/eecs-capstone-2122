@@ -30,7 +30,7 @@
 // <!D(+0020.0000,-0020.0000,-0000.0000,+0000.5000,+0000.5000,t)>
 
 // 5 motor + extrude
-// <!D(+0000.0000,-0000.0000,-0000.0000,+0000.0000,+0000.0000,-00.0000)>
+// <!D(+0000.0000,-0000.0000,-0000.0000,+0000.0000,+0000.0000,-02.0000)>
 
 
 // Set Hot-End Temp
@@ -137,12 +137,22 @@ void serialEvent()
       // Signifier shows a move command and the move data is the right 
       // length. Send the data to a data parser that will extract 
       // variables and call a move command.
-      if (signifier == MOVE_DATA && serial_message.substring(61,62) == ">") 
-        handle_move(serial_message.substring(4,60));
-
-      else if (signifier == MOVE_DATA && serial_message.substring(68,69) == ">") 
+      if (signifier == MOVE_DATA && serial_message.substring(61,62) == ">") {
+        for(int i = 0; i<data_length; i++){
+          if(serial_message.substring(61,62) == ">") {
+            handle_move(serial_message.substring(4,60));
+            serial_message = serial_message.substring(62);
+          }
+          else {
+            stop_message("Format error on data: " + String(i));
+            break;
+          }
+        }
+      }
+      else if (signifier == MOVE_DATA && serial_message.substring(68,69) == ">") {
         handle_print_move(serial_message.substring(4));
-
+        serial_message = serial_message.substring(69);
+      }
       // Signifier shows a homing request. Disable the z-axis motor so 
       // it will fall to its lowest point, initiate a homing sequence, 
       // wait for the z-axis to fall and re-enable it.
@@ -182,6 +192,7 @@ void serialEvent()
       else send_message("UNKOWN COMMAND");;
     }
     else send_message("BAD COMMAND");
+
   }
 
   // Send message of the time it took to process buffer.
