@@ -23,7 +23,6 @@ struct StallData createVoltageAverage() {
 }
 
 
-int voltages[1000];
 // Push a new Voltage for motor number index and pass all of
 // its stall data in a struct SData.
 // Returns: True - No Stall | False - Stall

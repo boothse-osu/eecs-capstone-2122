@@ -43,29 +43,17 @@ bool new_move_command(long stp_cnt[5], bool ht_nd){
   }
   setDirection(extruder_pin,0);
   
-
-  // Time between steps on a specific motor
-  // Should add a case where: if a time_step[i] is less than 150, add
-  // time to mvmt_time and recalculate. This will avoid missing steps
-  unsigned long added_time = 0;
-  bool mtr_ready = false;
-  while(!mtr_ready) {
-    mtr_ready = true;
-    for(int i = 0; i<5; i++) {
-      if(stp_cnt[i] == 0) time_steps[i] = 0;
-      else{
-        time_steps[i] = (mvmt_time + added_time) / abs(stp_cnt[i]);
-        if(time_steps[i]<min_mtr_delay) {
-          added_time += 5000; // half sec
-          mtr_ready = false;
-        }
-      }
-    }
+  long max = 0;
+  for(i = 0; i<5; i++){
+    if(abs(stp_cnt[i]) > max) max = abs(stp_cnt[i]);
+  }
+  unsigned long move_time = max*min_mtr_delay;
+  for(i = 0; i<5; i++) {
+    time_steps[i] = move_time / abs(stp_cnt[i]);
   }
 
   // Timer that the motors will trigger off
   unsigned long timeBegin = micros();
-  
   
   // Calculate the time of first step for each motor
   for(i = 0; i<5; i++) time_nxt_step[i] = timeBegin + time_steps[i];   
