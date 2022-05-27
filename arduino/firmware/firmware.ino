@@ -144,7 +144,7 @@ void serialEvent()
             serial_message = serial_message.substring(62);
           }
           else {
-            stop_message("Format error on data: " + String(i));
+            send_message("Format error on data: " + String(i));
             break;
           }
         }
