@@ -33,6 +33,7 @@ const char DATA_CON     = 'R'; // Confirmation that data was received
 const char STOP         = 's'; // Message about printer stop (stops IK)
 const char MESSAGE      = 'm'; // Message (does nothing but log)
 
+// How many data message to receive over serial each time
 const int data_length = 3;
 
 // Direction for motors to reach their homed position
