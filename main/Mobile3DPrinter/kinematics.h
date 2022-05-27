@@ -9,7 +9,7 @@
 //Precondition: The Printer struct has the angles set to the desired values
 void forward_kinematics(struct Printer*);
 
-int inverse_kinematics(struct Printer*, vec3 target, vec3 normal);
+int inverse_kinematics(struct Printer*, vec3, vec3, vec3);
 
 int ik_test_case(struct Printer*,vec3 target, vec3 normal);
 
