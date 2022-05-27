@@ -18,7 +18,7 @@
 
 /////////////////////////////////////////////////////////////////////
 
-// Requirement Grading:
+// Command Examples:
 
 // Positional acc +/- 1deg && Arb Positioning
 // <!D(+0000.0000,+0000.0000,+0000.0000,-0000.7854,+0000.0000,t)>
@@ -29,21 +29,15 @@
 // 4 motor
 // <!D(+0020.0000,-0020.0000,-0000.0000,+0000.5000,+0000.5000,t)>
 
-// Serial
-// <!!>
+// 5 motor + extrude
+// <!D(+0000.0000,-0000.0000,-0000.0000,+0000.0000,+0000.0000,-00.0000)>
 
-// Stall Detection
-// <!!> 
-// 4,0,00100
 
-// Filament
-// <!f>
+// Set Hot-End Temp
+// <!n(200)> 
 
-// Thermal Runaway
-// <!n(200)> <!t> disconnect sensor
-
-// Safety
-// visual inspection
+// Request Hot-End Status
+// <!t>
 
 /////////////////////////////////////////////////////////////////////
 
@@ -54,7 +48,7 @@ unsigned long processing_start;
 char signifier;
 
 // Array of Motor Driver Steppers.
-AMIS30543 stepper[5] = {};
+AMIS30543 stepper[6] = {};
 
 void setup()
 {
@@ -66,7 +60,7 @@ void setup()
   Serial.setTimeout(10);
 
   // Setup for each motor driver
-  for(int i = 0; i < 5; i++) {
+  for(int i = 0; i < 6; i++) {
     stepper[i].init(amisSlaveSelect[i]);
 
     // Drive the NXT/STEP and DIR pins low initially.
@@ -83,13 +77,13 @@ void setup()
   
     // Set the current limit.  You should change the number here to
     // an appropriate value for your particular system.
-    if (i < 3) {
+    if (i < 3 || i == 5) {
       stepper[i].setCurrentMilliamps(1800);
     } else {
       stepper[i].setCurrentMilliamps(700);
     }
   
-    // Set the number of microsteps that correspond to one full step.
+    // Set the number of micro-steps that correspond to one full step.
     stepper[i].setStepMode(4);
   
     stepper[i].setSlaTransparencyOff();
@@ -99,23 +93,26 @@ void setup()
     stepper[i].enableDriver();
   }
 
-  // Setup hotend with correct pinmodes and set variables.
+  // Setup hot-end with correct pin-modes and set variables.
   hotendSetup();
 }
 
 
 void loop()
 {
+  //step(extruder_pin);
+  //delayMicroseconds(200);
+  
   // Maintain hot-end temp and check for thermal runaway.
   runHotend();
 
   // serialEvent is called by the arduino at the end of every cycle.
 } 
 
-// Handles any commands the printer recieves over serial.
+// Handles any commands the printer receives over serial.
 void serialEvent()
 { 
-  // Checks if there is anything in the serial recieve buffer. The
+  // Checks if there is anything in the serial receive buffer. The
   // buffer holds 64 bytes.
   while(Serial.available()) 
   {
@@ -143,7 +140,7 @@ void serialEvent()
       if (signifier == MOVE_DATA && serial_message.substring(61,62) == ">") 
         handle_move(serial_message.substring(4,60));
 
-      else if (signifier == MOVE_DATA && serial_message.substring(61,62) == ">") 
+      else if (signifier == MOVE_DATA && serial_message.substring(68,69) == ">") 
         handle_print_move(serial_message.substring(4));
 
       // Signifier shows a homing request. Disable the z-axis motor so 
@@ -168,8 +165,8 @@ void serialEvent()
       else if (signifier == FILAMENT) 
         handle_filament_test(serial_message.substring(4));
 
-      // Signifier shows a hot-end tempature change request. Call hot-end 
-      // tempature change handler.
+      // Signifier shows a hot-end temperature change request. Call hot-end 
+      // temperature change handler.
       else if (signifier == TEMP_SET) 
         hotendParse(serial_message.substring(4));
 
@@ -178,7 +175,7 @@ void serialEvent()
       else if (signifier == TEMP_REP) 
         send_message("Current temp: " + String(hotin) + "°C, Target temp: " + String(hotset) + "°C");
       
-      // Signifer shows a debug mode request. Call debug mode handler.
+      // Signifier shows a debug mode request. Call debug mode handler.
       else if (signifier == DEBUG) 
         handle_debug();
       

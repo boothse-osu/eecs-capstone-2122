@@ -7,98 +7,131 @@
 // Printer Movement Function Library
 #include "printer_control.h"
 
+// Translates a _5_ motor move command and calculates step amounts for
+// each motor. Calls a the movement function and then requests more data.
 void handle_move(String str) {
-    long mtr_steps[5];
-    String hot_end = str.substring(55,56);
+  // Array of steps for the old 5 motor IK
+  long mtr_steps[5];
 
-    send_message(str);
-    unsigned long parseBegin = millis();
+  // IK used to send a T/F for hot-end operation
+  //String hot_end = str.substring(55,56);
 
-    for(int i = 0; i<5; i++) {
-      mtr_steps[i] = round(str.substring((i*11), (i*11)+10).toDouble() * (steps_per_rotations[i] / step_mode));
-      Serial.println(mtr_steps[i]);
-    }
-    
-    confirm_data();
+  // Log initial motor command
+  //send_message(str);
+  
+  // Parse data for angle changes and calculate steps for each motor
+  for(int i = 0; i<5; i++) {
+    // (steps_per_rotations[i] / step_mode): step conversion
+    // str.substring((i*11), (i*11)+10).toDouble(): grab 10 digit change
+    // - (note) 11s get start and end positions accounting for comma
+    mtr_steps[i] = round(str.substring((i*11), (i*11)+10).toDouble() * (steps_per_rotations[i] / step_mode));
+    send_message(String(mtr_steps[i]));
+  }
+  
+  // Confirm data has been received
+  confirm_data();
 
-    unsigned long calcStepsBegin = millis();
-    if(new_move_command(mtr_steps,true)) request_data(1);
-    else return;
+  // Call move command and request more dat if successful
+  // Only requests one more command atm due to low memory on micro-controller
+  if(new_move_command(mtr_steps,true)) request_data(1);
+  return;
 }
 
+// Translates a full 6 motor move command and calculates step amounts for
+// each motor and the extrusion speed. Calls a the movement function and 
+// then requests more data.
 void handle_print_move(String str) {
-    long mtr_steps[5];
-    String hot_end = str.substring(55,56);
+  // Array of steps for the 5 main motors
+  long mtr_steps[5];
+  // Cm per Second for 6th motor
+  double cms = str.substring(55,63).toDouble();
 
-    send_message(str);
-    unsigned long parseBegin = millis();
+  // Log initial motor command
+  //send_message(str);
 
-    for(int i = 0; i<5; i++) {
-      mtr_steps[i] = round(str.substring((i*11), (i*11)+10).toDouble() * (steps_per_rotations[i] / step_mode));
-      Serial.println(mtr_steps[i]);
-    }
-    
-    double cms = 2.0;
+  // Parse data for angle changes and calculate steps for each motor
+  for(int i = 0; i<5; i++) {
+    // (steps_per_rotations[i] / step_mode): step conversion
+    // str.substring((i*11), (i*11)+10).toDouble(): grab 10 digit change
+    // - (note) 11s get start and end positions accounting for commas
+    mtr_steps[i] = round(str.substring((i*11), (i*11)+10).toDouble() * (steps_per_rotations[i] / step_mode));
+    send_message(String(mtr_steps[i]));
+  }
+
+  // Confirm data has been received
+  confirm_data();
+
+
+  send_message(String(cms));
+  // If cm/s = 0 delay = 0 to avoid divide by zero
+  long delay_time;
+  if(cms==0) delay_time = 0;
+  else {
+    // Translate cm/s into microsecond step delay for motors
     int cm_step_amount = 461;
-    long delay_time = 1000000/(cm_step_amount*cms);
+    delay_time = 1000000/(cm_step_amount*cms);
+  }
+  send_message(String(delay_time));
 
-    confirm_data();
-
-    unsigned long calcStepsBegin = millis();
-    if(print_move_command(mtr_steps,delay_time)) request_data(1);
-    else return;
+  // Call move command and request more dat if successful
+  // Only requests one more command atm due to low memory on micro-controller
+  if(print_move_command(mtr_steps,delay_time)) request_data(1);
+  return;
 }
 
+// Test extrusion that takes in a cm/s and distance and passes them to
+// the extrude function
 void handle_filament_test(String str){
-    double cm = str.substring(0,6).toDouble();
-    int distance = str.substring(7,10).toInt();
-    //Serial.println(cm,4);
-    //Serial.println(distance);
-    //return;
-    //int seconds = str.substring(5,10).toInt();
-    //Serial.println(cm, 4);
-    //return;
-    //Serial.println(delay_time);
-    if(extrude(cm, distance)) {
-      send_message("Done Extruding");
-    }
+  // Grabs data from string
+  double cms = str.substring(0,6).toDouble();
+  int distance = str.substring(7,10).toInt();
+
+  // Call extrude function
+  if(extrude(cms, distance)) {
+    send_message("Done Extruding");
+  }
 }
 
+// Calls a homing command and then sends a confirmation of completion
 void handle_homing(){
-    if(homing_command()) {
-      confirm_homing();
-      request_data(1);
-    }
-    else stop_message("Homing Failed");
+  // Call homing sequence
+  if(homing_command()) {
+    // Confirm homing complete
+    confirm_homing();
+    // Request data needed to start IK
+    request_data(1);
+  }
+  else stop_message("Homing Failed");
 }
 
+// Prompt user for motor, direction, and step amount and runs that motor
 void handle_debug(){
-    long mtr_command[5] = {0};
-    Serial.read(); Serial.read(); 
-    Serial.println("\nmtr num, direction, 4 digit step amount");
-    Serial.println("(0-"+ String(MTR_NUMBER-1)+")  ,(0,1,-,+) ,XXXX\n");
-    Serial.println("X,X,XXXX");
-    while(Serial.available() == 0) {
-    }
-    delay(100);
-    String str = Serial.readString();
-    //for(int i = 0; i<8; i++) str += (char)Serial.read();
-    //Serial.read();
-    Serial.println(str);
-    
-    int mtr = str.substring(0,1).toInt();
-    String direct = str.substring(2,3);
-    long steps = str.substring(4,10).toInt(); // 9 for 4 digit number
+  long mtr_command[5] = {0};
 
-    if(direct == "+" || direct == String(POS_DIRECTION[mtr])) delay(1);
-    else if(direct == "-" || direct == String(NEG_DIRECTION[mtr])) steps *= -1;
-    else Serial.println("UNKNOWN DIRECTION");
+  // Prompt for input
+  Serial.println("\nmtr num, direction, 5 digit step amount");
+  Serial.println("(0-"+ String(MTR_NUMBER-1)+")  ,(0,1,-,+) ,XXXXX\n");
+  Serial.println("X,X,XXXXX");
 
-    
-    mtr_command[mtr] = steps;
-    new_move_command(mtr_command, 0);
-    
+  // Wait for response
+  while(Serial.available() == 0) {
+  }
+  delay(100);
+  String str = Serial.readString();
+  send_message(str);
+  
+  int mtr = str.substring(0,1).toInt();
+  String direct = str.substring(2,3);
+  long steps = str.substring(4,10).toInt();
 
+  if(direct == "+" || direct == String(POS_DIRECTION[mtr])) delay(1);
+  else if(direct == "-" || direct == String(NEG_DIRECTION[mtr])) steps *= -1;
+  else send_message("UNKNOWN DIRECTION");
+
+  
+  mtr_command[mtr] = steps;
+  new_move_command(mtr_command, 0);
+  return;
 }
 
 /////////////////////////////////////////////////////////////////////
@@ -124,7 +157,8 @@ void confirm_data() {
   Serial.println("<!" + String(DATA_CON) +  ">");
 }
 
-// <!d(num)>:
+// <!d(num)>: Requests new data, num amount specificities how many data
+//    arrays to be sent
 void request_data(int num) {
   Serial.println("<!" + String(DATA_REQ) + "(" + String(num) + ")>");
 }
