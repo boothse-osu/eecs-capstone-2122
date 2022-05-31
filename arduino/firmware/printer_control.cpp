@@ -25,7 +25,7 @@ float time_nxt_step [5];
 // ht_nd: will extrude if 't' and won't if 'f'
 // This move is only used to allow for commands from 5 motor only IK
 // Will be all deleted when IK is updated
-bool new_move_command(long stp_cnt[5], char ht_nd){//, double move_time){
+bool move_command(long stp_cnt[5], char ht_nd, long move_time){
   int i;
 
   // Might not need to be initialized here

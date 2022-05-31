@@ -33,7 +33,7 @@ const int min_mtr_delay = 200;
 const int extruder_pin = 5;
 
 // move motors in accordance to old 5 motor IK data messages
-bool new_move_command(long[5], char);//, double);
+bool move_command(long[5], char, long);
 
 // moves all 5 motors while extruding on a 6th at a set cm/s
 bool print_move_command(long[5], long);
