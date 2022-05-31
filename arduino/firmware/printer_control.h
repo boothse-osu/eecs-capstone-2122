@@ -21,7 +21,10 @@ const uint8_t amisSLA[6] =          {PA0,   PA1,  PA4,  PB0,  PC1,  PC0};
 
 // Placeholder value for time to complete movement
 // This will be sent from the IK
-const float mvmt_time = 5000; //  3 000 000 = 3 seconds
+const float mvmt_time = 0; //  3 000 000 = 3 seconds
+
+// Minimum delays before motor slip
+const int min_mtr_delays  [5] = {200, 500, 200, 200, 200};
 
 // Minimum delay before motor slip
 const int min_mtr_delay = 200;
@@ -30,7 +33,7 @@ const int min_mtr_delay = 200;
 const int extruder_pin = 5;
 
 // move motors in accordance to old 5 motor IK data messages
-bool new_move_command(long[5], bool);
+bool new_move_command(long[5], char);//, double);
 
 // moves all 5 motors while extruding on a 6th at a set cm/s
 bool print_move_command(long[5], long);

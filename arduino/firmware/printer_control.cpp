@@ -25,7 +25,7 @@ float time_nxt_step [5];
 // ht_nd: will extrude if 't' and won't if 'f'
 // This move is only used to allow for commands from 5 motor only IK
 // Will be all deleted when IK is updated
-bool new_move_command(long stp_cnt[5], bool ht_nd){
+bool new_move_command(long stp_cnt[5], char ht_nd){//, double move_time){
   int i;
 
   // Might not need to be initialized here
@@ -42,7 +42,13 @@ bool new_move_command(long stp_cnt[5], bool ht_nd){
     else setDirection(i,NEG_DIRECTION[i]);
   }
   setDirection(extruder_pin,0);
-  
+
+  /*
+  for(i = 0; i<5; i++){
+    time_steps[i] = (move_time * 1000000) / abs(stp_cnt[i]);
+  }
+  */
+  ///*
   long max = 0;
   for(i = 0; i<5; i++){
     if(abs(stp_cnt[i]) > max) max = abs(stp_cnt[i]);
@@ -51,6 +57,7 @@ bool new_move_command(long stp_cnt[5], bool ht_nd){
   for(i = 0; i<5; i++) {
     time_steps[i] = move_time / abs(stp_cnt[i]);
   }
+  //*/
 
   // Timer that the motors will trigger off
   unsigned long timeBegin = micros();
@@ -95,7 +102,7 @@ bool new_move_command(long stp_cnt[5], bool ht_nd){
       }
     }
     // If the Extruder needs to step: step it an calculate next step time
-    if(ht_nd == 't' && timeNow>=time_nxt_step_extruder){
+    if(ht_nd == 'e' && timeNow>=time_nxt_step_extruder){
       step(extruder_pin);
       time_nxt_step_extruder += time_steps_extruder;
     }

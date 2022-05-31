@@ -14,7 +14,7 @@ void handle_move(String str) {
   long mtr_steps[5];
 
   // IK used to send a T/F for hot-end operation
-  //String hot_end = str.substring(55,56);
+  char hot_end = str.charAt(55);
 
   // Log initial motor command
   //send_message(str);
@@ -33,7 +33,8 @@ void handle_move(String str) {
 
   // Call move command and request more dat if successful
   // Only requests one more command atm due to low memory on micro-controller
-  if(new_move_command(mtr_steps,true)) request_data(data_length);
+  if(new_move_command(mtr_steps, hot_end)) return;
+  stop_message("Stall");
   return;
 }
 
@@ -75,7 +76,7 @@ void handle_print_move(String str) {
 
   // Call move command and request more dat if successful
   // Only requests one more command atm due to low memory on micro-controller
-  if(print_move_command(mtr_steps,delay_time)) request_data(data_length);
+  //if(print_move_command(mtr_steps,delay_time)) request_data(data_length);
   return;
 }
 
@@ -99,7 +100,7 @@ void handle_homing(){
     // Confirm homing complete
     confirm_homing();
     // Request data needed to start IK
-    request_data(1);
+    request_data(data_length);
   }
   else stop_message("Homing Failed");
 }
@@ -130,7 +131,7 @@ void handle_debug(){
 
   
   mtr_command[mtr] = steps;
-  new_move_command(mtr_command, 0);
+  //new_move_command(mtr_command, 0);
   return;
 }
 

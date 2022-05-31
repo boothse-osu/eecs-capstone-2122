@@ -20,6 +20,10 @@
 
 // Command Examples:
 
+// <!D(+0165.3356,+0012.4316,+0003.5343,+0000.0000,+0000.0000,f,018.9835)>
+
+// <!D(+0020.0000,-0000.0000,-0000.0000,+0000.0000,+0000.0000,t)><!D(-0030.0000,-0005.0000,-0000.0000,+0000.0000,+0000.0000,t)><!D(+0010.0000,+0005.0000,-0000.0000,+0000.0000,+0000.0000,t)><!D(+0020.0000,-0000.0000,-0000.0000,+0000.0000,+0000.0000,t)><!D(-0030.0000,-0005.0000,-0000.0000,+0000.0000,+0000.0000,t)><!D(+0010.0000,+0005.0000,-0000.0000,+0000.0000,+0000.0000,t)>
+
 // Positional acc +/- 1deg && Arb Positioning
 // <!D(+0000.0000,+0000.0000,+0000.0000,-0000.7854,+0000.0000,t)>
 
@@ -27,7 +31,9 @@
 // <!D(+0020.0000,-0020.0000,+0020.0000,+0000.5000,+0000.5000,t)>
 
 // 4 motor
-// <!D(+0020.0000,-0020.0000,-0000.0000,+0000.5000,+0000.5000,t)>
+// <!D(+0020.0000,-0000.0000,-0000.0000,+0000.0000,+0000.0000,t)>
+// <!D(-0020.0000,-0000.0000,-0000.0000,+0000.0000,+0000.0000,t)>
+// <!D(-0000.0000,-0005.0000,-0000.0000,+0000.0000,+0000.0000,t)>
 
 // 5 motor + extrude
 // <!D(+0000.0000,-0000.0000,-0000.0000,+0000.0000,+0000.0000,-02.0000)>
@@ -56,8 +62,8 @@ void setup()
   Serial.begin(9600);
 
   // Shortens the timeout on readString() from 1000 to prevent
-  // long blocking.
-  Serial.setTimeout(10);
+  // long blocking. Can go as low as 3 for 64 byte messages.
+  Serial.setTimeout(4);
 
   // Setup for each motor driver
   for(int i = 0; i < 6; i++) {
@@ -104,7 +110,7 @@ void loop()
   //delayMicroseconds(200);
   
   // Maintain hot-end temp and check for thermal runaway.
-  runHotend();
+  //runHotend();
 
   // serialEvent is called by the arduino at the end of every cycle.
 } 
@@ -126,10 +132,10 @@ void serialEvent()
     // <!{Command Signifier}{optional: (data)}>
     // <!h>       - Homing Command
     // <!n(200)>  - Set Hot-end to New Temp (200)
-    if(serial_message.substring(0,2) == "<!") {
+    //if(serial_message.substring(0,2) == "<!") {
 
       // Get command signifier char from buffer string.
-      signifier = serial_message.charAt(2); 
+      //signifier = serial_message.charAt(2); 
 
 
       // Re-direct to the command that was called.
@@ -137,26 +143,31 @@ void serialEvent()
       // Signifier shows a move command and the move data is the right 
       // length. Send the data to a data parser that will extract 
       // variables and call a move command.
-      if (signifier == MOVE_DATA && serial_message.substring(61,62) == ">") {
+      if (serial_message.charAt(2) == MOVE_DATA){// && serial_message.substring(61,62) == ">") {
         for(int i = 0; i<data_length; i++){
-          if(serial_message.substring(61,62) == ">") {
+          if(serial_message.charAt(2) != EOF_MSG) {
+            //Serial.print("<!R>");
+            //double time_move = serial_message.substring(61,69).toDouble();
+            //send_message(serial_message.substring(0,62));
             handle_move(serial_message.substring(4,60));
-            serial_message = serial_message.substring(62);
+            request_data(data_length);
+            
+            //serial_message = serial_message.substring(62);
           }
           else {
-            send_message("Format error on data: " + String(i));
+            send_message("End of File Reached.");
             break;
           }
         }
       }
-      else if (signifier == MOVE_DATA && serial_message.substring(68,69) == ">") {
+      else if (serial_message.charAt(2) == MOVE_DATA && serial_message.substring(68,69) == ">") {
         handle_print_move(serial_message.substring(4));
         serial_message = serial_message.substring(69);
       }
       // Signifier shows a homing request. Disable the z-axis motor so 
       // it will fall to its lowest point, initiate a homing sequence, 
       // wait for the z-axis to fall and re-enable it.
-      else if (signifier == HOMING_REQ) {
+      else if (serial_message.charAt(2) == HOMING_REQ) {
         setDirection(2,0);
         for(int i = 0; i<50; i++){
           step(2);
@@ -172,29 +183,29 @@ void serialEvent()
 
       // Signifier shows a filament extrusion test request. Initiate a 
       // filament test.
-      else if (signifier == FILAMENT) 
+      else if (serial_message.charAt(2) == FILAMENT) 
         handle_filament_test(serial_message.substring(4));
 
       // Signifier shows a hot-end temperature change request. Call hot-end 
       // temperature change handler.
-      else if (signifier == TEMP_SET) 
+      else if (serial_message.charAt(2) == TEMP_SET) 
         hotendParse(serial_message.substring(4));
 
       // Signifier shows a hot-end status request. Send message containing 
       // hot-end information.
-      else if (signifier == TEMP_REP) 
+      else if (serial_message.charAt(2) == TEMP_REP) 
         send_message("Current temp: " + String(hotin) + "°C, Target temp: " + String(hotset) + "°C");
       
       // Signifier shows a debug mode request. Call debug mode handler.
-      else if (signifier == DEBUG) 
+      else if (serial_message.charAt(2) == DEBUG) 
         handle_debug();
       
       else send_message("UNKOWN COMMAND");;
-    }
-    else send_message("BAD COMMAND");
+    //}
+    //else send_message("BAD COMMAND");
 
   }
 
   // Send message of the time it took to process buffer.
-  send_message("Done in: " + String((double)(millis() - processing_start)/1000.0) + " seconds");
+  //send_message("Done in: " + String((double)(millis() - processing_start)/1000.0) + " seconds");
 }

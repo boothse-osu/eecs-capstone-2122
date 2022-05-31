@@ -25,6 +25,7 @@ const char DEBUG        = '!'; // Request for debug movement
 const char TEMP_SET     = 'n'; // Request to set temp on hot end
 const char TEMP_REP     = 't'; // Request for hot end status
 const char FILAMENT     = 'f'; // Request for filament extrusion test
+const char EOF_MSG      = 'e'; // Signifies the End of the Print File
 
 // Command header presets the printer sends back to the computer
 const char HOMING_CON   = 'H'; // Confirmation that homing finished
@@ -34,7 +35,7 @@ const char STOP         = 's'; // Message about printer stop (stops IK)
 const char MESSAGE      = 'm'; // Message (does nothing but log)
 
 // How many data message to receive over serial each time
-const int data_length = 3;
+const int data_length = 1;
 
 // Direction for motors to reach their homed position
 const int HOME_DIRECTION[MTR_NUMBER] = {0,1,0,1,0};
