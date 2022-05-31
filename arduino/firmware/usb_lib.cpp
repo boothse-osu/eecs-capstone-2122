@@ -1,6 +1,9 @@
 // Cpp - Arduino Library
 #include "Arduino.h"
 
+//
+#include "config.h"
+
 // USB Communication Function Library
 #include "usb_lib.h"
 
@@ -34,7 +37,7 @@ void handle_move(String str) {
 
   // Call move command and request more dat if successful
   // Only requests one more command atm due to low memory on micro-controller
-  if(new_move_command(mtr_steps, hot_end, time_micro)) return;
+  if(move_command(mtr_steps, hot_end, time_micro)) return;
   return;
 }
 

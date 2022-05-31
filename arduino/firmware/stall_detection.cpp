@@ -1,6 +1,9 @@
 // Cpp - Arduino Library
 #include "Arduino.h"
 
+//
+#include "config.h"
+
 // USB Communication Function Library
 #include "usb_lib.h"
 
