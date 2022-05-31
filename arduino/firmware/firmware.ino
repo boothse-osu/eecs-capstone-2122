@@ -4,6 +4,9 @@
 // Motor Driver Library
 #include <AMIS30543.h>
 
+//
+#include "config.h"
+
 // USB Communication Function Library
 #include "usb_lib.h"
 
@@ -52,6 +55,12 @@ unsigned long processing_start;
 
 // Char holding the serial request command signifier.
 char signifier;
+
+long mtr_steps[5];
+
+char hot_end;
+
+unsigned long time_micro;
 
 // Array of Motor Driver Steppers.
 AMIS30543 stepper[6] = {};
@@ -125,22 +134,21 @@ void serialEvent()
     // Signifier shows a move command and the move data is the right 
     // length. Send the data to a data parser that will extract 
     // variables and call a move command.
-    if (serial_message.charAt(2) == MOVE_DATA){// && serial_message.substring(61,62) == ">") {
+    if (serial_message.charAt(2) == MOVE_DATA){
       for(int i = 0; i<data_length; i++){
         if(serial_message.charAt(2) != EOF_MSG) {
-          long mtr_steps[5];
+          
           // IK used to send a T/F for hot-end operation
-          char hot_end = str.charAt(59);
-          send_message(String(hot_end);)
+          hot_end = serial_message.charAt(59);
+          send_message(String(hot_end));
 
           // Parse data for angle changes and calculate steps for each motor
           for(int i = 0; i<5; i++) {
-            mtr_steps[i] = round(str.substring((i*11)+4, (i*11)+4+10).toDouble() * (steps_per_rotations[i] / step_mode));
+            mtr_steps[i] = round(serial_message.substring((i*11)+4, (i*11)+4+10).toDouble() * (steps_per_rotations[i] / step_mode));
             send_message(String(mtr_steps[i]));
           }
 
-          double time_move = serial_message.substring(61,69).toDouble();
-          unsigned long time_micro = time_move * 1000000;
+          time_micro = serial_message.substring(61,69).toDouble() * 1000000;
 
           move_command(mtr_steps, hot_end, time_micro);
           
@@ -153,11 +161,6 @@ void serialEvent()
           break;
         }
       }
-    }
-
-    else if (serial_message.charAt(2) == MOVE_DATA && serial_message.substring(68,69) == ">") {
-      handle_print_move(serial_message.substring(4));
-      serial_message = serial_message.substring(69);
     }
 
     // Signifier shows a homing request. Disable the z-axis motor so 
