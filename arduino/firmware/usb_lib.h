@@ -53,13 +53,6 @@ void handle_move(String);
 // then requests more data.
 void handle_print_move(String);
 
-// Test extrusion that takes in a cm/s and distance and passes them to
-// the extrude function
-void handle_filament_test(String);
-
-// Calls a homing command and then sends a confirmation of completion
-void handle_homing();
-
 // Prompt user for motor, direction, and step amount and runs that motor
 void handle_debug();
 

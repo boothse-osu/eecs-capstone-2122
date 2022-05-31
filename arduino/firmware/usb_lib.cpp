@@ -16,6 +16,7 @@ void handle_move(String str) {
   // IK used to send a T/F for hot-end operation
   char hot_end = str.charAt(55);
 
+  unsigned long time_micro = 0;
   // Log initial motor command
   //send_message(str);
   
@@ -33,8 +34,7 @@ void handle_move(String str) {
 
   // Call move command and request more dat if successful
   // Only requests one more command atm due to low memory on micro-controller
-  if(new_move_command(mtr_steps, hot_end)) return;
-  stop_message("Stall");
+  if(new_move_command(mtr_steps, hot_end, time_micro)) return;
   return;
 }
 
@@ -78,31 +78,6 @@ void handle_print_move(String str) {
   // Only requests one more command atm due to low memory on micro-controller
   //if(print_move_command(mtr_steps,delay_time)) request_data(data_length);
   return;
-}
-
-// Test extrusion that takes in a cm/s and distance and passes them to
-// the extrude function
-void handle_filament_test(String str){
-  // Grabs data from string
-  double cms = str.substring(0,6).toDouble();
-  int distance = str.substring(7,10).toInt();
-
-  // Call extrude function
-  if(extrude(cms, distance)) {
-    send_message("Done Extruding");
-  }
-}
-
-// Calls a homing command and then sends a confirmation of completion
-void handle_homing(){
-  // Call homing sequence
-  if(true){//homing_command()) {
-    // Confirm homing complete
-    confirm_homing();
-    // Request data needed to start IK
-    request_data(data_length);
-  }
-  else stop_message("Homing Failed");
 }
 
 // Prompt user for motor, direction, and step amount and runs that motor
