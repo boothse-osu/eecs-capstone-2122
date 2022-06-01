@@ -158,7 +158,7 @@ int main(int argc,char* argv[]) {
 		//We know we can skip the first two chars
 		//Strcopy did not work as I expected so we'll just uh do this instead ;)
 
-		//printf("%s\n", i_state.parser_buffer);
+		printf("%i: %s\n", i_state.parser_idx,  i_state.parser_buffer);
 
 		for (int i = 2; i < (i_state.parser_idx); i++) {
 			char chr = i_state.parser_buffer[i];
@@ -171,12 +171,17 @@ int main(int argc,char* argv[]) {
 			}
 		}
 
+		usb_new_command(&i_state);
+
+		printf("Parser buffer payload after copy: %s\n", payload);
+		printf("%i: %s\n", i_state.parser_idx, i_state.parser_buffer);
+
 		switch (c) {
 			case 'd': {
 				//Handle sending an amount of data
 				//Aka the slightly more difficult part
 				int num_datas = atoi(payload);
-				printf("I am supposed to print %i datas\n", num_datas);
+				printf("I am supposed to print %i data\n", num_datas);
 				
 				for (int i = 0; i < num_datas; i++) {
 					
