@@ -2,26 +2,30 @@
 
 #include <AMIS30543.h>
 
-const uint8_t amisDirPin[5] = {PB11, PB12, PB13, PB14, PB15};
-const uint8_t amisStepPin[5] = {PC5, PC6, PC7, PC8, PC9};
-const uint8_t amisSlaveSelect[5] = {PB3, PB4, PB5, PB6, PB7};
-const uint8_t amisSLA[5] = {PA0, PA1, PA4, PB0, PC1};
+const uint8_t amisDirPin[6] =       {PB11,  PB12, PB13, PB14, PB15, PA12};
+const uint8_t amisStepPin[6] =      {PC5,   PC6,  PC7,  PC8,  PC9,  PA11};
+const uint8_t amisSlaveSelect[6] =  {PB3,   PB4,  PB5,  PB6,  PB7,  PC3};
+const uint8_t amisSLA[6] =          {PA0,   PA1,  PA4,  PB0,  PC1,  PC0};
 
 // Radius of circle in steps
 const int cm_radius = 2000;
 
 bool jobDone = false;
 
-AMIS30543 stepper;
+AMIS30543 stepper[6] = {};
 
 void setup()
 {
-  Serial.begin(9600);
   SPI.begin();
   Serial.begin(9600);
 
-  for(int i = 0; i < 2; i++) {
-    stepper.init(amisSlaveSelect[i]);
+  // Shortens the timeout on readString() from 1000 to prevent
+  // long blocking.
+  Serial.setTimeout(10);
+
+  // Setup for each motor driver
+  for(int i = 0; i < 6; i++) {
+    stepper[i].init(amisSlaveSelect[i]);
 
     // Drive the NXT/STEP and DIR pins low initially.
     digitalWrite(amisStepPin[i], LOW);
@@ -33,29 +37,43 @@ void setup()
     delay(1);
   
     // Reset the driver to its default settings.
-    stepper.resetSettings();
+    stepper[i].resetSettings();
   
     // Set the current limit.  You should change the number here to
     // an appropriate value for your particular system.
-    stepper.setCurrentMilliamps(1800);
+    if (i < 3 || i == 5) {
+      stepper[i].setCurrentMilliamps(1800);
+    } else {
+      stepper[i].setCurrentMilliamps(700);
+    }
   
-    // Set the number of microsteps that correspond to one full step.
-    stepper.setStepMode(4);
+    // Set the number of micro-steps that correspond to one full step.
+    stepper[i].setStepMode(4);
   
-    stepper.setSlaTransparencyOff();
-    stepper.setSlaGainHalf();
+    stepper[i].setSlaTransparencyOff();
+    stepper[i].setSlaGainHalf();
   
     // Enable the motor outputs.
-    stepper.enableDriver();
-    
+    stepper[i].enableDriver();
   }
+
+  // Setup hot-end with correct pin-modes and set variables.
 }
+
+int extruder_pin = 5;
+long extrude_delay = 1080-200;
 
 void loop()
 {
   // Stops the loop after the job has been completed
   if(jobDone==false)
   {
+      if (extrude_delay>0)setDirection(extruder_pin,0);
+      else setDirection(extruder_pin,1);
+  // Set motor step delay
+    long time_steps_extruder = abs(extrude_delay);
+    float time_nxt_step_extruder = micros() + time_steps_extruder;
+
     int x = cm_radius;
     int y = 0;
     int x_x = 0;
@@ -65,6 +83,7 @@ void loop()
     int y_shift = 0;
     for (int angle = 0; angle < 361; angle++)
     {
+      unsigned long timeNow = micros();
       if (angle==0 || angle==360)
       {
         x_x = cm_radius;
@@ -100,8 +119,8 @@ void loop()
       if(x != x_x)
       {
         change = x_x-x;
-        Serial.print("\nX: ");
-        Serial.print(change);
+        //Serial.print("\nX: ");
+        //Serial.print(change);
         x_shift += change;
         if(change > 0) setDirection(1,0);
         else setDirection(1,1);
@@ -112,14 +131,18 @@ void loop()
       if(y != y_y)
       {
         change = y_y-y;
-        Serial.print("\nY: ");
-        Serial.print(change);
+        //Serial.print("\nY: ");
+        //Serial.print(change);
         y_shift += change;
         if(change > 0) setDirection(0,0);
         else setDirection(0,1);
         for(int i = 0; i<abs(change); i++) step(0); // add abs to change
         //step(0);
         y = y_y;
+      }
+      if(timeNow>=time_nxt_step_extruder && extrude_delay != 0){
+        step(extruder_pin);
+        time_nxt_step_extruder += time_steps_extruder;
       }
     }
     Serial.print("\nX_shift: ");

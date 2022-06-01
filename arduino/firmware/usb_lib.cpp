@@ -14,7 +14,7 @@ void handle_move(String str) {
   long mtr_steps[5];
 
   // IK used to send a T/F for hot-end operation
-  //String hot_end = str.substring(55,56);
+  char hot_end = str.charAt(55);
 
   // Log initial motor command
   //send_message(str);
@@ -25,15 +25,16 @@ void handle_move(String str) {
     // str.substring((i*11), (i*11)+10).toDouble(): grab 10 digit change
     // - (note) 11s get start and end positions accounting for comma
     mtr_steps[i] = round(str.substring((i*11), (i*11)+10).toDouble() * (steps_per_rotations[i] / step_mode));
-    send_message(String(mtr_steps[i]));
+    //send_message(String(mtr_steps[i]));
   }
   
   // Confirm data has been received
-  confirm_data();
+  //confirm_data();
 
   // Call move command and request more dat if successful
   // Only requests one more command atm due to low memory on micro-controller
-  if(new_move_command(mtr_steps,true)) request_data(1);
+  if(new_move_command(mtr_steps, hot_end)) return;
+  stop_message("Stall");
   return;
 }
 
@@ -62,7 +63,7 @@ void handle_print_move(String str) {
   confirm_data();
 
 
-  send_message(String(cms));
+  send_message("CM/S: " + String(cms));
   // If cm/s = 0 delay = 0 to avoid divide by zero
   long delay_time;
   if(cms==0) delay_time = 0;
@@ -71,11 +72,11 @@ void handle_print_move(String str) {
     int cm_step_amount = 461;
     delay_time = 1000000/(cm_step_amount*cms);
   }
-  send_message(String(delay_time));
+  send_message("Delay: " + String(delay_time));
 
   // Call move command and request more dat if successful
   // Only requests one more command atm due to low memory on micro-controller
-  if(print_move_command(mtr_steps,delay_time)) request_data(1);
+  //if(print_move_command(mtr_steps,delay_time)) request_data(data_length);
   return;
 }
 
@@ -95,11 +96,11 @@ void handle_filament_test(String str){
 // Calls a homing command and then sends a confirmation of completion
 void handle_homing(){
   // Call homing sequence
-  if(homing_command()) {
+  if(true){//homing_command()) {
     // Confirm homing complete
     confirm_homing();
     // Request data needed to start IK
-    request_data(1);
+    request_data(data_length);
   }
   else stop_message("Homing Failed");
 }
@@ -130,7 +131,7 @@ void handle_debug(){
 
   
   mtr_command[mtr] = steps;
-  new_move_command(mtr_command, 0);
+  //new_move_command(mtr_command, 0);
   return;
 }
 
