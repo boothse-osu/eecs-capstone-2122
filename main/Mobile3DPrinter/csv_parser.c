@@ -8,9 +8,9 @@ void add_point(struct Path* path, struct Point point) {
 	//If there isn't enough memory, we need to add more
 	if ((path->size) + 1 > path->cap) {
 		//Otherwise double the cap
-		struct Point* tmp = (struct Point*)realloc(path->points, sizeof(struct Point) * path->cap * 2);
+		struct Point* tmp = (struct Point*)realloc(path->raw_points, sizeof(struct Point) * path->cap * 2);
 		if (tmp != NULL) {
-			path->points = tmp;
+			path->raw_points = tmp;
 			path->cap = 2 * path->cap;
 		}
 		else {
@@ -19,7 +19,7 @@ void add_point(struct Path* path, struct Point point) {
 		}
 	}
 
-	path->points[path->size] = point;
+	path->raw_points[path->size] = point;
 	path->size++;
 }
 

@@ -21,6 +21,9 @@ struct Point {
 
 //Struct for the whole path
 struct Path {
+	//Holds raw points in terms of 3D space
+	struct Point* raw_points;
+	//Holds points which have gone through IK in terms of motor angles relative to the last move
 	struct Point* points;
 	int size;
 	int cap;

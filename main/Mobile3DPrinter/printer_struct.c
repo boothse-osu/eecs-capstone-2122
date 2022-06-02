@@ -18,7 +18,7 @@ void printer_get_tip(struct Printer* prn, vec3 out) {
 }
 
 //Normal vector from the print surface
-void printer_get_normal(struct Printer* prn, vec3 out) {
+void printer_get_normal(struct Printer* prn, vec2 out) {
 
 	//Get the position of the end of link 4 minus the position of link 5
 	vec3 lnk5;
@@ -29,11 +29,11 @@ void printer_get_normal(struct Printer* prn, vec3 out) {
 	vec3 norm;
 	glm_vec3_sub(lnk5, lnk4, norm);
 
-	//Reverse it
-	glm_vec3_scale(norm, -1.f, norm);
+	float theta = (float)atan2(-1.f * (double)norm[0], norm[1]);
+	float phi = (float)atan2(norm[2], sqrt(((double)norm[0] * (double)norm[0]) + ((double)norm[1] * (double)norm[1])));
 
-	//Normalize
-	glm_vec3_normalize_to(norm,out);
+	out[0] = theta;
+	out[1] = phi;
 }
 
 //Generates a motor, taking in min and max angles in radians

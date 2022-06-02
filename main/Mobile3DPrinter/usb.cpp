@@ -57,9 +57,16 @@ void usb_get_input(PORT port, struct InputState* state) {
 	
 	//The amount of characters last read is stored in order to
 	//Allow for non-full buffers
-	ReciveData(port, state->input_buffer, BUFFSIZE);
-	//For debug purposes:
-	printf("Bytes recieved: %s\n",state->input_buffer);
+	int got_data = ReciveData(port, state->input_buffer, BUFFSIZE);
+	if (!got_data) {
+		printf("\x1B[31mGot no data!\033[0m\n");
+		//If we don't get input, clear the buffer
+		strcpy_s(state->input_buffer,"");
+	}
+	else {
+		//For debug purposes:
+		printf("Bytes read: %s", state->input_buffer);
+	}
 	state->input_idx = 0;
 }
 
@@ -83,8 +90,6 @@ void usb_add_char(struct InputState* state, char c) {
 
 void usb_get_command(PORT port, struct InputState* state) {
 
-	//printf("usb_get_command\n");
-
 	//How many chars of the command initliazer '<!' we have seen
 	bool accepting = FALSE;
 	bool saw_lt = FALSE;
@@ -95,7 +100,6 @@ void usb_get_command(PORT port, struct InputState* state) {
 
 		//If we recieve "<!" begin accepting input
 		char c = state->input_buffer[state->input_idx];
-		//printf("Index: %i, character: %c\n", state->input_idx, c);
 		switch (c) {
 			case '<':
 				//If we are not yet accepting a command, mark it
@@ -112,7 +116,7 @@ void usb_get_command(PORT port, struct InputState* state) {
 					accepting = TRUE;
 					saw_lt = FALSE;
 				}
-				else {
+				else if(accepting){
 					usb_add_char(state, c);
 				}
 				break;
@@ -135,6 +139,8 @@ void usb_get_command(PORT port, struct InputState* state) {
 		if (saw_gt) {
 			return;
 		}
+
+		//printf("Getting char %c, index %i\n",c,state->input_idx);
 	}
 
 	//By the end of the function we ought to have

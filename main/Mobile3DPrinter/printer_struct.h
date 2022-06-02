@@ -43,8 +43,8 @@ struct Printer{
 //Gets vector3 position of the printer's end effector, assuming that the final absolute link matrix is up to date
 void printer_get_tip(struct Printer*, vec3);
 
-//Gets the normal vector relative to the surface of the last two joints.
-void printer_get_normal(struct Printer*, vec3);
+//Gets the theta and phi of the end effector
+void printer_get_normal(struct Printer*, vec2);
 
 //Printer constructor helpers
 struct Printer generate_printer();

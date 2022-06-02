@@ -1,8 +1,14 @@
 //Test program for the inverse kinematics code
 
 #include <assert.h>
+#include <math.h>
 #include "../Mobile3DPrinter/printer_struct.h"
 #include "../Mobile3DPrinter/kinematics.h"
+
+float deg2rad(float deg) {
+
+	return deg * (M_PI / 180.f);
+}
 
 int main() {
 
@@ -14,11 +20,11 @@ int main() {
 	vec3 home_position;
 	printer_get_tip(&prn,home_position);
 
-	vec3 home_normal;
+	vec2 home_normal;
 	printer_get_normal(&prn, home_normal);
 
 	printf("Home normal:\n");
-	print_vec3(home_normal);
+	printf("<%f, %f>\n", home_normal[0], home_normal[1]);
 	printf("Home position:\n");
 	print_vec3(home_position);
 
@@ -26,22 +32,22 @@ int main() {
 	//print_printer(&prn);
 
 	printf("Move just the first motor\n");
-	if(ik_test_case(&prn, (vec3) { 2.f, 3.f, 1.f }, (vec3){0.f, -1.f,0.f})) return;
+	if (ik_test_case(&prn, (vec3) { 2.f, 3.f, 1.f }, (vec2) { deg2rad(90.f), deg2rad(0.f) })) return;
 
 	printf("Move just the second motor\n");
-	if(ik_test_case(&prn, (vec3) { 2.f, 3.f, 2.f }, (vec3) { 0.f, -1.f, 0.f })) return;
+	if(ik_test_case(&prn, (vec3) { 2.f, 3.f, 2.f }, (vec2) { deg2rad(0.f), deg2rad(90.f) })) return;
 
 	printf("Move just the third motor\n");
-	if (ik_test_case(&prn, (vec3) { 2.f, 4.f, 2.f }, (vec3) { 0.f, -1.f, 0.f })) return;
+	if (ik_test_case(&prn, (vec3) { 2.f, 4.f, 2.f }, (vec2) { deg2rad(45.f), deg2rad(45.f) })) return;
 
-	printf("Move around Z less than 90 degrees\n");
-	if (ik_test_case(&prn, (vec3) { 2.f, 4.f, 2.f }, (vec3) { 1.f, -1.f, 0.f })) return;
+	printf("Move just theta\n");
+	if (ik_test_case(&prn, (vec3) { 2.f, 4.f, 2.f }, (vec2) { deg2rad(20.f), deg2rad(60.f) })) return;
 
-	printf("Move around Z to 90 degrees\n");
-	if (ik_test_case(&prn, (vec3) { 2.f, 4.f, 2.f }, (vec3) { 1.f, 0.f, 0.f })) return;
+	printf("Move just phi\n");
+	if (ik_test_case(&prn, (vec3) { 2.f, 4.f, 2.f }, (vec2) { deg2rad(15.f), deg2rad(15.f) })) return;
 
-	printf("Move around Z to more than 90 degrees\n");
-	if (ik_test_case(&prn, (vec3) { 2.f, 4.f, 2.f }, (vec3) { 1.f, -1.f, 0.f })) return;
+	printf("Move all\n");
+	if (ik_test_case(&prn, (vec3) { 3.f, 5.f, 3.f }, (vec2) { deg2rad(90.f), deg2rad(0.f) })) return;
 
 	return 0;
 }
