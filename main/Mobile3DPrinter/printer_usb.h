@@ -4,7 +4,7 @@
 #include "CSerialPort.h"
 
 //Serial port number for communication
-#define PORTNO 4
+#define PORTNO 3
 
 //Size of the input character buffer.
 #define BUFFSIZE 64
