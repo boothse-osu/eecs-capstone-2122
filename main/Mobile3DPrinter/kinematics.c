@@ -93,29 +93,35 @@ int inverse_kinematics(struct Printer* prn, vec3 target, vec2 normal, vec3 posit
 	//Handle rotational joints. May need to redo this whole section later.
 	//Calculate axis coordinates
 	
-	vec2 current_norm;
-	printer_get_normal(prn,current_norm);
+	if (IK_NORMALS) {
+		vec2 current_norm;
+		printer_get_normal(prn, current_norm);
 
-	//Theta
-	//XY plane, Z axis
-	float theta_current = current_norm[0];
-	float theta_diff = normal[0] - theta_current;
-	printf("Current R1: %f Target R1: %f R1 Diff: %f\n", theta_current,normal[0],theta_diff);
+		//Theta
+		//XY plane, Z axis
+		float theta_current = current_norm[0];
+		float theta_diff = normal[0] - theta_current;
+		printf("Current R1: %f Target R1: %f R1 Diff: %f\n", theta_current, normal[0], theta_diff);
 
-	//Phi
-	//YZ plane,  
-	float phi_current = current_norm[1];
-	float phi_diff = normal[1] - phi_current;
-	printf("Current R2: %f Target R2: %f R2 Diff: %f\n", phi_current, normal[1], phi_diff);
+		//Phi
+		//YZ plane,  
+		float phi_current = current_norm[1];
+		float phi_diff = normal[1] - phi_current;
+		printf("Current R2: %f Target R2: %f R2 Diff: %f\n", phi_current, normal[1], phi_diff);
 
-	//Set the rotational joints to those coordinates if possible
-	//Making assumptions about these last two motors being Z axis rotation and X axis rotation
-	//	specifically
-	if (set_motor_angle(prn, 3, prn->motors[3].angle + theta_diff)) return 1;
-	normal_delta[0] = theta_diff;
+		//Set the rotational joints to those coordinates if possible
+		//Making assumptions about these last two motors being Z axis rotation and X axis rotation
+		//	specifically
+		if (set_motor_angle(prn, 3, prn->motors[3].angle + theta_diff)) return 1;
+		normal_delta[0] = theta_diff;
 
-	if (set_motor_angle(prn, 4, prn->motors[4].angle + phi_diff)) return 1;
-	normal_delta[1] = phi_diff;
+		if (set_motor_angle(prn, 4, prn->motors[4].angle + phi_diff)) return 1;
+		normal_delta[1] = phi_diff;
+	}
+	else {
+		normal_delta[0] = 0.f;
+		normal_delta[1] = 0.f;
+	}
 
 	//Do FK on the last two joints to get the final two links as a single vector
 	forward_kinematics(prn);

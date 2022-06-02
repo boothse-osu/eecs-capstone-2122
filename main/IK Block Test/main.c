@@ -32,22 +32,22 @@ int main() {
 	//print_printer(&prn);
 
 	printf("Move just the first motor\n");
-	if(ik_test_case(&prn, (vec3) { 2.f, 3.f, 1.f }, deg2rad(90.f), deg2rad(0.f))) return;
+	if (ik_test_case(&prn, (vec3) { 2.f, 3.f, 1.f }, (vec2) { deg2rad(90.f), deg2rad(0.f) })) return;
 
 	printf("Move just the second motor\n");
-	if(ik_test_case(&prn, (vec3) { 2.f, 3.f, 2.f }, deg2rad(0.f), deg2rad(90.f))) return;
+	if(ik_test_case(&prn, (vec3) { 2.f, 3.f, 2.f }, (vec2) { deg2rad(0.f), deg2rad(90.f) })) return;
 
 	printf("Move just the third motor\n");
-	if (ik_test_case(&prn, (vec3) { 2.f, 4.f, 2.f }, deg2rad(45.f), deg2rad(45.f))) return;
+	if (ik_test_case(&prn, (vec3) { 2.f, 4.f, 2.f }, (vec2) { deg2rad(45.f), deg2rad(45.f) })) return;
 
 	printf("Move just theta\n");
-	if (ik_test_case(&prn, (vec3) { 2.f, 4.f, 2.f }, deg2rad(45.f), deg2rad(90.f))) return;
+	if (ik_test_case(&prn, (vec3) { 2.f, 4.f, 2.f }, (vec2) { deg2rad(20.f), deg2rad(60.f) })) return;
 
 	printf("Move just phi\n");
-	if (ik_test_case(&prn, (vec3) { 2.f, 4.f, 2.f }, deg2rad(90.f), deg2rad(45.f))) return;
+	if (ik_test_case(&prn, (vec3) { 2.f, 4.f, 2.f }, (vec2) { deg2rad(15.f), deg2rad(15.f) })) return;
 
 	printf("Move all\n");
-	if (ik_test_case(&prn, (vec3) { 3.f, 5.f, 3.f }, deg2rad(15.f), deg2rad(25.f))) return;
+	if (ik_test_case(&prn, (vec3) { 3.f, 5.f, 3.f }, (vec2) { deg2rad(90.f), deg2rad(0.f) })) return;
 
 	return 0;
 }

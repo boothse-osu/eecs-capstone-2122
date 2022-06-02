@@ -10,9 +10,13 @@
 #define ROUND_PRECISION 10000
 
 //Determines whether or not the angle bounds checker is on
-//Mostly for debug purposes
-
+//For debug purposes
 #define ANGLE_BOUNDS 0
+
+//Determines whether the IK will consider the normal
+//For debug purposes
+
+#define IK_NORMALS 1
 
 //Defines for the inverse kinematics
 //All of this is used by the generate_printer function in printer_struct.c
