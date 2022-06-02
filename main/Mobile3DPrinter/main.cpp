@@ -64,7 +64,7 @@ int main(int argc,char* argv[]) {
 	printf("Printing %s",filepath);
 	*/
 
-	char filepath[64] = "..\\Circle_Path.csv";
+	char filepath[64] = "..\\Circle_Path (50 Points)+Distance.csv";
 
 	//Parse the CSV file
 	struct Path print_path;
