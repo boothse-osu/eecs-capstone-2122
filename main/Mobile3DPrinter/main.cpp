@@ -30,21 +30,21 @@ void sphere_to_normal(vec3 norm, float theta, float phi) {
 }
 
 //Output a point to the controller in the required format
-void output_point(PORT port, vec3 delta, bool extrude) {
+void output_point(PORT port, struct Point point) {
 
 	//Precise size of the outgoing string
 	char outgoing[63];
 
 	//Extrusion var to send
 	char ex;
-	if (extrude) {
+	if (point.extrusion) {
 		ex = 't';
 	}
 	else {
 		ex = 'f';
 	}
 
-	snprintf(outgoing,63,"<!D(%+010.4f,%+010.4f,%+010.4f,%+010.4f,%+010.4f,%c)>",delta[0],delta[1],delta[2],0.f,0.f,ex);
+	snprintf(outgoing,63,"<!D(%+010.4f,%+010.4f,%+010.4f,%+010.4f,%+010.4f,%c)>",point.x,point.y,point.z,point.theta,point.phi,ex);
 
 	printf("Outgoing data: %s\n",outgoing);
 	SendData(port, outgoing);
@@ -69,13 +69,13 @@ int main(int argc,char* argv[]) {
 
 	//Parse the CSV file
 	struct Path print_path;
-	print_path.points = (struct Point*) malloc(sizeof(struct Point)*PATH_SIZE); //Say your prayers boys we doing dynamic memory
+	print_path.raw_points = (struct Point*) malloc(sizeof(struct Point)*PATH_SIZE); //Say your prayers boys we doing dynamic memory
 	print_path.size = 0;
 	print_path.cap = PATH_SIZE;
 
 	int parse_fail = csv_parse(&print_path,filepath);
 	if (parse_fail) {
-		free(print_path.points);
+		free(print_path.raw_points);
 		printf("Unexpected error: File parsing failed\n");
 		return 0;
 	}
@@ -97,10 +97,55 @@ int main(int argc,char* argv[]) {
 
 	vec3 tip;
 	printer_get_tip(&printer, tip);
+	printf("Initial tip position: ");
 	print_vec3(tip);
 
 	int extruding = 0;
 	
+	//****************
+	//Pre-compute the print path
+
+	//Initialize array of motor states
+
+	printf("Pre-computing inverse kinematics\n");
+
+	print_path.points = (struct Point*)malloc(sizeof(struct Point) * print_path.size);
+
+	for (int i = 0; i < print_path.size; i++) {
+
+		struct Point point = print_path.raw_points[i];
+
+		vec3 position = { point.x,point.y,point.z };
+		vec3 normal;
+
+		vec3 position_delta;
+
+		int ik_err = inverse_kinematics(&printer,position,normal,position_delta);
+
+		//Handle any issues with the IK
+		if (ik_err) {
+
+			for (int i = 0; i < NUM_MOTORS; i++) {
+				print_motor(&printer.motors[i]);
+			}
+
+			printf("Error: IK out of bounds\n");
+			exit(1);
+		}
+
+		print_path.points[i].x = position_delta[0];
+		print_path.points[i].y = position_delta[1];
+		print_path.points[i].z = position_delta[2];
+		//Temporary normal values held still for now
+		print_path.points[i].theta = 0.f;
+		print_path.points[i].phi = 0.f;
+
+		print_path.points[i].extrusion = print_path.raw_points[i].extrusion;
+
+	}
+
+	free(print_path.raw_points);
+
 	//***************
 	//Program state
 
@@ -173,9 +218,6 @@ int main(int argc,char* argv[]) {
 
 		usb_new_command(&i_state);
 
-		printf("Parser buffer payload after copy: %s\n", payload);
-		printf("%i: %s\n", i_state.parser_idx, i_state.parser_buffer);
-
 		switch (c) {
 			case 'd': {
 				//Handle sending an amount of data
@@ -184,41 +226,16 @@ int main(int argc,char* argv[]) {
 				printf("I am supposed to print %i data\n", num_datas);
 				
 				for (int i = 0; i < num_datas; i++) {
-					
+
 					struct Point point = print_path.points[print_path_idx];
-
-					//Put the print path data into vectors
-					vec3 position = { point.x,point.y,point.z };
-					vec3 normal;
-
-					printf("Attenpting to print: %f %f %f\n",point.x,point.y,point.z);
-
-					sphere_to_normal(normal, point.theta, point.phi);
-
-					//Changes in XYZ for movement
-					vec3 deltaxyz;
-
-					//Calculate and send the required data the required number of times
-					int ik_err = inverse_kinematics(&printer,position,normal,deltaxyz);
+					printf("Attempting to print: %f %f %f\n",point.x,point.y,point.z);
 					
-					//Handle any issues with the IK
-					if (ik_err) {
-						
-						for (int i = 0; i < NUM_MOTORS; i++) {
-							print_motor(&printer.motors[i]);
-						}
-
-						printf("Error: IK out of bounds\n");
-						//SendData(port,"<!s>");
-						error = TRUE;
-						break;
-					}
-
-					output_point(port,deltaxyz,point.extrusion);
+					output_point(port,point);
 
 					//If we need to do a check for data recieved response, it goes here
-
+					
 					print_path_idx++;
+					
 					//If we've hit the end of the file, we stop running and tell the controller we're at EOF
 					if (print_path_idx == print_path.size) {
 

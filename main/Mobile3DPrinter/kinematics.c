@@ -3,9 +3,10 @@
 //Helper function to check motor angles
 //Returns a zero if the new angle is safe
 //Returns a one otherwise
+//Note that this is only setting the motor angles of the program's internal understanding of the printer's location
 int set_motor_angle(struct Printer* prn, int idx, float angle) {
 	
-	printf("Changing angle %i to %f!\n", idx, angle);
+	//printf("Changing angle %i to %f!\n", idx, angle);
 
 	/*
 	//Ensure it is within bounds, otherwie set the angle
@@ -86,7 +87,8 @@ void forward_kinematics(struct Printer* prn)
 //Returns an error value, zero if no errors. One if errors.
 int inverse_kinematics(struct Printer* prn, vec3 target, vec3 normal, vec3 deltaxyz) {
 
-	//printf("Calling inverse kinematics!\n");
+	printf("Calling inverse kinematics!\n");
+	printf("Target: %f, %f, %f\n", target[0], target[1], target[2]);
 	//Handle rotational joints. May need to redo this whole section later.
 	//Calculate axis coordinates
 	
@@ -122,6 +124,7 @@ int inverse_kinematics(struct Printer* prn, vec3 target, vec3 normal, vec3 delta
 	forward_kinematics(prn);
 
 	//DEBUG
+	/*
 	printf("Position\n");
 	vec3 results;
 	printer_get_tip(prn, results);
@@ -130,6 +133,7 @@ int inverse_kinematics(struct Printer* prn, vec3 target, vec3 normal, vec3 delta
 	printer_get_normal(prn, results);
 	print_vec3(results);
 	print_printer_link_positions(prn);
+	*/
 	//END
 
 	//Move the prismatic joints to get it to where it needs to go
@@ -140,8 +144,8 @@ int inverse_kinematics(struct Printer* prn, vec3 target, vec3 normal, vec3 delta
 
 	//Move the pristmatic joints one by one
 	vec3 differences = { target[0] - end_effector[0],target[1] - end_effector[1],target[2] - end_effector[2] };
-	printf("Differences: ");
-	print_vec3(differences);
+	//printf("Differences: ");
+	//print_vec3(differences);
 
 	//Again making assumptions based on the design of our specific printer
 	//X-axis
@@ -161,6 +165,13 @@ int inverse_kinematics(struct Printer* prn, vec3 target, vec3 normal, vec3 delta
 
 	//Do FK to ensure that the end of the printer is in the right place
 	forward_kinematics(prn);
+
+	//Print end position. (Debug purposes)
+	/*
+	vec3 end_pos;
+	printer_get_tip(prn,end_pos);
+	print_vec3(end_pos);
+	*/
 
 	round_motors(prn);
 
