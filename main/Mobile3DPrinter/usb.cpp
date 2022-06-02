@@ -20,7 +20,7 @@ PORT usb_init() {
 
 	//Set all of the properties of the serial connection 
 	//These are the arduino defaults
-	if (!(SetPortBoudRate(port, 9600))) {
+	if (!(SetPortBoudRate(port, 500000))) {
 		printf("Setting Boud rate failed!\n");
 		return NULL;
 	};

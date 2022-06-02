@@ -1,5 +1,5 @@
-#include <stdio.h>
-#include <string.h>
+#include <iostream>
+#include <string>
 
 //I feel like I have to defend this
 //The windows API and C apparently do not get along to the tune of 3000 compiler errors
@@ -30,10 +30,7 @@ void sphere_to_normal(vec3 norm, float theta, float phi) {
 }
 
 //Output a point to the controller in the required format
-void output_point(PORT port, struct Point point) {
-
-	//Precise size of the outgoing string
-	char outgoing[63];
+void output_point(std::string* out, struct Point point) {
 
 	//Extrusion var to send
 	char ex;
@@ -44,10 +41,12 @@ void output_point(PORT port, struct Point point) {
 		ex = 'f';
 	}
 
+	char outgoing[63];
 	snprintf(outgoing,63,"<!D(%+010.4f,%+010.4f,%+010.4f,%+010.4f,%+010.4f,%c)>",point.x,point.y,point.z,point.theta,point.phi,ex);
 
-	printf("Outgoing data: %s\n",outgoing);
-	SendData(port, outgoing);
+	std::string line(outgoing);
+
+	*out += line;
 }
 
 int main(int argc,char* argv[]) {
@@ -228,7 +227,9 @@ int main(int argc,char* argv[]) {
 				//Handle sending an amount of data
 				//Aka the slightly more difficult part
 				int num_datas = atoi(payload);
-				printf("I am supposed to print %i data\n", num_datas);
+				printf("I am supposed to print %i points\n", num_datas);
+
+				std::string out_data;
 				
 				for (int i = 0; i < num_datas; i++) {
 
@@ -236,7 +237,7 @@ int main(int argc,char* argv[]) {
 
 					printf("Attempting to print: %f %f %f\n",point.x,point.y,point.z);
 					
-					output_point(port,point);
+					output_point(&out_data,point);
 
 					//If we need to do a check for data recieved response, it goes here
 					
@@ -244,14 +245,23 @@ int main(int argc,char* argv[]) {
 					
 					//If we've hit the end of the file, we stop running and tell the controller we're at EOF
 					if (print_path_idx == print_path.size) {
-
-						SendData(port,"<!e>");
-						printf("End of file reached!\n");
-
 						eof_called = TRUE;
 						running = FALSE;
 						break;
 					}
+				}
+
+				//Send the points all at once
+				char* out = new char[out_data.length() + 1];
+				std::strcpy(out, out_data.c_str());
+				printf("Outgoing data: %s", out);
+				SendData(port, out);
+
+				free(out);
+
+				if (eof_called) {
+					SendData(port, "<!e>");
+					printf("End of file reached!\n");
 				}
 
 				break;

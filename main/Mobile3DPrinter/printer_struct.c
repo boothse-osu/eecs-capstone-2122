@@ -29,7 +29,7 @@ void printer_get_normal(struct Printer* prn, vec2 out) {
 	vec3 norm;
 	glm_vec3_sub(lnk5, lnk4, norm);
 
-	float theta = (float)atan2(-1.f * (double)norm[0], norm[1]);
+	float theta = (float)atan2((double)norm[1], (double)norm[0]);
 	float phi = (float)atan2(norm[2], sqrt(((double)norm[0] * (double)norm[0]) + ((double)norm[1] * (double)norm[1])));
 
 	out[0] = theta;

@@ -16,7 +16,7 @@
 //Determines whether the IK will consider the normal
 //For debug purposes
 
-#define IK_NORMALS 1
+#define IK_NORMALS 0
 
 //Defines for the inverse kinematics
 //All of this is used by the generate_printer function in printer_struct.c
