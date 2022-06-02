@@ -15,36 +15,36 @@
 
 // Translates a 5 motor move command and calculates step amounts for
 // each motor. Calls a the movement function and then requests more data.
-void handle_move(String);
+void MoveHandler(String);
 
 // Translates a full 6 motor move command and calculates step amounts for
 // each motor and the extrusion speed. Calls a the movement function and 
 // then requests more data.
-void handle_print_move(String);
+void PrintMoveHandler(String);
 
 // Prompt user for motor, direction, and step amount and runs that motor
-void handle_debug();
+void DebugHandler();
 
 // Communication Functions
 
 // <!m(msg)>: Simple way to send a message over serial with the correct
 //    formatting. 
-// - (note) Needs to be called with only strings: send_message("number:"+String(int));
+// - (note) Needs to be called with only strings: SendMessage("number:"+String(int));
 // -  All other data must be turned into strings with String()
-void send_message(String);
+void SendMessage(String);
 
 // <!s(msg)>: Sends a stop message over serial, stopping the IK. 
-// - (note) Needs to be called with only strings: send_message("number:"+String(int));
+// - (note) Needs to be called with only strings: SendMessage("number:"+String(int));
 // -  All other data must be turned into strings with String()
-void stop_message(String);
+void SendStopMessage(String);
 
 // <!R>: Called after we have confirmed we correctly received move data.
-void confirm_data();
+void SendConfirmData();
 
 // <!d(num)>: Requests new data, num amount specificities how many data
 //    arrays to be sent
-void request_data(int);
+void SendDataRequest(int);
 
 // <!H>: Confirms that homing has completed.
-void confirm_homing();
+void SendHomingComplete();
 #endif

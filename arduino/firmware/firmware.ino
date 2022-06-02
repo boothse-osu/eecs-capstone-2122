@@ -23,6 +23,9 @@
 
 // Command Examples:
 
+// y = 365
+// <!D(+0000.0000,+0014.0682,+0003.5343,+0000.0000,+0000.0000,f,009.4918)>
+// y = 355
 // <!D(+0165.3356,+0012.4316,+0003.5343,+0000.0000,+0000.0000,f,018.9835)>
 
 // <!D(+0020.0000,-0000.0000,-0000.0000,+0000.0000,+0000.0000,t)><!D(-0030.0000,-0005.0000,-0000.0000,+0000.0000,+0000.0000,t)><!D(+0010.0000,+0005.0000,-0000.0000,+0000.0000,+0000.0000,t)><!D(+0020.0000,-0000.0000,-0000.0000,+0000.0000,+0000.0000,t)><!D(-0030.0000,-0005.0000,-0000.0000,+0000.0000,+0000.0000,t)><!D(+0010.0000,+0005.0000,-0000.0000,+0000.0000,+0000.0000,t)>
@@ -50,17 +53,20 @@
 
 /////////////////////////////////////////////////////////////////////
 
+String oldCircle = "<!D(+0128.0122,+0012.4316,+0003.5343,+0000.0000,+0000.0000,f,004.0000)><!D(+0000.0001,+0000.0001,+0000.0000,+0000.0000,+0000.0000,t,000.0000)><!D(-0000.3014,+0001.0908,+0000.0000,+0000.0000,+0000.0000,t,000.3340)><!D(-0000.8989,+0001.0713,+0000.0000,+0000.0000,+0000.0000,t,000.3340)><!D(-0001.4803,+0001.0328,+0000.0000,+0000.0000,+0000.0000,t,000.3340)><!D(-0002.0354,+0000.9757,+0000.0000,+0000.0000,+0000.0000,t,000.3340)><!D(-0002.5541,+0000.9013,+0000.0000,+0000.0000,+0000.0000,t,000.3340)><!D(-0003.0272,+0000.8108,+0000.0000,+0000.0000,+0000.0000,t,000.3340)><!D(-0003.4464,+0000.7058,+0000.0000,+0000.0000,+0000.0000,t,000.3340)><!D(-0003.8040,+0000.5882,+0000.0000,+0000.0000,+0000.0000,t,000.3340)><!D(-0004.0937,+0000.4602,+0000.0000,+0000.0000,+0000.0000,t,000.3340)><!D(-0004.3104,+0000.3240,+0000.0000,+0000.0000,+0000.0000,t,000.3340)><!D(-0004.4501,+0000.1819,+0000.0000,+0000.0000,+0000.0000,t,000.3340)><!D(-0004.5104,+0000.0365,+0000.0000,+0000.0000,+0000.0000,t,000.3340)><!D(-0004.4903,-0000.1094,+0000.0000,+0000.0000,+0000.0000,t,000.3340)><!D(-0004.3900,-0000.2534,+0000.0000,+0000.0000,+0000.0000,t,000.3340)><!D(-0004.2114,-0000.3928,+0000.0000,+0000.0000,+0000.0000,t,000.3340)><!D(-0003.9577,-0000.5253,+0000.0000,+0000.0000,+0000.0000,t,000.3340)><!D(-0003.6333,-0000.6484,+0000.0000,+0000.0000,+0000.0000,t,000.3340)><!D(-0003.2440,-0000.7599,+0000.0000,+0000.0000,+0000.0000,t,000.3340)><!D(-0002.7969,-0000.8579,+0000.0000,+0000.0000,+0000.0000,t,000.3340)><!D(-0002.2999,-0000.9406,+0000.0000,+0000.0000,+0000.0000,t,000.3340)><!D(-0001.7618,-0001.0064,+0000.0000,+0000.0000,+0000.0000,t,000.3340)><!D(-0001.1922,-0001.0543,+0000.0000,+0000.0000,+0000.0000,t,000.3340)><!D(-0000.6015,-0001.0833,+0000.0000,+0000.0000,+0000.0000,t,000.3340)><!D(+0000.0000,-0001.0931,+0000.0000,+0000.0000,+0000.0000,t,000.3340)><!D(+0000.6016,-0001.0834,+0000.0000,+0000.0000,+0000.0000,t,000.3340)><!D(+0001.1924,-0001.0542,+0000.0000,+0000.0000,+0000.0000,t,000.3340)><!D(+0001.7619,-0001.0064,+0000.0000,+0000.0000,+0000.0000,t,000.3340)><!D(+0002.2999,-0000.9405,+0000.0000,+0000.0000,+0000.0000,t,000.3340)><!D(+0002.7970,-0000.8579,+0000.0000,+0000.0000,+0000.0000,t,000.3340)><!D(+0003.2441,-0000.7599,+0000.0000,+0000.0000,+0000.0000,t,000.3340)><!D(+0003.6333,-0000.6484,+0000.0000,+0000.0000,+0000.0000,t,000.3340)><!D(+0003.9577,-0000.5253,+0000.0000,+0000.0000,+0000.0000,t,000.3340)><!D(+0004.2115,-0000.3928,+0000.0000,+0000.0000,+0000.0000,t,000.3340)><!D(+0004.3901,-0000.2533,+0000.0000,+0000.0000,+0000.0000,t,000.3340)><!D(+0004.4904,-0000.1093,+0000.0000,+0000.0000,+0000.0000,t,000.3340)><!D(+0004.5105,+0000.0366,+0000.0000,+0000.0000,+0000.0000,t,000.3340)><!D(+0004.4502,+0000.1819,+0000.0000,+0000.0000,+0000.0000,t,000.3340)><!D(+0004.3104,+0000.3239,+0000.0000,+0000.0000,+0000.0000,t,000.3340)><!D(+0004.0937,+0000.4602,+0000.0000,+0000.0000,+0000.0000,t,000.3340)><!D(+0003.8040,+0000.5883,+0000.0000,+0000.0000,+0000.0000,t,000.3340)><!D(+0003.4464,+0000.7058,+0000.0000,+0000.0000,+0000.0000,t,000.3340)><!D(+0003.0273,+0000.8108,+0000.0000,+0000.0000,+0000.0000,t,000.3340)><!D(+0002.5542,+0000.9013,+0000.0000,+0000.0000,+0000.0000,t,000.3340)><!D(+0002.0354,+0000.9757,+0000.0000,+0000.0000,+0000.0000,t,000.3340)><!D(+0001.4804,+0001.0327,+0000.0000,+0000.0000,+0000.0000,t,000.3340)><!D(+0000.8990,+0001.0714,+0000.0000,+0000.0000,+0000.0000,t,000.3340)><!D(+0000.3015,+0001.0908,+0000.0000,+0000.0000,+0000.0000,t,000.3340)><!D(+0000.0001,+0000.0001,+0000.0000,+0000.0000,+0000.0000,f,000.0000)>";
+
+
 // Timer for how a serial event runs, blocking the main loop.
-unsigned long processing_start;
+unsigned long serialReceivedTime;
 
 // Char holding the serial request command signifier.
 char signifier;
 
-long mtr_steps[5];
+long motorStepAmounts[5];
 
-char hot_end;
+char hotEndSignifier;
 
-unsigned long time_micro;
+unsigned long movementTime;
 
 // Array of Motor Driver Steppers.
 AMIS30543 stepper[6] = {};
@@ -109,14 +115,14 @@ void setup()
   }
 
   // Setup hot-end with correct pin-modes and set variables.
-  hotendSetup();
+  HotEndSetup();
 }
 
 
 void loop()
 {  
   // Maintain hot-end temp and check for thermal runaway.
-  //runHotend();
+  RunHotEnd();
 
   // serialEvent is called by the arduino at the end of every cycle.
 } 
@@ -129,86 +135,104 @@ void serialEvent()
   while(Serial.available()) 
   {
     // Read the entire buffer into a string
-    String serial_message = Serial.readString();
+    String serialMessage = Serial.readString();
+
+/////////////////////////////////////////////////////////////////////////////////////////////////
 
     // Signifier shows a move command and the move data is the right 
     // length. Send the data to a data parser that will extract 
     // variables and call a move command.
-    if (serial_message.charAt(2) == MOVE_DATA){
-      for(int i = 0; i<data_length; i++){
-        if(serial_message.charAt(2) != EOF_MSG) {
+    if (serialMessage.charAt(2) == MOVE_DATA){
+      for(int i = 0; i<DATA_REQUEST_AMOUNT; i++){
+        if(serialMessage.charAt(2) != EOF_MSG) {
           
           // IK used to send a T/F for hot-end operation
-          hot_end = serial_message.charAt(59);
-          send_message(String(hot_end));
+          hotEndSignifier = serialMessage.charAt(59);
+          //SendMessage(String(hotEndSignifier));
 
           // Parse data for angle changes and calculate steps for each motor
           for(int i = 0; i<5; i++) {
-            mtr_steps[i] = round(serial_message.substring((i*11)+4, (i*11)+4+10).toDouble() * (steps_per_rotations[i] / step_mode));
-            send_message(String(mtr_steps[i]));
+            motorStepAmounts[i] = round(serialMessage.substring((i*11)+4, (i*11)+4+10).toDouble() * (motorStepsPerRotation[i] / radianConversion));
+            //SendMessage(String(motorStepAmounts[i]));
           }
 
-          time_micro = serial_message.substring(61,69).toDouble() * 1000000;
+          //SendMessage(serialMessage.substring(61,69));
+          movementTime = serialMessage.substring(61,69).toDouble() * 1000000;
 
-          move_command(mtr_steps, hot_end, time_micro);
+          //unsigned long time_st = micros();
+          MoveCommand(motorStepAmounts, hotEndSignifier, movementTime);
+          //Serial.println((micros()-time_st)/1000000);
           
-          request_data(data_length);
-          
-          //serial_message = serial_message.substring(62);
+          //Serial.println(serialMessage);
+          serialMessage = serialMessage.substring(62);
+          //serialMessage = serialMessage.substring(71);
         }
         else {
-          send_message("End of File Reached.");
+          SendMessage("End of File Reached.");
           break;
         }
       }
+      SendDataRequest(DATA_REQUEST_AMOUNT);
     }
+
+/////////////////////////////////////////////////////////////////////////////////////////////////
 
     // Signifier shows a homing request. Disable the z-axis motor so 
     // it will fall to its lowest point, initiate a homing sequence, 
     // wait for the z-axis to fall and re-enable it.
-    else if (serial_message.charAt(2) == HOMING_REQ) {
-      setDirection(2,0);
+    else if (serialMessage.charAt(2) == HOMING_REQ) {
+      SetDirection(2,0);
       for(int i = 0; i<50; i++){
-        step(2);
+        Step(2);
         delayMicroseconds(300);
       }
       stepper[2].disableDriver();
       stepper[4].disableDriver();
 
-      if(!homing_command()) stop_message("Homing Failed");
+      //if(!HomingCommand()) SendStopMessage("Homing Failed");
       //delay(1000*3); // 3sec delay
       stepper[2].enableDriver();
       stepper[4].enableDriver();
 
       // Confirm homing complete
-      confirm_homing();
+      SendHomingComplete();
       // Request data needed to start IK
-      request_data(data_length);
+      SendDataRequest(DATA_REQUEST_AMOUNT);
     }
+
+/////////////////////////////////////////////////////////////////////////////////////////////////
 
     // Signifier shows a filament extrusion test request. Initiate a 
     // filament test.
-    else if (serial_message.charAt(2) == FILAMENT) {
-      double cms = serial_message.substring(4,10).toDouble();
-      int distance = serial_message.substring(11,14).toInt();
-      extrude(cms, distance);
+    else if (serialMessage.charAt(2) == FILAMENT) {
+      double cmPerSecond = serialMessage.substring(4,10).toDouble();
+      int filamentLength = serialMessage.substring(11,14).toInt();
+      ExtrudeCommand(cmPerSecond, filamentLength);
     }
+
+/////////////////////////////////////////////////////////////////////////////////////////////////
 
     // Signifier shows a hot-end temperature change request. Call hot-end 
     // temperature change handler.
-    else if (serial_message.charAt(2) == TEMP_SET) 
-      hotendParse(serial_message.substring(4));
+    else if (serialMessage.charAt(2) == TEMP_SET) 
+      hotendParse(serialMessage.substring(4));
+
+/////////////////////////////////////////////////////////////////////////////////////////////////
 
     // Signifier shows a hot-end status request. Send message containing 
     // hot-end information.
-    else if (serial_message.charAt(2) == TEMP_REP) 
-      send_message("Current temp: " + String(hotin) + "°C, Target temp: " + String(hotset) + "°C");
+    else if (serialMessage.charAt(2) == TEMP_REP) 
+      SendMessage("Current temp: " + String(hotin) + "°C, Target temp: " + String(hotset) + "°C");
     
+/////////////////////////////////////////////////////////////////////////////////////////////////
+
     // Signifier shows a debug mode request. Call debug mode handler.
-    else if (serial_message.charAt(2) == DEBUG) 
-      handle_debug();
+    else if (serialMessage.charAt(2) == DEBUG) 
+      DebugHandler();
     
-    else send_message("UNKOWN COMMAND");;
+/////////////////////////////////////////////////////////////////////////////////////////////////
+
+    else SendMessage("UNKOWN COMMAND");;
 
   }
 }

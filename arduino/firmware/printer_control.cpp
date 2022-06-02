@@ -17,177 +17,188 @@
 #include "printer_control.h"
 
 // Used to record the time between steps for each motor or each move command
-float time_steps [5];
+float motorDelays [5];
 // Set extruder motor step delay
-long time_steps_extruder = 1000;
-// Time at which the next step should be taken for each motor
-float time_nxt_step [5];
 
-// 
-// stp_cnt: 5 long array of ints for the amount of steps to move for each motor
-// ht_nd: will extrude if 't' and won't if 'f'
-// This move is only used to allow for commands from 5 motor only IK
-// Will be all deleted when IK is updated
-bool move_command(long stp_cnt[5], char ht_nd, long move_time){
-  int i;
+// Time at which the next step should be taken for each motor
+float nextStepTimes [5];
+
+unsigned long currentTime;
+
+int i;
+
+unsigned long extruderDelay = 1000;
+
+// motorStepAmounts: 5 long array of ints for the amount of steps to move for each motor
+// isHotEndOn: will extrude if 't' and won't if 'f'
+bool MoveCommand(long motorStepAmounts[5], char isHotEndOn, long movementTime){
+  // Data for stall detection, may be moved to stall_detection.cpp
+  //struct stallData slaVoltageLog[MTR_NUMBER];
+  //for(int i=0; i<MTR_NUMBER; i++) slaVoltageLog[i] = CreateVoltageAverage();
+
+
+  // Set each motor in the correct direction
+  // Could track if motor is already set in correct location but this code is fast anyways
+  for(i = 0; i<5; i++) {
+    if(motorStepAmounts[i] >= 0 ) SetDirection(i,POS_DIRECTION[i]);
+    else SetDirection(i,NEG_DIRECTION[i]);
+  }
+  SetDirection(EXTRUDER_PIN,0);
+
+
+  /*
+  //SendMessage(String(movementTime));
+  for(i = 0; i<5; i++){
+    motorDelays[i] = movementTime / abs(motorStepAmounts[i]);
+    //SendMessage(String(motorDelays[i]));
+  }
+  */
+  /*
+  for(int k = 0; k<5; k++){
+    if((motorDelays[k] != 0 && motorDelays[k] < minMotorDelay) || isHotEndOn == 'f'){ 
+  */
+      long largestStepAmount = 0;
+      for(i = 0; i<5; i++){
+        if(abs(motorStepAmounts[i]) > largestStepAmount) {
+          largestStepAmount = abs(motorStepAmounts[i]);
+          //if(i == 1) largestStepAmount += 1000;
+        }
+        
+      }
+      movementTime = largestStepAmount*minMotorDelay;
+      for(i = 0; i<5; i++) {
+        motorDelays[i] = movementTime / abs(motorStepAmounts[i]);
+        Serial.println(motorDelays[i]);
+      }
+  /*
+      break;
+    }
+  }
+  */
+  
+  // Calculate the time of first step for each motor
+  for(i = 0; i<5; i++) nextStepTimes[i] = micros() + motorDelays[i];   
+  float nextExtruderStepTime = micros() + extruderDelay;
+
 
   // Might not need to be initialized here
   // Records the amount of steps taken
-  long steps_taken[5] = {0, 0, 0, 0, 0};
-
-  // Data for stall detection, may be moved to stall_detection.cpp
-  //struct StallData voltage_log[MTR_NUMBER];
-  //for(int i=0; i<MTR_NUMBER; i++) voltage_log[i] = createVoltageAverage();
-
-  // Set each motor in the correct direction
-  for(i = 0; i<5; i++) {
-    if(stp_cnt[i] >= 0) setDirection(i,POS_DIRECTION[i]);
-    else setDirection(i,NEG_DIRECTION[i]);
-  }
-  setDirection(extruder_pin,0);
-
-  /*
-  for(i = 0; i<5; i++){
-    time_steps[i] = (move_time * 1000000) / abs(stp_cnt[i]);
-  }
-  */
-  ///*
-  long max = 0;
-  for(i = 0; i<5; i++){
-    if(abs(stp_cnt[i]) > max) max = abs(stp_cnt[i]);
-  }
-  move_time = max*min_mtr_delay;
-  for(i = 0; i<5; i++) {
-    time_steps[i] = move_time / abs(stp_cnt[i]);
-  }
-  //*/
-
-  // Timer that the motors will trigger off
-  unsigned long timeBegin = micros();
-  
-  // Calculate the time of first step for each motor
-  for(i = 0; i<5; i++) time_nxt_step[i] = timeBegin + time_steps[i];   
-  float time_nxt_step_extruder = timeBegin + time_steps_extruder;
-
-  // Record current time for stepping
-  unsigned long timeNow = micros();
+  long stepsTaken[5] = {0, 0, 0, 0, 0};
 
   // Set all motors to not done
-  bool done_mtrs [5] = {false};
-  int motors_done = 0;
+  bool doneMotorList [5] = {false};
+  int doneMotorNum = 0;
   // End when all motors are done
-  while(motors_done < 5){
-    timeNow = micros();
+  while(doneMotorNum < 5){
+    currentTime = micros();
 
     //delayMicroseconds(150);
     for(i = 0; i<5; i++){
       
       // If motor is done don't step it
-      if(done_mtrs[i]==true) {}
+      if(doneMotorList[i]==true) {}
       // If the if now finishing make it as done
-      else if(steps_taken[i]==abs(stp_cnt[i])){
+      else if(stepsTaken[i]==abs(motorStepAmounts[i])){
         //Serial.println("Done: Motor " + String(i));
-        done_mtrs[i] = true;
-        motors_done++;
+        doneMotorList[i] = true;
+        doneMotorNum++;
       // If the motor is ready to step
-      } else if(timeNow>=time_nxt_step[i]){
-        step(i);
+      } else if(currentTime>=nextStepTimes[i]){
+        Step(i);
 
         // Stall detection check
-        //if(abs(steps_taken[i])%Stall_Check_Step[i]==0 && pushVoltage(i, &voltage_log[i]) == false) {
-        //    stop_message("Stall on motor " + String(i));
+        //if(abs(stepsTaken[i])%stallCheckStepInterval[i]==0 && PushVoltage(i, &slaVoltageLog[i]) == false) {
+        //    SendStopMessage("Stall on motor " + String(i));
         //    return false;
         //}
 
         // Calculate new step trigger time
-        time_nxt_step[i] += time_steps[i];
-        steps_taken[i]++;
+        nextStepTimes[i] += motorDelays[i];
+        stepsTaken[i]++;
       }
     }
     // If the Extruder needs to step: step it an calculate next step time
-    if(ht_nd == 't' && timeNow>=time_nxt_step_extruder){
-      step(extruder_pin);
-      time_nxt_step_extruder += time_steps_extruder;
+    if(isHotEndOn == 't' && currentTime>=nextExtruderStepTime){
+      Step(EXTRUDER_PIN);
+      nextExtruderStepTime += extruderDelay;
     }
   }
     
-  //send_message("Done in "+String((double)(millis()-start_time)/1000.0)+" seconds");
-  //for(int i = 0; i<5; i++) send_message("MTR "+String(i)+" steps taken: " + String(steps_taken[i]));
-  //for(int i = 0; i<5; i++) send_message("MTR "+String(i)+" microseconds per step: " + String(time_steps[i]));
   return true;
 }
 
 
-bool homing_command(){
+bool HomingCommand(){
+    // This function is very odd, mainly due to a z motor that is too strong to stall
+    // and two rotational motors that are weak enough to stall if the filament tube sags
+
     //return true;
-    struct StallData voltage_log[MTR_NUMBER];
-    for(int i=0; i<MTR_NUMBER; i++) voltage_log[i] = createVoltageAverage();
+    struct stallData slaVoltageLog[MTR_NUMBER];
+    for(int i=0; i<MTR_NUMBER; i++) slaVoltageLog[i] = CreateVoltageAverage();
 
 
-    bool mtr_running [5] = {true, true, false, false, false};
-    int mtrs_done = 0;
+    bool motorsRunning [5] = {true, true, false, false, false};
+    int doneMotorNum = 0;
     
     // Set all motors to their homing direction
-    for(int i = 0; i<5; i++) setDirection(i,HOME_DIRECTION[i]);
+    for(int i = 0; i<5; i++) SetDirection(i,NEG_DIRECTION[i]);
 
     // Home the X and Y motors at the same time
-    unsigned long time_nxt_step = micros() + 350;
-    send_message("Starting Homing");
+    unsigned long nextStepTime = micros() + 350;
+    SendMessage("Starting Homing");
     while(true) {
-      if(micros()>time_nxt_step){
-        time_nxt_step = micros() + 350;
+      if(micros()>nextStepTime){
+        nextStepTime = micros() + 350;
         for(int i = 0; i<2; i++) {
-          if(mtr_running[i]) {
-            step(i);
-            mtr_running[i] = pushVoltage(i, &voltage_log[i]);
-            if(mtr_running[i]==false) {
-              send_message("Motor " + String(i) + " at home");
-              mtrs_done++;
+          if(motorsRunning[i]) {
+            Step(i);
+            motorsRunning[i] = PushVoltage(i, &slaVoltageLog[i]);
+            if(motorsRunning[i]==false) {
+              SendMessage("Motor " + String(i) + " at home");
+              doneMotorNum++;
             }
           }
         }
-        if(mtrs_done==2) break;
+        if(doneMotorNum==2) break;
       }
     }
 
     // Home the rotational motors now that the filament tube is in a
     // safe location
-    time_nxt_step = micros() + 7500;
+    nextStepTime = micros() + 7500;
     while(true) {
-      if(micros()>time_nxt_step){
-        time_nxt_step = micros() + 7500;
-        step(3);
-        mtr_running[3] = pushVoltage(3, &voltage_log[3]);
-        if(mtr_running[3]==false) break;
+      if(micros()>nextStepTime){
+        nextStepTime = micros() + 7500;
+        Step(3);
+        motorsRunning[3] = PushVoltage(3, &slaVoltageLog[3]);
+        if(motorsRunning[3]==false) break;
       }
     }
-    send_message("Motor 3 at home");
+    SendMessage("Motor 3 at home");
     
     // Prompt motors done for deactivated motors
-    send_message("Motor 4 at home");
-    send_message("Motor 2 at home");
+    SendMessage("Motor 4 at home");
+    SendMessage("Motor 2 at home");
 
   return true;
 }
 
 // Temporary Test Function
-bool extrude(double cms, int cm){
-    int extrude_mtr_index = extruder_pin;
+bool ExtrudeCommand(double cmPerSecond, int cm){
+    int cmExtrudeAmount = 461;
+    long extruderDelay = 1000000/(cmExtrudeAmount*cmPerSecond);
 
-    int cm_step_amount = 461;
-    int delay_time = 1000000/(cm_step_amount*cms);
-
-    if (cm>0)setDirection(extrude_mtr_index,0);
-    else setDirection(extrude_mtr_index,1);
+    if (cm>0)SetDirection(EXTRUDER_PIN,0);
+    else SetDirection(EXTRUDER_PIN,1);
     
-    int cm_target_number = cms;
-    int target = cm_step_amount * abs(cm);
+    int cm_target_number = cmPerSecond;
+    int target = cmExtrudeAmount * abs(cm);
     int steps = 0;
-    unsigned long time_nxt_step = micros() + 300;
+    unsigned long nextStepTime = micros() + 300;
     while(true) {
-      if(micros()>time_nxt_step){
-        time_nxt_step = micros() + delay_time;
-        step(extrude_mtr_index);
+      if(micros()>nextStepTime){
+        nextStepTime = micros() + extruderDelay;
+        Step(EXTRUDER_PIN);
         steps++;
         if(steps==target) return true;
       }
@@ -196,7 +207,7 @@ bool extrude(double cms, int cm){
 
 // Sends a pulse on the NXT/STEP pin to tell the driver to take
 // one step, and also delays to control the speed of the motor.
-void step(int sel)
+void Step(int sel)
 {
   // The NXT/STEP minimum high pulse width is 2 microseconds.
   digitalWrite(amisStepPin[sel], HIGH);
@@ -214,7 +225,7 @@ void step(int sel)
 
 // Writes a high or low value to the direction pin to specify
 // what direction to turn the motor.
-void setDirection(int sel, bool dir)
+void SetDirection(int sel, bool dir)
 {
   // The NXT/STEP pin must not change for at least 0.5
   // microseconds before and after changing the DIR pin.

@@ -79,7 +79,7 @@ void hotendParse(String str) {
   hotset = str.toDouble();
 }
 
-void hotendSetup() {
+void HotEndSetup() {
   // set pinmodes
   pinMode(TEMPIN, INPUT);
   pinMode(HOTEND, OUTPUT);
@@ -96,7 +96,7 @@ void hotendSetup() {
   underheatCount = 0;
 }
 
-void runHotend() {
+void RunHotEnd() {
   // if (Serial.available() > 0) {
   //   hotset = Serial.parseFloat();
   // }
@@ -116,7 +116,7 @@ void runHotend() {
   // Serial.println(hotout);
 
   if(runawayCheck()) {
-    stop_message("Thermal runaway alarm tripped. Reason: " + alarmMsg);
+    SendStopMessage("Thermal runaway alarm tripped. Reason: " + alarmMsg);
     analogWrite(HOTEND, 0);
     while(1);
   }

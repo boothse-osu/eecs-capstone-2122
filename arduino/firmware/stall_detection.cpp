@@ -16,48 +16,48 @@
 
 // Constructor for VoltageAverage structs. Sets everything to initial 
 // values
-struct StallData createVoltageAverage() {
-    struct StallData SData;
-    SData.len = 0;
-    SData.sum = 0;
-    SData.stall_trigger = 0;
-    SData.stall_line = 0.0;
-    return SData;
+struct stallData CreateVoltageAverage() {
+    struct stallData stallLog;
+    stallLog.len = 0;
+    stallLog.sum = 0;
+    stallLog.stallTrigger = 0;
+    stallLog.stallLine = 0.0;
+    return stallLog;
 }
 
 
 // Push a new Voltage for motor number index and pass all of
-// its stall data in a struct SData.
+// its stall data in a struct stallLog.
 // Returns: True - No Stall | False - Stall
 // - (note) No longer using rolling average due to stalls on some motors being
 // - too gradual.
-bool pushVoltage(int index, struct StallData* SData) {
+bool PushVoltage(int index, struct stallData* stallLog) {
     // If enough voltages have been pushed to have an accurate average.
-    if(SData->len > Stall_Array_Size[index]) {
+    if(stallLog->len > dataPointsInStallLine[index]) {
 
       // Read the SLA voltage from the indexed motor driver.
-      int test = analogRead(amisSLA[index]);
+      int slaVoltage = analogRead(amisSLA[index]);
       
       // If voltage is below stall line, add a trigger. Otherwise, reset
       // trigger.
-      if (test <= SData->stall_line) {
-        SData->stall_trigger++;
+      if (slaVoltage <= stallLog->stallLine) {
+        stallLog->stallTrigger++;
 
         // If a stall has been triggered enough times in a row for the 
         // specific motor, return a false (indicating stall)
-        if(SData->stall_trigger == Stall_Trigger_Amt[index]){
-          //Serial.println("Line: " + String(SData->stall_line));
+        if(stallLog->stallTrigger == stallTriggerAmount[index]){
+          //Serial.println("Line: " + String(stallLog->stallLine));
           return false;
         }
       }
-      else SData->stall_trigger = 0;
+      else stallLog->stallTrigger = 0;
     }
     // If we are still fine-tuning the average: grab the voltage, increment
     // the length of data, and recalculate the new stall-line
     else {
-      SData->sum += analogRead(amisSLA[index]);
-      SData->len++;
-      SData->stall_line = ((SData->sum / SData->len)/Stall_Line_Frac[index])+5;
+      stallLog->sum += analogRead(amisSLA[index]);
+      stallLog->len++;
+      stallLog->stallLine = ((stallLog->sum / stallLog->len)*stallLineFraction[index])+5;
     }
     return true;
 }

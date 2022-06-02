@@ -9,17 +9,17 @@
 
 
 // Struct for holding all stall information for a specific motor.
-struct StallData {
-    int len, sum, stall_trigger;
-    float stall_line;
+struct stallData {
+    int len, sum, stallTrigger;
+    float stallLine;
 };
 
 // Sets variables in struct to initial values.
-struct StallData createVoltageAverage();
+struct stallData CreateVoltageAverage();
 
 // Push a new Voltage for the motor indexed by int and pass all of
 // its stall data in a struct.
 // Returns: True - No Stall | False - Stall
-bool pushVoltage(int, struct StallData*);
+bool PushVoltage(int, struct stallData*);
 
 #endif
