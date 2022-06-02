@@ -116,11 +116,12 @@ int main(int argc,char* argv[]) {
 		struct Point point = print_path.raw_points[i];
 
 		vec3 position = { point.x,point.y,point.z };
-		vec3 normal;
+		vec2 normal = {point.theta,point.phi};
 
 		vec3 position_delta;
+		vec2 norm_delta;
 
-		int ik_err = inverse_kinematics(&printer,position,normal,position_delta);
+		int ik_err = inverse_kinematics(&printer,position,normal,position_delta,norm_delta);
 
 		//Handle any issues with the IK
 		if (ik_err) {
@@ -133,15 +134,19 @@ int main(int argc,char* argv[]) {
 			exit(1);
 		}
 
+		//Position values
 		print_path.points[i].x = position_delta[0];
 		print_path.points[i].y = position_delta[1];
 		print_path.points[i].z = position_delta[2];
-		//Temporary normal values held still for now
-		print_path.points[i].theta = 0.f;
-		print_path.points[i].phi = 0.f;
 
+		//Normal values
+		print_path.points[i].theta = norm_delta[0];
+		print_path.points[i].phi = norm_delta[1];
+
+		//Extrusion
 		print_path.points[i].extrusion = print_path.raw_points[i].extrusion;
 
+		//Could probably refactor the IK code to take in a Point struct at this point
 	}
 
 	free(print_path.raw_points);
@@ -228,6 +233,7 @@ int main(int argc,char* argv[]) {
 				for (int i = 0; i < num_datas; i++) {
 
 					struct Point point = print_path.points[print_path_idx];
+
 					printf("Attempting to print: %f %f %f\n",point.x,point.y,point.z);
 					
 					output_point(port,point);
