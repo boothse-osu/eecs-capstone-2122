@@ -7,7 +7,7 @@
 #define PORTNO 4
 
 //Size of the input character buffer.
-#define BUFFSIZE 64
+#define BUFFSIZE 128
 //Which COMM port the program tries to use. May need to be changed from machine to machine.
 
 struct InputState {
