@@ -18,6 +18,9 @@
 
 #define IK_NORMALS 0
 
+//Printer defines
+#define MILS_PER_SECOND 20
+
 //Defines for the inverse kinematics
 //All of this is used by the generate_printer function in printer_struct.c
 

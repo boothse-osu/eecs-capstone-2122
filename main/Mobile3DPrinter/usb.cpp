@@ -65,7 +65,7 @@ void usb_get_input(PORT port, struct InputState* state) {
 	}
 	else {
 		//For debug purposes:
-		printf("Bytes read: %s", state->input_buffer);
+		//printf("Bytes read: %s", state->input_buffer);
 	}
 	state->input_idx = 0;
 }

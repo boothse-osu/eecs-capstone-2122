@@ -70,7 +70,7 @@ int csv_parse(struct Path* path, char* filepath) {
 
 			case 5: temptok.extrusion = atoi(token); break;
 
-			case 6: break;
+			case 6: temptok.distance = (float)atof(token); break;
 			}
 
 			token = strtok(NULL, delims);

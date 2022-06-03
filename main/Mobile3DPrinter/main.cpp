@@ -41,8 +41,8 @@ void output_point(std::string* out, struct Point point) {
 		ex = 'f';
 	}
 
-	char outgoing[63];
-	snprintf(outgoing,63,"<!D(%+010.4f,%+010.4f,%+010.4f,%+010.4f,%+010.4f,%c)>",point.x,point.y,point.z,point.theta,point.phi,ex);
+	char outgoing[72];
+	snprintf(outgoing,72,"<!D(%+010.4f,%+010.4f,%+010.4f,%+010.4f,%+010.4f,%c,%08.4f)>",point.x,point.y,point.z,point.theta,point.phi,ex,point.distance/MILS_PER_SECOND);
 
 	std::string line(outgoing);
 
@@ -144,6 +144,7 @@ int main(int argc,char* argv[]) {
 
 		//Extrusion
 		print_path.points[i].extrusion = print_path.raw_points[i].extrusion;
+		print_path.points[i].distance = print_path.raw_points[i].distance;
 
 		//Could probably refactor the IK code to take in a Point struct at this point
 	}
@@ -207,7 +208,7 @@ int main(int argc,char* argv[]) {
 		//We know we can skip the first two chars
 		//Strcopy did not work as I expected so we'll just uh do this instead ;)
 
-		printf("%i: %s\n", i_state.parser_idx,  i_state.parser_buffer);
+		//printf("%i: %s\n", i_state.parser_idx,  i_state.parser_buffer);
 
 		for (int i = 2; i < (i_state.parser_idx); i++) {
 			char chr = i_state.parser_buffer[i];

@@ -17,6 +17,7 @@ struct Point {
 	float theta;
 	float phi;
 	int extrusion;
+	float distance;
 };
 
 //Struct for the whole path
